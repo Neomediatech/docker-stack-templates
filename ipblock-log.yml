@@ -1,0 +1,405 @@
+# WARNING: This stack depends on traefik.yml stack
+# STACK_BASE_PATH [base folder where to host files, must exists]
+# DOMAIN: base domain for LE certificates
+# TODO: stunnel accepting connections instead of mariadb directly
+# remember to allow only trusted ip, by setting iptables rules (iptables -A INPUT -p tcp --dport 3306 -s [ip] -j ACCEPT)
+# STACK_BASE_PATH=/srv/data/docker/containers/ipblock-log ; grep device ipblock-log.yml|grep -v "#"|awk '{print $2}'|while read dir; do eval mkdir -p $dir; done
+# echo "db_root_password" > ${STACK_BASE_PATH}/db/data/db-root.pwd
+# echo "db_user_password" > ${STACK_BASE_PATH}/db/data/db-user.pwd
+# echo "db_user_name" > ${STACK_BASE_PATH}/db/data/db-user.txt
+# echo "db_name" > ${STACK_BASE_PATH}/db/data/db-name.txt
+
+version: '3.7'
+
+x-envs: &common-vars
+  TZ: Europe/Rome
+  MYSQL_ROOT_PASSWORD_FILE: /var/lib/mysql/db-root.pwd
+  MYSQL_PASSWORD_FILE: /var/lib/mysql/db-user.pwd
+  MYSQL_USER_FILE: /var/lib/mysql/db-user.txt
+  MYSQL_HOST: ${MYSQL_HOST:-db}
+
+services:
+  db:
+    image: mariadb:10
+    hostname: db
+    ports:
+      - target: 3306
+        published: 3306
+        mode: host
+    command: >
+      --transaction-isolation=READ-COMMITTED
+      --binlog-format=ROW
+    volumes:
+      - db_data:/var/lib/mysql
+      - db_scripts:/docker-entrypoint-initdb.d
+    environment:
+      << : *common-vars
+      MYSQL_DATABASE_FILE: /var/lib/mysql/db-name.txt
+    networks:
+      - private
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: any
+
+  pma:
+    image: phpmyadmin/phpmyadmin
+    hostname: pma
+    environment:
+      << : *common-vars    
+      PMA_HOST: ${MYSQL_HOST}
+      PMA_PORT: 3306
+    networks:
+      - private
+      - traefik-public
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: any
+      labels:
+        - "traefik.enable=true"
+        - "traefik.docker.network=traefik-public"
+        - "traefik.port=80"
+        - "traefik.tags=traefik-public"
+        - "traefik.redirectorservice.frontend.entryPoints=http"
+        - "traefik.redirectorservice.frontend.redirect.entryPoint=https"
+        - "traefik.webservice.frontend.entryPoints=https"
+        - "traefik.frontend.rule=Host:ipblock-log.${DOMAIN}"
+        - "traefik.frontend.headers.SSLRedirect=true"
+        - "traefik.frontend.entryPoints=http,https"
+        - "traefik.frontend.passHostHeader=true"
+        - "traefik.frontend.auth.basic.usersFile=/auth/htpasswd"
+    depends_on:
+      - db
+
+  cron:
+    image: neomediatech/cron
+    hostname: cron
+    environment:
+      << : *common-vars
+    networks:
+      - private
+    volumes:
+      - db_data:/var/lib/mysql
+      - crontabs:/var/spool/cron/crontabs
+      - cron_scripts:/scripts
+      - db_backups:/backups
+    depends_on:
+      - db
+
+  nginx:
+    image: nginx:1-alpine
+    hostname: nginx
+    environment:
+      TZ: Europe/Rome
+    networks:
+      - private
+      - traefik-public
+    deploy:
+      restart_policy:
+        condition: any
+      labels:
+        - "traefik.enable=true"
+        - "traefik.docker.network=traefik-public"
+        - "traefik.port=80"
+        - "traefik.tags=traefik-public"
+        - "traefik.redirectorservice.frontend.entryPoints=http"
+        - "traefik.redirectorservice.frontend.redirect.entryPoint=https"
+        - "traefik.webservice.frontend.entryPoints=https"
+        - "traefik.frontend.rule=Host:dnsbl.${DOMAIN}"
+        - "traefik.frontend.headers.SSLRedirect=true"
+        - "traefik.frontend.entryPoints=http,https"
+        - "traefik.frontend.passHostHeader=true"
+        - "traefik.frontend.auth.basic.usersFile=/auth/dnsbl"
+    volumes:
+      - app_conf:/etc/nginx/conf.d:ro
+      - app_html:/usr/share/nginx/html
+      - logs:/var/log/nginx
+    depends_on:
+      - app
+    #entrypoint: ["/entrypoint.sh"]
+    #command: "/bin/sh -c 'echo -n \"Waiting for app...\"; until ping app -c1 >/dev/null; do sleep 1; echo -n \"...\"; done; echo \"OK\"; nginx -g \"daemon off;\"'"
+    healthcheck:
+      test: ["CMD", "/bin/sh", "-c", "nc -w 7 -zv 0.0.0.0 80 || (echo \"Very bad things are happening here...\" && exit 1)"]
+      interval: 30s
+      timeout: 10s
+      start_period: 60s
+      retries: 6
+    stop_grace_period: 20s
+
+  app:
+    image: neomediatech/php-fpm-debian:7.4-fpm-redis
+    hostname: app
+    volumes:
+      - app_html:/usr/share/nginx/html
+      - rbldnsd_data:/data
+      - logs:/logs
+    environment:
+      TZ: Europe/Rome
+    networks:
+      - private
+    #depends_on:
+    #  - db
+    #entrypoint: ["/entrypoint.sh"]
+    #command: ["tini", "--", "php-fpm"]
+    healthcheck:
+      test: ["CMD", "nc", "-w", "7", "-zv", "0.0.0.0", "9000"]
+      interval: 30s
+      timeout: 30s
+      start_period: 60s
+      retries: 20
+
+  redis:
+    image: redis:5-alpine
+    hostname: redis
+    environment:
+      TZ: Europe/Rome
+    networks:
+      - private
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis_db:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 20s
+      timeout: 10s
+      retries: 5
+    # according to https://github.com/moby/moby/pull/37701#issuecomment-448014841
+    # on docker 19.03 you will be able to set /proc/sys/net/core/somaxconn to 511 instead of default 128
+    # like this example below (maybe syntax will change)
+    #sysctls:
+    #  - net.core.somaxconn=511
+    stop_grace_period: 1m
+
+  redis-archive:
+    image: redis:5-alpine
+    hostname: redis-archive
+    environment:
+      TZ: Europe/Rome
+    networks:
+      - private
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis_db_archive:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 20s
+      timeout: 10s
+      retries: 5
+    # according to https://github.com/moby/moby/pull/37701#issuecomment-448014841
+    # on docker 19.03 you will be able to set /proc/sys/net/core/somaxconn to 511 instead of default 128
+    # like this example below (maybe syntax will change)
+    #sysctls:
+    #  - net.core.somaxconn=511
+    stop_grace_period: 1m
+
+  redis-logs:
+    image: redis:5-alpine
+    hostname: redis-logs
+    environment:
+      TZ: Europe/Rome
+    networks:
+      - private
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis_db_logs:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 20s
+      timeout: 10s
+      retries: 5
+    # according to https://github.com/moby/moby/pull/37701#issuecomment-448014841
+    # on docker 19.03 you will be able to set /proc/sys/net/core/somaxconn to 511 instead of default 128
+    # like this example below (maybe syntax will change)
+    #sysctls:
+    #  - net.core.somaxconn=511
+    stop_grace_period: 1m
+
+  docs:
+    image: nginx:1-alpine
+    hostname: docs
+    environment:
+      TZ: Europe/Rome
+    networks:
+      - private
+      - traefik-public
+    deploy:
+      restart_policy:
+        condition: any
+      labels:
+        - "traefik.enable=true"
+        - "traefik.docker.network=traefik-public"
+        - "traefik.port=80"
+        - "traefik.tags=traefik-public"
+        - "traefik.redirectorservice.frontend.entryPoints=http"
+        - "traefik.redirectorservice.frontend.redirect.entryPoint=https"
+        - "traefik.webservice.frontend.entryPoints=https"
+        - "traefik.frontend.rule=Host:docs.dnsbl.${DOMAIN}"
+        - "traefik.frontend.headers.SSLRedirect=true"
+        - "traefik.frontend.entryPoints=http,https"
+        - "traefik.frontend.passHostHeader=true"
+        - "traefik.frontend.whiteList.sourceRange=${TRAEFIK_WHITELIST:-127.0.0.1/32}"
+    volumes:
+      - docs_conf:/etc/nginx/conf.d:ro
+      - docs_html:/usr/share/nginx/html
+      - logs:/var/log/nginx
+    healthcheck:
+      test: ["CMD", "/bin/sh", "-c", "nc -w 7 -zv 0.0.0.0 80 || (echo \"Very bad things are happening here...\" && exit 1)"]
+      interval: 30s
+      timeout: 10s
+      start_period: 60s
+      retries: 6
+    stop_grace_period: 20s
+
+  redis-commander:
+    hostname: redis-commander
+    image: rediscommander/redis-commander:latest
+    environment:
+      REDIS_HOSTS: "redis,redis-archive,redis-logs,sessions:redis:6379:1"
+      TZ: Europe/Rome
+    networks:
+      - private
+      - traefik-public
+    deploy:
+      restart_policy:
+        condition: any
+      labels:
+        - "traefik.enable=true"
+        - "traefik.docker.network=traefik-public"
+        - "traefik.port=8081"
+        - "traefik.tags=traefik-public"
+        - "traefik.redirectorservice.frontend.entryPoints=http"
+        - "traefik.redirectorservice.frontend.redirect.entryPoint=https"
+        - "traefik.webservice.frontend.entryPoints=https"
+        - "traefik.frontend.rule=Host:redis.dnsbl.${DOMAIN}"
+        - "traefik.frontend.headers.SSLRedirect=true"
+        - "traefik.frontend.entryPoints=http,https"
+        - "traefik.frontend.passHostHeader=true"
+        - "traefik.frontend.whiteList.sourceRange=${TRAEFIK_WHITELIST:-127.0.0.1/32}"
+    healthcheck:
+      test: ["CMD", "/redis-commander/bin/healthcheck.js"]
+      interval: 30s
+      timeout: 10s
+      start_period: 10s
+      retries: 60
+
+networks:
+  private:
+    driver: overlay
+    attachable: true
+
+  traefik-public:
+    external: true
+
+volumes:
+  db_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/db/data
+
+  db_scripts:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/db/scripts
+
+  db_backups:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/db/backups
+
+  crontabs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/cron/crontabs
+
+  cron_scripts:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/cron/scripts
+
+  app_conf:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/app/conf
+
+  app_html:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/app/html
+
+  docs_conf:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/app/docs_conf
+
+  docs_html:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/app/docs_html
+
+  rbldnsd_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /srv/data/docker/containers/rbldns/data
+
+  logs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/logs
+
+  redis_db:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/redis/db
+
+  redis_db_archive:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/redis_archive/db
+
+  redis_db_logs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/redis_logs/db

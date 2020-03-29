@@ -1,0 +1,146 @@
+# stack name "nextcloud"
+version: '3.7'
+
+x-environment: &common-vars
+  MYSQL_PASSWORD: 
+  MYSQL_DATABASE: 
+  MYSQL_USER: 
+  MYSQL_ROOT_PASSWORD: 
+  TZ: Europe/Rome
+  UPLOAD_MAX_SIZE: 20G
+
+x-default-opts: 
+  &default-opts
+  deploy:
+    restart_policy:
+      condition: on-failure
+      delay: 5s
+      #max_attempts: 3
+      window: 20s
+
+services:
+  nginx:
+    image: nginx:1.17
+    #    restart: unless-stopped
+    hostname: nginx
+    <<: *default-opts    
+    ports:
+      - target: 80
+        published: 89
+        protocol: tcp
+        mode: host
+    volumes:
+      - /srv/data/nextcloud/nginx/nextcloud.conf:/etc/nginx/nginx.conf:ro
+#      - /srv/data/website/nginx/app.conf:/etc/nginx/conf.d/app.conf:ro
+      - app:/var/www/html
+      - logs:/var/log/nginx
+      - /srv/data/nextcloud/nginx/entrypoint.sh:/entrypoint.sh:ro
+    environment:
+      TZ: Europe/Rome
+      WAITFOR: app:ping
+    depends_on:
+      - app
+    entrypoint: ["/entrypoint.sh"]
+    command: ["nginx", "-g", "daemon off;"]
+ #   healthcheck:
+ #     test: ["CMD", "/bin/sh", "-c", "nc -w 7 -zv 0.0.0.0 80 || (echo \"Very bad things are happening here...\" && exit 1)"]
+ #     interval: 30s
+ #     timeout: 10s
+ #     start_period: 90s
+ #     retries: 6
+    stop_grace_period: 20s
+
+  app:
+    image: nextcloud:17-fpm 
+    hostname: app
+    <<: *default-opts    
+    volumes:
+      - app:/var/www/html
+    environment:
+      TZ: Europe/Rome
+      REDIS_HOST: redis
+      MYSQL_HOST : db
+      << : *common-vars
+    depends_on:
+      - db
+      - redis
+    stop_grace_period: 20s
+
+  cron:
+    image: nextcloud:17-fpm
+    hostname: cron
+    <<: *default-opts
+    volumes:
+      - app:/var/www/html
+    environment:
+      TZ: Europe/Rome
+      << : *common-vars
+    entrypoint: /cron.sh
+    depends_on:
+      - db
+      - redis
+    stop_grace_period: 20s
+
+  db:
+    image: mariadb:10
+    hostname: db
+    <<: *default-opts
+    volumes:
+      - db:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD_FILE: /var/lib/mysql/db-root.pwd
+      MYSQL_PASSWORD_FILE: /var/lib/mysql/db-nextcloud.pwd
+      MYSQL_DATABASE_FILE: /var/lib/mysql/db-name.txt
+      MYSQL_USER_FILE: /var/lib/mysql/db-user.txt
+      TZ: Europe/Rome
+    healthcheck:
+      test: ["CMD", "/bin/bash", "-c", "read p < $$MYSQL_PASSWORD_FILE ; read u < $$MYSQL_USER_FILE ; mysql -p$$p -u$$u -e status | grep Uptime || (echo \"MariaDB is down\" && exit 1)"]
+      interval: 30s
+      timeout: 30s
+      start_period: 5s
+      retries: 20
+    command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW
+
+  redis:
+    image: redis:5-alpine
+    hostname: redis
+    <<: *default-opts
+    environment:
+      TZ: Europe/Rome
+    volumes:
+      - redis:/data
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    environment:
+      << : *common-vars    
+      PMA_HOST: db
+      PMA_PORT: 3306
+    ports:
+      - '8288:80'
+    depends_on:
+      - db
+
+volumes:
+  common_data:
+    driver: local
+  logs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /srv/data/logs/nextcloud
+  db:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /srv/data/databases/nextcloud
+  app:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /srv/data/nextcloud/app
+  redis:
+    driver: local

@@ -1,0 +1,93 @@
+# stack name "website"
+version: '3.7'
+
+services:
+  nginx:
+    image: nginx:1.17-alpine
+    #    restart: unless-stopped
+    hostname: nginx
+    ports:
+      - target: 80
+        published: 82
+        protocol: tcp
+        mode: host
+    volumes:
+      - /srv/data/website/nginx/app.conf:/etc/nginx/conf.d/app.conf:ro
+      - app:/usr/share/nginx/html
+      - /srv/data/website/nginx/htaccess.pwd:/etc/nginx/htaccess.pwd:ro
+      - logs:/var/log/nginx
+      - /srv/data/website/nginx/entrypoint-nginx.sh:/entrypoint.sh:ro
+    environment:
+      TZ: Europe/Rome
+    depends_on:
+      - app
+    entrypoint: ["/entrypoint.sh"]
+    #command: "/bin/sh -c 'echo -n \"Waiting for app...\"; until ping app -c1 >/dev/null; do sleep 1; echo -n \"...\"; done; echo \"OK\"; nginx -g \"daemon off;\"'"
+    command: ["nginx", "-g", "daemon off;"]
+    healthcheck:
+      test: ["CMD", "/bin/sh", "-c", "nc -w 7 -zv 0.0.0.0 80 || (echo \"Very bad things are happening here...\" && exit 1)"]
+      interval: 30s
+      timeout: 10s
+      start_period: 90s
+      retries: 6
+    stop_grace_period: 20s
+
+  app:
+    image: php:7.2-fpm
+    hostname: app
+    volumes:
+      - app:/usr/share/nginx/html
+      - /srv/data/website/nginx/entrypoint-app-debian.sh:/entrypoint.sh:ro
+    environment:
+      TZ: Europe/Rome
+    depends_on:
+      - db
+    entrypoint: ["/entrypoint.sh"]
+    command: ["php-fpm"]
+    healthcheck:
+      test: ["CMD", "/bin/sh", "-c", "SCRIPT_NAME=/ping SCRIPT_FILENAME=/ping REQUEST_METHOD=GET cgi-fcgi -bind -connect 127.0.0.1:9000 || exit 1"]
+      interval: 30s
+      timeout: 30s
+      start_period: 60s
+      retries: 20
+    stop_grace_period: 20s
+
+  db:
+    image: mariadb:10.4
+    hostname: db
+    volumes:
+      - db:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD_FILE: /var/lib/mysql/db-root.pwd
+      MYSQL_PASSWORD_FILE: /var/lib/mysql/db-website.pwd
+      MYSQL_DATABASE_FILE: /var/lib/mysql/db-name.txt
+      MYSQL_USER_FILE: /var/lib/mysql/db-user.txt
+      TZ: Europe/Rome
+    healthcheck:
+      test: ["CMD", "/bin/bash", "-c", "read p < $$MYSQL_PASSWORD_FILE ; read u < $$MYSQL_USER_FILE ; mysql -p$$p -u$$u -e status | grep Uptime || (echo \"MariaDB is down\" && exit 1)"]
+      interval: 30s
+      timeout: 30s
+      start_period: 5s
+      retries: 20
+
+volumes:
+  common_data:
+    driver: local
+  logs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /srv/data/logs/website
+  db:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /srv/data/databases/website
+  app:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /srv/data/website/app

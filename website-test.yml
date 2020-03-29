@@ -1,0 +1,76 @@
+# WARNING: This stack depends on traefik.yml stack
+# STACK_BASE_PATH [base folder where to host files, must exists]
+# DOMAIN: base domain for LE certificates
+# TODO: stunnel accepting connections instead of mariadb directly
+# remember to allow only trusted ip, by setting iptables rules (iptables -A INPUT -p tcp --dport 3306 -s [ip] -j ACCEPT)
+# STACK_BASE_PATH=/srv/data/docker/containers/website-test ; grep device website-test.yml|grep -v "#"|awk '{print $2}'|while read dir; do eval mkdir -p $dir; done
+
+version: '3.7'
+
+services:
+  nginx-test:
+    image: nginx:1-alpine
+    hostname: nginx-test
+    networks:
+      - private
+      - traefik-public
+    deploy:
+      restart_policy:
+        condition: any
+      labels:
+        - "traefik.enable=true"
+        - "traefik.docker.network=traefik-public"
+        - "traefik.port=80"
+        - "traefik.tags=traefik-public"
+        - "traefik.redirectorservice.frontend.entryPoints=http"
+        - "traefik.redirectorservice.frontend.redirect.entryPoint=https"
+        - "traefik.webservice.frontend.entryPoints=https"
+        - "traefik.frontend.rule=Host:test1.${DOMAIN}"
+        - "traefik.frontend.headers.SSLRedirect=true"
+        - "traefik.frontend.entryPoints=http,https"
+        - "traefik.frontend.passHostHeader=true"
+    volumes:
+      - app_conf:/etc/nginx/conf.d:ro
+      - app_html:/usr/share/nginx/html
+      - logs:/var/log/nginx
+    depends_on:
+      - app
+
+  app:
+    image: neomediatech/php-fpm-debian:7.4-fpm-redis
+    hostname: app
+    volumes:
+      - app_html:/usr/share/nginx/html
+      - logs:/logs
+    networks:
+      - private
+
+networks:
+  private:
+    driver: overlay
+    attachable: true
+
+  traefik-public:
+    external: true
+
+volumes:
+  app_conf:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/app/conf
+
+  app_html:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/app/html
+
+  logs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/logs

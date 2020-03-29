@@ -1,0 +1,169 @@
+# because of portainer limitation (at still 21 feb 2019) we must use version 2 of compose
+version: '2'
+
+x-environment: &common-vars
+    TZ: Europe/Rome
+
+services:
+  dovecot:
+    image: neomediatech/dovecot-alpine
+    hostname: dovecot
+    ports:
+      - '11143:143'
+      - '993:993'
+    volumes:
+      - mailbox_files:/data/files
+      - mailbox_homes:/data/home
+      - logs:/data/logs
+      - common_data:/data/common
+      - certs:/data/certs
+      - /srv/data/email/servername_cert:/servername_cert:ro
+    environment:
+      << : *common-vars
+
+  exim:
+    image: exim-alpine-neo-new
+    hostname: exim
+    ports:
+      - '11125:25'
+      - '11465:465'
+      - '11587:587'
+    volumes:
+      - mailbox_files:/data/files
+      - mailbox_homes:/data/home
+      - logs:/data/logs
+      - common_data:/data/common
+      - certs:/data/certs
+      - /srv/data/email/servername_cert:/servername_cert:ro
+    environment:
+      << : *common-vars
+    depends_on:
+      - dovecot
+      - clamav
+      - redis
+ #       condition: service_healthy
+      - rspamd
+
+  nginx:
+    image: nginx:1.15-alpine
+    #    restart: unless-stopped
+    hostname: nginx
+    volumes:
+      - /srv/data/email/nginx/webmail.conf:/etc/nginx/conf.d/webmail.conf:ro
+      - /srv/data/email/webmail/logo.png:/var/www/html/logo.png:ro
+      - webmail_app:/var/www/html
+      - /srv/data/docker/docker-compose-projects/spiderweb-new/nginx/404.html:/var/www/nil/404.html:ro
+      - /srv/data/docker/docker-compose-projects/spiderweb-new/nginx/404.css:/var/www/nil/404.css:ro
+    environment:
+      << : *common-vars
+
+  webmail:
+    image: roundcube/roundcubemail:latest-fpm
+    hostname: webmail
+    volumes:
+      - /srv/data/email/webmail/roundcube-config.php:/var/roundcube/config/roundcube-config.php:ro
+      - /srv/data/email/webmail/logo.png:/var/www/html/logo.png:ro
+      - webmail_app:/var/www/html
+    environment:
+      ROUNDCUBEMAIL_DEFAULT_HOST: dovecot
+      ROUNDCUBEMAIL_SMTP_SERVER: exim
+      << : *common-vars
+
+  clamav:
+    image: neomediatech/clamav-alpine:latest
+    hostname: clamav
+    volumes:
+      - clamav_defs:/var/lib/clamav
+    environment:
+      << : *common-vars
+
+  rspamd:
+    image: neomediatech/rspamd-alpine
+    hostname: rspamd
+    ports:
+      - '172.16.217.9:11334:11334'
+    volumes:
+      - /srv/data/docker/docker-compose-projects/spiderweb-new/rspamd/worker-controller.inc:/etc/rspamd/local.d/worker-controller.inc:ro
+      - rspamd_data:/var/lib/rspamd
+      - logs:/var/log/rspamd
+    environment:
+      << : *common-vars
+    depends_on:
+      - redis
+
+  dcc:
+    image: neomediatech/dcc:latest
+    hostname: dcc
+    environment:
+      << : *common-vars
+
+  razor:
+    image: neomediatech/razor:latest
+    hostname: razor
+    environment:
+      << : *common-vars
+
+  pyzor:
+    image: neomediatech/pyzor:latest
+    hostname: pyzor
+    environment:
+      << : *common-vars
+
+  redis:
+    image: redis:alpine
+    hostname: redis
+    environment:
+      << : *common-vars
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis_db:/data
+#    healthcheck:
+#      test: ["CMD", "redis-cli", "ping"]
+#      interval: 10s
+#      timeout: 10s
+#      retries: 3
+#      start_period: 40s
+
+volumes:
+  common_data:
+    driver: local
+  webmail_app:
+    driver: local
+  clamav_defs:
+    driver: local
+  redis_db:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /srv/data/email/redis/db
+  rspamd_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /srv/data/email/rspamd/var
+  logs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /srv/data/logs/spiderweb
+  mailbox_files:    
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /srv/data/mailboxes/files
+  mailbox_homes:    
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /srv/data/mailboxes/home
+  certs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /srv/data/certbot/conf

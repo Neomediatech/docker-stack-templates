@@ -1,0 +1,35 @@
+# Add a new file /etc/rsyslog.d/10-docker-logs.conf
+# provides UDP syslog reception
+# module(load="imudp")
+# input(type="imudp" port="514")
+# provides TCP syslog reception
+# module(load="imtcp")
+# input(type="imtcp" port="514")
+# systemctl restart rsyslog.service
+
+version: '3.7'
+
+services:
+  logspout:
+    image: gliderlabs/logspout
+    hostname: logspout
+    ports:
+      - target: 80
+        published: 18080
+        mode: host
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /etc/localtime:/etc/localtime
+    networks:
+      - logspout-net
+    command:
+      syslog://10.205.33.1:514
+
+networks:
+  logspout-net:
+    name: logspout-net
+    driver: overlay
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.205.33.0/24
