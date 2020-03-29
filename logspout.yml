@@ -1,3 +1,4 @@
+# WARN : not working
 # Add a new file /etc/rsyslog.d/10-docker-logs.conf
 # provides UDP syslog reception
 # module(load="imudp")
