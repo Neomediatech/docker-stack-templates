@@ -5,7 +5,17 @@
 # provides TCP syslog reception
 # module(load="imtcp")
 # input(type="imtcp" port="514")
-# systemctl restart rsyslog.service
+# $FileCreateMode 0644
+# template(name="DockerLogFileName" type="list") {
+#    constant(value="/var/log/docker-containers/")
+#    property(name="syslogtag" securepath="replace" \
+#             regex.expression="docker-\\(.*\\)\\[" regex.submatch="1")
+#    constant(value="/docker.log")
+# }
+# if $syslogtag startswith 'docker-' then ?DockerLogFileName
+# $FileCreateMode 0600
+#
+# then: systemctl restart rsyslog.service
 
 version: '3.7'
 
