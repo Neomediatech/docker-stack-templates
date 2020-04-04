@@ -25,7 +25,6 @@ services:
       --acme.onHostRule=true
       --acme.onDemand=false
       --acme.acmelogging=true
-      --acme.email=${EMAIL:-root@localhost}
       --constraints=tag==traefik-public
       --docker
       --docker.swarmMode
@@ -37,7 +36,7 @@ services:
       --entryPoints.websecure.address=:443
       --certificatesResolvers.default.acme.storage=/certs/acme-v2.json
       --certificatesResolvers.default.acme.httpChallenge.entryPoint=web
-
+      --certificatesResolvers.default.acme.email=${EMAIL:-root@localhost}
       --entrypoints='Name:https Address::443 TLS TLS.DefaultCertificate.Cert:/certs/default.crt TLS.DefaultCertificate.Key:/certs/default.key'
       --logLevel=INFO
       --accessLog
