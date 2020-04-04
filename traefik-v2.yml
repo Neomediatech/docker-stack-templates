@@ -18,10 +18,9 @@ services:
         published: 443
         mode: host
     command: >
-      --api
-      --acme
-      --acme.entryPoint=https
-      --acme.httpChallenge.entryPoint=http
+      --api.insecure=true
+      --api.dashboard=true
+      --providers.docker=true
       --acme.onHostRule=true
       --acme.onDemand=false
       --acme.acmelogging=true
@@ -30,7 +29,7 @@ services:
       --docker.swarmMode
       --docker.domain=${DOMAIN:-localhost}
       --docker.watch
-      --docker.exposedbydefault=false
+      --providers.docker.exposedbydefault=false
       --defaultentrypoints=http,https
       --entryPoints.web.address=:80
       --entryPoints.websecure.address=:443
@@ -38,11 +37,14 @@ services:
       --certificatesResolvers.default.acme.httpChallenge.entryPoint=web
       --certificatesResolvers.default.acme.email=${EMAIL:-root@localhost}
       --entrypoints='Name:https Address::443 TLS TLS.DefaultCertificate.Cert:/certs/default.crt TLS.DefaultCertificate.Key:/certs/default.key'
+      --certificatesResolvers.default.acme.tlsChallenge=true
+      --certificatesResolvers.default.acme.httpChallenge=true
+
+            
       --logLevel=INFO
       --accessLog
       --accessLog.filePath="/logs/access.log"
       --accessLog.bufferingSize=100
-      command: --api.insecure=true --providers.docker
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - traefik_certs:/certs
@@ -62,12 +64,16 @@ services:
       restart_policy:
         condition: on-failure
       labels:
+        - traefik.http.routers.http_catchall.rule=HostRegexp(`{any:.+}`)
+        - traefik.http.routers.http_catchall.entrypoints=web
+        - traefik.http.routers.http_catchall.middlewares=https_redirect
+        - traefik.http.middlewares.https_redirect.redirectscheme.scheme=https
+        - traefik.http.middlewares.https_redirect.redirectscheme.permanent=true
+            
+            
         - "traefik.docker.network=traefik-public"
         - "traefik.port=8080"
         - "traefik.tags=traefik-public"
-        - "traefik.redirectorservice.frontend.entryPoints=http"
-        - "traefik.redirectorservice.frontend.redirect.entryPoint=https"
-        - "traefik.webservice.frontend.entryPoints=https"
         - "traefik.backend=traefik"
         - "traefik.enable=true"
         - "traefik.frontend.rule=Host:traefik.${DOMAIN:-localhost}"
