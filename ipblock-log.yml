@@ -169,6 +169,7 @@ services:
     volumes:
       - frontend-app_html:/var/www/html
       - app_html:/var/www/backend
+      - app_assets:/var/www/html/assets
       - logs:/logs
     environment:
       TZ: Europe/Rome
@@ -384,6 +385,13 @@ volumes:
       o: bind
       device: ${STACK_BASE_PATH}/app/html
 
+  app_assets:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/app/html/assets
+  
   frontend-app_html:
     driver: local
     driver_opts:
