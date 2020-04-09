@@ -299,7 +299,7 @@ services:
     hostname: redis-commander
     image: rediscommander/redis-commander:latest
     environment:
-      REDIS_HOSTS: "redis,redis-archive,redis-logs,sessions:redis:6379:1"
+      REDIS_HOSTS: "redis,redis-archive,redis-archive:6379:1,redis-logs,sessions:redis:6379:1"
       TZ: Europe/Rome
     networks:
       - private
