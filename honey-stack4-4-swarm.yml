@@ -196,7 +196,7 @@ services:
         protocol: tcp
         mode: host
       - target: 22
-        published: 22
+        published: 2022
         protocol: tcp
         mode: host
       - target: 23
