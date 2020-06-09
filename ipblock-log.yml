@@ -169,6 +169,7 @@ services:
     volumes:
       - frontend-app_html:/var/www/html
       - app_html:/var/www/backend
+      - rbldnsd_data:/data:ro
       - app_assets:/var/www/html/assets
       - logs:/logs
     environment:
