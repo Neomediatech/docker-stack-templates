@@ -1,0 +1,25 @@
+# use to create a swarm template in Portainer
+# PMA_HOST= set the name of the MariaDB/MySQL host to connect to
+# UPLOAD_LIMIT= set the max size of the file allowed to upload
+
+version: '3.7'
+
+x-default-opts: 
+  &default-opts
+  deploy:
+    restart_policy:
+      condition: on-failure
+      delay: 5s
+      #max_attempts: 3
+      window: 20s
+  
+services:
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    hostname: phpmyadmin
+    <<: *default-opts
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+    ports:
+      - '18280:80'
