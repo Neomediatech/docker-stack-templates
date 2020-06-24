@@ -1,7 +1,7 @@
 # use to create a swarm template in Portainer
 # PMA_HOST= set the name of the MariaDB/MySQL host to connect to
 # UPLOAD_LIMIT= set the max size of the file allowed to upload
-# DOMAIN= [required] domain to use to reach services
+# FQDN= [required] fqdn to use to reach services
 # this template depends on traefik
 
 version: '3.7'
@@ -42,7 +42,7 @@ services:
         - "traefik.redirectorservice.frontend.entryPoints=http"
         - "traefik.redirectorservice.frontend.redirect.entryPoint=https"
         - "traefik.webservice.frontend.entryPoints=https"
-        - "traefik.frontend.rule=Host:pma-ispc.${DOMAIN}"
+        - "traefik.frontend.rule=Host:${FQDN}"
         - "traefik.frontend.headers.SSLRedirect=true"
         - "traefik.frontend.entryPoints=http,https"
         - "traefik.frontend.passHostHeader=true"
