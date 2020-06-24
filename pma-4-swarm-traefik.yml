@@ -1,0 +1,57 @@
+# use to create a swarm template in Portainer
+# PMA_HOST= set the name of the MariaDB/MySQL host to connect to
+# UPLOAD_LIMIT= set the max size of the file allowed to upload
+# DOMAIN= [required] domain to use to reach services
+# this template depends on traefik
+
+version: '3.7'
+
+x-envs: &common-vars
+  TZ: Europe/Rome
+  PMA_HOST: ${PMA_HOST:-db}
+  UPLOAD_LIMIT: ${UPLOAD_LIMIT:-20M}
+
+services:
+  pma:
+    image: phpmyadmin/phpmyadmin
+    hostname: pma
+    environment:
+      << : *common-vars    
+      PMA_HOST: ${PMA_HOST}
+      PMA_PORT: 3306
+      UPLOAD_LIMIT: ${UPLOAD_LIMIT}
+    networks:
+      - private
+      - traefik-public
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: any
+      labels:
+        - "traefik.enable=true"
+        - "traefik.docker.network=traefik-public"
+        - "traefik.port=80"
+        - "traefik.tags=traefik-public"
+        - "traefik.redirectorservice.frontend.entryPoints=http"
+        - "traefik.redirectorservice.frontend.redirect.entryPoint=https"
+        - "traefik.webservice.frontend.entryPoints=https"
+        - "traefik.frontend.rule=Host:pma-ispc.${DOMAIN}"
+        - "traefik.frontend.headers.SSLRedirect=true"
+        - "traefik.frontend.entryPoints=http,https"
+        - "traefik.frontend.passHostHeader=true"
+        - "traefik.frontend.auth.basic.usersFile=/auth/htpasswd"
+
+networks:
+  private:
+    driver: overlay
+    attachable: true
+
+  traefik-public:
+    external: true
