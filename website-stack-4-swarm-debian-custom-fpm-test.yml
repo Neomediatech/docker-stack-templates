@@ -65,7 +65,6 @@ services:
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
     hostname: phpmyadmin
-    <<: *default-opts
     environment:
       PMA_HOST: db
       PMA_PORT: 3306
