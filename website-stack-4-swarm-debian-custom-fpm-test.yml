@@ -34,7 +34,6 @@ services:
 
   app:
     image: neomediatech/php-fpm-debian:7.4-fpm
-    # php 7.3 cause errors to AcyMailing
     hostname: app
     volumes:
       - app:/usr/share/nginx/html
