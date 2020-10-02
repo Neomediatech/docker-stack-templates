@@ -3,7 +3,7 @@ version: '3.7'
 
 services:
   nginx:
-    image: nginx:1.17-alpine
+    image: nginx:1.18-alpine
     #    restart: unless-stopped
     hostname: nginx
     ports:
@@ -33,7 +33,7 @@ services:
     stop_grace_period: 20s
 
   app:
-    image: neomediatech/php-fpm-debian:7.2-epe
+    image: neomediatech/php-fpm-debian:7.4-fpm-redis
     # php 7.3 cause errors to AcyMailing
     hostname: app
     volumes:
@@ -45,7 +45,7 @@ services:
     stop_grace_period: 20s
 
   db:
-    image: mariadb:10.4
+    image: mariadb:10.5
     hostname: db
     volumes:
       - db:/var/lib/mysql
