@@ -33,7 +33,7 @@ services:
     stop_grace_period: 20s
 
   app:
-    image: neomediatech/php-fpm-debian:7.3-fpm
+    image: neomediatech/php-fpm-debian:7.4-fpm
     # php 7.3 cause errors to AcyMailing
     hostname: app
     volumes:
