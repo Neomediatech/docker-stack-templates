@@ -1,0 +1,335 @@
+# !!!!!!!!!!!!!!!!!!!
+#
+#  NOTHING IS WORKING FOR NOW
+#
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# use to create a swarm template in Portainer
+# STACK_BASE_PATH [base folder where to host files, must exists]
+# STACK_BASE_PATH=/srv/data/email ; grep device email-stack-4-swarm.yml|grep -v "#"|awk '{print $2}'|while read dir; do eval mkdir -p $dir; done
+# MAILSERVER_CERT=yourmailserver.domain.tld
+# Prior to run this stack you must have a SSL certificate to be used by dovecot and exim and a certificate used
+#   by the webmail container
+
+version: '3.7'
+
+x-default-opts: 
+  &default-opts
+  deploy:
+    restart_policy:
+      condition: on-failure
+      delay: 5s
+      #max_attempts: 3
+      window: 20s
+  
+services:
+  dovecot:
+    image: neomediatech/dovecot:latest
+    hostname: dovecot
+    <<: *default-opts    
+    ports:
+      - target: 143
+        published: 143
+        protocol: tcp
+        mode: host
+    volumes:
+      - mailbox_files:/data/files
+      - mailbox_homes:/data/home
+      - logs:/data/logs
+      - common_data:/data/common
+      - certs:/data/certs
+    environment:
+      MAILSERVER_CERT: "${MAILSERVER_CERT}"
+  
+  exim:
+    image: neomediatech/exim-alpine:latest
+    hostname: exim
+    <<: *default-opts    
+    ports:
+      - target: 25
+        published: 25
+        protocol: tcp
+        mode: host
+      - target: 465
+        published: 465
+        protocol: tcp
+        mode: host
+      - target: 587
+        published: 587
+        protocol: tcp
+        mode: host
+    volumes:
+      - mailbox_files:/data/files
+      - mailbox_homes:/data/home
+      - logs:/data/logs
+      - common_data:/data/common
+      - certs:/data/certs
+      - /srv/data/email/servername_cert:/servername_cert:ro
+      - exim_spool:/var/spool/exim
+      - exim_confs:/etc/exim/conf.d
+      - /srv/data/email/exim/exim4.filter:/etc/exim/exim4.filter:ro
+    environment:
+      TZ: Europe/Rome
+      WAITFOR: "dovecot:dovecot clamav:clamav redis:redis rspamd:rspamd"
+    depends_on:
+      - dovecot
+      - clamav
+      - redis
+      - rspamd
+
+  nginx:
+    image: nginx:1.17-alpine
+    #    restart: unless-stopped
+    hostname: nginx
+    <<: *default-opts
+    ports:
+      - target: 80
+        published: 81
+        protocol: tcp
+        mode: host    
+    volumes:
+      - /srv/data/email/nginx/confs/webmail.conf:/etc/nginx/conf.d/webmail.conf:ro
+      - /srv/data/email/webmail/logo.png:/var/www/html/logo.png:ro
+      - webmail_app:/var/www/html
+      - /srv/data/email/nginx/assets:/var/www/nil:ro
+      - /srv/data/email/nginx/bin:/data/bin:ro
+    environment:
+      TZ: Europe/Rome
+      WAITFOR: webmail:ping
+    depends_on:
+      - webmail
+    entrypoint: ["/data/bin/entrypoint.sh"]
+    command: ["nginx", "-g", "daemon off;"]
+    healthcheck:
+      test: ["CMD", "/bin/sh", "-c", "/data/bin/healthcheck.sh"]
+      interval: 30s
+      timeout: 30s
+      start_period: 10s
+      retries: 20
+
+  webmail:
+    image: roundcube/roundcubemail:1.4.x-fpm
+    hostname: webmail
+    <<: *default-opts
+    volumes:
+      - /srv/data/email/webmail/config:/var/roundcube/config:ro
+      - /srv/data/email/webmail/logo.png:/var/www/html/logo.png:ro
+      - webmail_app:/var/www/html
+    environment:
+      ROUNDCUBEMAIL_DEFAULT_HOST: dovecot
+      ROUNDCUBEMAIL_SMTP_SERVER: exim
+      ROUNDCUBEMAIL_DB_TYPE: mysql
+      ROUNDCUBEMAIL_DB_HOST: db
+      TZ: Europe/Rome
+    depends_on:
+      - db
+      - exim
+    healthcheck:
+      test: ["CMD", "/bin/sh", "-c", "pidof php-fpm 1>/dev/null && echo \"One is glad to be of service ( ͡° ͜ʖ ͡°)\" || (echo \"I'm feeling bad...\" && exit 1)"]
+      interval: 30s
+      timeout: 30s
+      start_period: 10s
+      retries: 20
+
+  clamav:
+    image: neomediatech/clamav:latest
+    hostname: clamav
+    <<: *default-opts    
+    deploy:
+      restart_policy:
+        condition: any
+        delay: 5s
+        #max_attempts: 3
+        window: 20s    
+    volumes:
+      - clamav_defs:/var/lib/clamav
+    stop_grace_period: 1m
+
+  rspamd:
+    image: neomediatech/rspamd:2.3-1-bionic_r2
+    hostname: rspamd
+    <<: *default-opts    
+    ports:
+      - target: 11334
+        published: 11334
+        protocol: tcp
+        mode: host
+    volumes:
+      - rspamd_conf:/data
+      - rspamd_data:/var/lib/rspamd
+      - logs:/var/log/rspamd
+    environment:
+      WAITFOR: clamav:clamav
+    depends_on:
+      - redis
+      - clamav
+    stop_grace_period: 1m
+
+  dcc:
+    image: neomediatech/dcc:latest
+    hostname: dcc
+    <<: *default-opts    
+
+  razor:
+    image: neomediatech/razor:latest
+    hostname: razor
+    <<: *default-opts
+    ports:
+      - target: 9192
+        published: 9192
+        protocol: tcp
+        mode: host
+
+  pyzor:
+    image: neomediatech/pyzor-cc:latest
+    hostname: pyzor
+    <<: *default-opts
+    ports:
+      - target: 5953
+        published: 5953
+        protocol: tcp
+        mode: host
+
+  redis:
+    image: redis:5-alpine
+    hostname: redis
+    <<: *default-opts    
+    environment:
+      TZ: Europe/Rome
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis_db:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 10s
+      retries: 3
+    # according to https://github.com/moby/moby/pull/37701#issuecomment-448014841
+    # on docker 19.03 you will be able to set /proc/sys/net/core/somaxconn to 511 instead of default 128
+    # like this example below (maybe syntax will change)
+    #sysctls:
+    #  - net.core.somaxconn=511
+    stop_grace_period: 1m
+
+  redis-rspamd-history:
+    image: redis:5-alpine
+    hostname: redis-rspamd-history
+    <<: *default-opts    
+    environment:
+      TZ: Europe/Rome
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis_history_db:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 10s
+      retries: 3
+    # according to https://github.com/moby/moby/pull/37701#issuecomment-448014841
+    # on docker 19.03 you will be able to set /proc/sys/net/core/somaxconn to 511 instead of default 128
+    # like this example below (maybe syntax will change)
+    #sysctls:
+    #  - net.core.somaxconn=511
+    stop_grace_period: 1m
+
+  db:
+    image: mariadb:10.4
+    hostname: db
+    <<: *default-opts    
+    volumes:
+      - webmail_db:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD_FILE: /var/lib/mysql/db-root.pwd
+      MYSQL_PASSWORD_FILE: /var/lib/mysql/db-webmail.pwd
+      MYSQL_DATABASE_FILE: /var/lib/mysql/db-name.txt
+      MYSQL_USER_FILE: /var/lib/mysql/db-user.txt
+      TZ: Europe/Rome
+    healthcheck:
+      test: ["CMD", "/bin/bash", "-c", "read p < $$MYSQL_PASSWORD_FILE ; read u < $$MYSQL_USER_FILE ; mysql -p$$p -u$$u -e status | grep Uptime || (echo \"MariaDB is down\" && exit 1)"]
+      interval: 30s
+      timeout: 30s
+      start_period: 5s
+      retries: 20
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    hostname: phpmyadmin
+    <<: *default-opts
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+    ports:
+      - '8280:80'
+    depends_on:
+      - db
+
+volumes:
+  common_data:
+    driver: local
+  webmail_app:
+    driver: local
+  clamav_defs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/clamav/defs
+  redis_db:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/redis/db
+  redis_db:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/redis_history/db
+  rspamd_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/rspamd/var
+  logs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /srv/data/logs/email
+  mailbox_files:    
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /srv/data/mailboxes/files
+  mailbox_homes:    
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /srv/data/mailboxes/home
+  certs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /srv/data/certbot/conf
+  exim_spool:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/exim/spool
+  exim_confs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/exim/conf.d
+  webmail_db:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /srv/data/databases/webmail
