@@ -20,7 +20,7 @@ x-default-opts:
 
 services:
   nginx:
-    image: nginx:1.17
+    image: nginx:1.18
     #    restart: unless-stopped
     hostname: nginx
     <<: *default-opts    
