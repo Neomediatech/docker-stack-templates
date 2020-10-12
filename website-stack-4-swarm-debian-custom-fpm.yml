@@ -62,6 +62,17 @@ services:
       start_period: 5s
       retries: 20
 
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    hostname: phpmyadmin
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+    ports:
+      - '8282:80'
+    depends_on:
+      - db
+
 volumes:
   common_data:
     driver: local
