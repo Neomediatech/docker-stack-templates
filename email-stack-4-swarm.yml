@@ -290,6 +290,12 @@ volumes:
       type: none
       o: bind
       device: ${STACK_BASE_PATH}/rspamd/var
+  rspamd_conf:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/rspamd/conf
   logs:
     driver: local
     driver_opts:
