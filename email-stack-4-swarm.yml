@@ -278,7 +278,7 @@ volumes:
       type: none
       o: bind
       device: ${STACK_BASE_PATH}/redis/db
-  redis_db:
+  redis_history_db:
     driver: local
     driver_opts:
       type: none
