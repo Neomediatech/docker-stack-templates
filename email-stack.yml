@@ -76,7 +76,7 @@ services:
       - clamav
       - redis
       - rspamd
-    command: ["/data/common_bin/dockerize-alpine", "-wait", "tcp://dovecot:143", "-wait", "tcp://clamav:3310", "-wait", "tcp://redis:6379", "-wait", "tcp://rspamd:11333", "-timeout", "60s", "-wait-retry-interval", "10s", "tini", "-s", "--", "exim", "-bd", "-q5m"]
+    entrypoint: ["/data/common_bin/dockerize-alpine", "-wait", "tcp://dovecot:143", "-wait", "tcp://clamav:3310", "-wait", "tcp://redis:6379", "-wait", "tcp://rspamd:11333", "-timeout", "180s", "-wait-retry-interval", "15s", "/entrypoint.sh"]
 
   webmail:
     image: roundcube/roundcubemail:1.4.x-apache
@@ -101,12 +101,6 @@ services:
     depends_on:
       - db
       - exim
-#    healthcheck:
-#      test: ["CMD", "/bin/sh", "-c", "pidof php-fpm 1>/dev/null && echo \"One is glad to be of service ( ͡° ͜ʖ ͡°)\" || (echo \"I'm feeling bad...\" && exit 1)"]
-#      interval: 30s
-#      timeout: 30s
-#      start_period: 10s
-#      retries: 20
 
   clamav:
     image: neomediatech/clamav:latest
@@ -116,7 +110,6 @@ services:
       restart_policy:
         condition: any
         delay: 5s
-        #max_attempts: 3
         window: 20s    
     volumes:
       - clamav_defs:/var/lib/clamav
