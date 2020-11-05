@@ -11,8 +11,9 @@ x-default-opts:
   &default-opts
   deploy:
     restart_policy:
-      condition: on-failure
-      delay: 5s
+      #condition: on-failure
+      condition: always
+      delay: 15s
       #max_attempts: 3
       window: 20s
   
@@ -126,7 +127,6 @@ services:
     depends_on:
       - db
       - exim
-      - nginx
     healthcheck:
       test: ["CMD", "/bin/sh", "-c", "pidof php-fpm 1>/dev/null && echo \"One is glad to be of service ( ͡° ͜ʖ ͡°)\" || (echo \"I'm feeling bad...\" && exit 1)"]
       interval: 30s
