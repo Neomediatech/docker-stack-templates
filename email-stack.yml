@@ -71,7 +71,6 @@ services:
       - common_bin:/data/common_bin
     environment:
       TZ: Europe/Rome
-      WAITFOR: "dovecot:dovecot clamav:clamav redis:redis rspamd:rspamd"
     depends_on:
       - dovecot
       - clamav
