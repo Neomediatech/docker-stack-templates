@@ -78,40 +78,45 @@ services:
       - rspamd
     command: ["/data/common_bin/dockerize-alpine", "-wait", "tcp://dovecot:143", "-wait", "tcp://clamav:3310", "-wait", "tcp://redis:6379", "-wait", "tcp://rspamd:11333", "-timeout", "60s", "-wait-retry-interval", "5s"]
 
-  nginx:
-    image: nginx:1.17-alpine
+#  nginx:
+#    image: nginx:1.17-alpine
     #    restart: unless-stopped
-    hostname: nginx
+#    hostname: nginx
+#    <<: *default-opts
+#    ports:
+#      - target: 80
+#        published: 81
+#        protocol: tcp
+#        mode: host    
+#    volumes:
+#      - /srv/data/email/nginx/confs/webmail.conf:/etc/nginx/conf.d/webmail.conf:ro
+#      - /srv/data/email/webmail/logo.png:/var/www/html/logo.png:ro
+#      - webmail_app:/var/www/html
+#      - /srv/data/email/nginx/assets:/var/www/nil:ro
+#      - /srv/data/email/nginx/bin:/data/bin:ro
+#      - common_bin:/data/common_bin
+#    environment:
+#      TZ: Europe/Rome
+#    depends_on:
+#      - webmail
+#    entrypoint: ["/data/bin/entrypoint.sh"]
+#    command: ["/data/common_bin/dockerize-alpine", "-wait", "tcp://webmail:9000", "-timeout", "60s", "-wait-retry-interval", "5s", "nginx", "-g", "daemon off;"]
+#    healthcheck:
+#      test: ["CMD", "/bin/sh", "-c", "/data/bin/healthcheck.sh"]
+#      interval: 30s
+#      timeout: 30s
+#      start_period: 10s
+#      retries: 20
+
+  webmail:
+    image: roundcube/roundcubemail:1.4.x-apache
+    hostname: webmail
     <<: *default-opts
     ports:
       - target: 80
         published: 81
         protocol: tcp
         mode: host    
-    volumes:
-      - /srv/data/email/nginx/confs/webmail.conf:/etc/nginx/conf.d/webmail.conf:ro
-      - /srv/data/email/webmail/logo.png:/var/www/html/logo.png:ro
-      - webmail_app:/var/www/html
-      - /srv/data/email/nginx/assets:/var/www/nil:ro
-      - /srv/data/email/nginx/bin:/data/bin:ro
-      - common_bin:/data/common_bin
-    environment:
-      TZ: Europe/Rome
-    depends_on:
-      - webmail
-    entrypoint: ["/data/bin/entrypoint.sh"]
-    command: ["/data/common_bin/dockerize-alpine", "-wait", "tcp://webmail:9000", "-timeout", "60s", "-wait-retry-interval", "5s", "nginx", "-g", "daemon off;"]
-    healthcheck:
-      test: ["CMD", "/bin/sh", "-c", "/data/bin/healthcheck.sh"]
-      interval: 30s
-      timeout: 30s
-      start_period: 10s
-      retries: 20
-
-  webmail:
-    image: roundcube/roundcubemail:1.4.x-fpm
-    hostname: webmail
-    <<: *default-opts
     volumes:
       - /srv/data/email/webmail/config:/var/roundcube/config:ro
       - /srv/data/email/webmail/logo.png:/var/www/html/logo.png:ro
@@ -126,12 +131,12 @@ services:
     depends_on:
       - db
       - exim
-    healthcheck:
-      test: ["CMD", "/bin/sh", "-c", "pidof php-fpm 1>/dev/null && echo \"One is glad to be of service ( ͡° ͜ʖ ͡°)\" || (echo \"I'm feeling bad...\" && exit 1)"]
-      interval: 30s
-      timeout: 30s
-      start_period: 10s
-      retries: 20
+#    healthcheck:
+#      test: ["CMD", "/bin/sh", "-c", "pidof php-fpm 1>/dev/null && echo \"One is glad to be of service ( ͡° ͜ʖ ͡°)\" || (echo \"I'm feeling bad...\" && exit 1)"]
+#      interval: 30s
+#      timeout: 30s
+#      start_period: 10s
+#      retries: 20
 
   clamav:
     image: neomediatech/clamav:latest
