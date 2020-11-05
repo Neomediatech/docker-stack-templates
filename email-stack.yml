@@ -76,7 +76,7 @@ services:
       - clamav
       - redis
       - rspamd
-    command: ["/data/common_bin/dockerize-alpine", "-wait", "tcp://dovecot:143", "-wait", "tcp://clamav:3310", "-wait", "tcp://redis:6379", "-wait", "tcp://rspamd:11333", "-timeout", "60s", "-wait-retry-interval", "5s", "tini", "-s", "--", "exim", "-bd", "-q5m"]
+    command: ["/data/common_bin/dockerize-alpine", "-wait", "tcp://dovecot:143", "-wait", "tcp://clamav:3310", "-wait", "tcp://redis:6379", "-wait", "tcp://rspamd:11333", "-timeout", "60s", "-wait-retry-interval", "10s", "tini", "-s", "--", "exim", "-bd", "-q5m"]
 
   webmail:
     image: roundcube/roundcubemail:1.4.x-apache
