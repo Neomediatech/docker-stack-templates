@@ -97,7 +97,6 @@ services:
       - common_bin:/data/common_bin
     environment:
       TZ: Europe/Rome
-      WAITFOR: webmail:ping
     depends_on:
       - webmail
     entrypoint: ["/data/bin/entrypoint.sh"]
