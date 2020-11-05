@@ -36,6 +36,7 @@ services:
       - logs:/data/logs
       - common_data:/data/common
       - certs:/data/certs
+      - common_bin:/data/common_bin
     environment:
       MAILSERVER_CERT: "${MAILSERVER_CERT}"
   
@@ -66,6 +67,7 @@ services:
       - exim_spool:/var/spool/exim
       - exim_confs:/etc/exim/conf.d
       - /srv/data/email/exim/exim4.filter:/etc/exim/exim4.filter:ro
+      - common_bin:/data/common_bin
     environment:
       TZ: Europe/Rome
       WAITFOR: "dovecot:dovecot clamav:clamav redis:redis rspamd:rspamd"
@@ -91,6 +93,7 @@ services:
       - webmail_app:/var/www/html
       - /srv/data/email/nginx/assets:/var/www/nil:ro
       - /srv/data/email/nginx/bin:/data/bin:ro
+      - common_bin:/data/common_bin
     environment:
       TZ: Europe/Rome
       WAITFOR: webmail:ping
@@ -113,6 +116,7 @@ services:
       - /srv/data/email/webmail/config:/var/roundcube/config:ro
       - /srv/data/email/webmail/logo.png:/var/www/html/logo.png:ro
       - webmail_app:/var/www/html
+      - common_bin:/data/common_bin
     environment:
       ROUNDCUBEMAIL_DEFAULT_HOST: dovecot
       ROUNDCUBEMAIL_SMTP_SERVER: exim
@@ -141,6 +145,7 @@ services:
         window: 20s    
     volumes:
       - clamav_defs:/var/lib/clamav
+      - common_bin:/data/common_bin
     stop_grace_period: 1m
 
   rspamd:
@@ -156,6 +161,7 @@ services:
       - rspamd_conf:/data
       - rspamd_data:/var/lib/rspamd
       - logs:/var/log/rspamd
+      - common_bin:/data/common_bin
     environment:
       WAITFOR: clamav:clamav
     depends_on:
