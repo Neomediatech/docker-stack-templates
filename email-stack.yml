@@ -100,7 +100,7 @@ services:
     depends_on:
       - webmail
     entrypoint: ["/data/bin/entrypoint.sh"]
-    command: ["nginx", "-g", "daemon off;"]
+    command: ["/data/common_bin/dockerize-alpine", "-wait", "http://webmail:80", "-timeout", "60s", "nginx", "-g", "daemon off;"]
     healthcheck:
       test: ["CMD", "/bin/sh", "-c", "/data/bin/healthcheck.sh"]
       interval: 30s
