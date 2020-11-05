@@ -77,6 +77,7 @@ services:
       - clamav
       - redis
       - rspamd
+    command: ["/data/common_bin/dockerize-alpine", "-wait", "tcp://dovecot:143", "-wait", "tcp://clamav:3310", "-wait", "tcp://redis:6379", "-wait", "tcp://rspamd:11333", "-timeout", "60s", "-wait-retry-interval", "5s"]
 
   nginx:
     image: nginx:1.17-alpine
