@@ -117,7 +117,7 @@ services:
     stop_grace_period: 1m
 
   rspamd:
-    image: neomediatech/rspamd:2.3-1-bionic_r2
+    image: neomediatech/rspamd:2.6
     hostname: rspamd
     <<: *default-opts    
     ports:
