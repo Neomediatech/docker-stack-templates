@@ -163,7 +163,7 @@ services:
         mode: host
 
   redis:
-    image: redis:5-alpine
+    image: redis:6-alpine
     hostname: redis
     <<: *default-opts    
     environment:
@@ -184,7 +184,7 @@ services:
     stop_grace_period: 1m
 
   redis-rspamd-history:
-    image: redis:5-alpine
+    image: redis:6-alpine
     hostname: redis-rspamd-history
     <<: *default-opts    
     environment:
@@ -205,7 +205,7 @@ services:
     stop_grace_period: 1m
 
   db:
-    image: mariadb:10.4
+    image: mariadb:10.5
     hostname: db
     <<: *default-opts    
     volumes:
