@@ -111,6 +111,7 @@ services:
         window: 20s    
     volumes:
       - clamav_defs:/var/lib/clamav
+      - clamav_unoff_defs:/var/lib/clamav-unofficial-sigs
     stop_grace_period: 1m
 
   rspamd:
@@ -247,6 +248,12 @@ volumes:
       type: none
       o: bind
       device: ${STACK_BASE_PATH}/clamav/defs
+  clamav_unoff_defs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/clamav/unoff_defs  
   redis_db:
     driver: local
     driver_opts:
