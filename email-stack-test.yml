@@ -66,8 +66,7 @@ services:
       - certs:/data/certs
       - /srv/data/email/servername_cert:/servername_cert:ro
       - exim_spool:/var/spool/exim
-      - exim_confs:/etc/exim/conf.d
-      - /srv/data/email/exim/exim4.filter:/etc/exim/exim4.filter:ro
+      - exim_confs:/data/conf
       - common_bin:/data/common_bin
     environment:
       TZ: Europe/Rome
@@ -305,7 +304,7 @@ volumes:
     driver_opts:
       type: none
       o: bind
-      device: ${STACK_BASE_PATH}/exim/conf.d
+      device: ${STACK_BASE_PATH}/exim/conf
   webmail_db:
     driver: local
     driver_opts:
