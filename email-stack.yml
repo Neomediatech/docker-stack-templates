@@ -111,7 +111,6 @@ services:
         window: 20s    
     volumes:
       - clamav_defs:/var/lib/clamav
-      - common_bin:/data/common_bin
     stop_grace_period: 1m
 
   rspamd:
