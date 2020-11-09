@@ -236,6 +236,10 @@ services:
 volumes:
   common_data:
     driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/common
   webmail_app:
     driver: local
   clamav_defs:
