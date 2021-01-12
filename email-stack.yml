@@ -91,6 +91,7 @@ services:
       - webmail_app:/var/www/html
       - common_bin:/data/common_bin
       - webmail_local_db:/var/roundcube/db
+      - webmail_tmp:/tmp/roundcube-temp
     environment:
       ROUNDCUBEMAIL_DEFAULT_HOST: dovecot
       ROUNDCUBEMAIL_SMTP_SERVER: exim
@@ -328,4 +329,6 @@ volumes:
       o: bind
       device: /srv/data/common/bin
   webmail_local_db:
+    driver: local
+  webmail_tmp:
     driver: local
