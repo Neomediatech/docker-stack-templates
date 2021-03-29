@@ -20,7 +20,8 @@ x-envs: &common-vars
   MYSQL_PASSWORD_FILE: /var/lib/mysql/db-password.pwd
   MYSQL_USER_FILE: /var/lib/mysql/db-user.txt
   MYSQL_HOST: ${MYSQL_HOST:-db}
-  FQDN_HOST: ${FQDN_HOST:-nohost.tld}
+  FQDN_PMA: ${FQDN_PMA:-nohost.tld}
+  FQDN_NGINX: ${FQDN_NGINX:-nohost.tld}
 
 services:
   nginx:
@@ -45,9 +46,27 @@ services:
       start_period: 90s
       retries: 6
     stop_grace_period: 20s
+    networks:
+      - private
+      - traefik-public
+    deploy:
+      labels:
+        - "traefik.enable=true"
+        - "traefik.docker.network=traefik-public"
+        - "traefik.port=80"
+        - "traefik.tags=traefik-public"
+        - "traefik.redirectorservice.frontend.entryPoints=http"
+        - "traefik.redirectorservice.frontend.redirect.entryPoint=https"
+        - "traefik.webservice.frontend.entryPoints=https"
+        - "traefik.frontend.rule=Host:${FQDN_NGINX}"
+        - "traefik.frontend.headers.SSLRedirect=true"
+        - "traefik.frontend.entryPoints=http,https"
+        - "traefik.frontend.passHostHeader=true"
+        - "traefik.frontend.auth.basic.usersFile=/auth/htpasswd"
+        - "traefik.frontend.whiteList.sourceRange=${TRAEFIK_WHITELIST:-127.0.0.1/32}"
 
   app:
-    image: php:7.2-fpm-alpine
+    image: php:8-fpm-alpine
     hostname: app
     volumes:
       - app:/usr/share/nginx/html
@@ -64,8 +83,6 @@ services:
       timeout: 30s
       start_period: 60s
       retries: 20
-    labels:
-      - "traefik.enable=false"
 
   db:
     image: mariadb:10
@@ -115,7 +132,7 @@ services:
         - "traefik.redirectorservice.frontend.entryPoints=http"
         - "traefik.redirectorservice.frontend.redirect.entryPoint=https"
         - "traefik.webservice.frontend.entryPoints=https"
-        - "traefik.frontend.rule=Host:${FQDN_HOST}"
+        - "traefik.frontend.rule=Host:${FQDN_PMA}"
         - "traefik.frontend.headers.SSLRedirect=true"
         - "traefik.frontend.entryPoints=http,https"
         - "traefik.frontend.passHostHeader=true"
