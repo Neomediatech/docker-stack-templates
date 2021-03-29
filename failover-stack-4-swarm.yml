@@ -23,6 +23,50 @@ x-envs: &common-vars
   FQDN_HOST: ${FQDN_HOST:-nohost.tld}
 
 services:
+  nginx:
+    image: nginx:1-alpine
+    hostname: nginx
+    volumes:
+      - nginx_conf:/etc/nginx/conf.d:ro
+      - app:/usr/share/nginx/html
+      - /srv/data/website/nginx/htaccess.pwd:/etc/nginx/htaccess.pwd:ro
+      - logs:/var/log/nginx
+      - /srv/data/website/nginx/entrypoint-nginx.sh:/entrypoint.sh:ro
+    environment:
+      TZ: Europe/Rome
+    depends_on:
+      - app
+    entrypoint: ["/entrypoint.sh"]
+    command: ["nginx", "-g", "daemon off;"]
+    healthcheck:
+      test: ["CMD", "/bin/sh", "-c", "nc -w 7 -zv 0.0.0.0 80 || (echo \"Very bad things are happening here...\" && exit 1)"]
+      interval: 30s
+      timeout: 10s
+      start_period: 90s
+      retries: 6
+    stop_grace_period: 20s
+
+  app:
+    image: php:7.2-fpm-alpine
+    hostname: app
+    volumes:
+      - app:/usr/share/nginx/html
+      - /srv/data/website/nginx/entrypoint-app.sh:/entrypoint.sh:ro
+    environment:
+      TZ: Europe/Rome
+    depends_on:
+      - db
+    entrypoint: ["/entrypoint.sh"]
+    command: ["tini", "--", "php-fpm"]
+    healthcheck:
+      test: ["CMD", "nc", "-w", "7", "-zv", "0.0.0.0", "9000"]
+      interval: 30s
+      timeout: 30s
+      start_period: 60s
+      retries: 20
+    labels:
+      - "traefik.enable=false"
+
   db:
     image: mariadb:10
     hostname: db
