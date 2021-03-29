@@ -1,3 +1,4 @@
+# WARNING: This stack depends on traefik.yml stack
 # use to create a swarm template in Portainer
 # STACK_BASE_PATH [base folder where to host files, must exists]
 # STACK_BASE_PATH=/srv/data/docker/containers/failover ; grep device failover-stack-4-swarm.yml|grep -v "#"|awk '{print $2}'|while read dir; do eval mkdir -p $dir; done
@@ -12,7 +13,15 @@ x-default-opts:
       delay: 5s
       #max_attempts: 3
       window: 20s
-  
+
+x-envs: &common-vars
+  TZ: Europe/Rome
+  MYSQL_ROOT_PASSWORD_FILE: /var/lib/mysql/db-root.pwd
+  MYSQL_PASSWORD_FILE: /var/lib/mysql/db-password.pwd
+  MYSQL_USER_FILE: /var/lib/mysql/db-user.txt
+  MYSQL_HOST: ${MYSQL_HOST:-db}
+  FQDN_HOST: ${FQDN_HOST:-nohost.tld}
+
 services:
   db:
     image: mariadb:10
@@ -21,11 +30,10 @@ services:
     volumes:
       - db:/var/lib/mysql
     environment:
-      MYSQL_ROOT_PASSWORD_FILE: /var/lib/mysql/db-root.pwd
-      MYSQL_PASSWORD_FILE: /var/lib/mysql/db-password.pwd
+      << : *common-vars
       MYSQL_DATABASE_FILE: /var/lib/mysql/db-name.txt
-      MYSQL_USER_FILE: /var/lib/mysql/db-user.txt
-      TZ: Europe/Rome
+    networks:
+      - private
     healthcheck:
       test: ["CMD", "/bin/bash", "-c", "read p < $$MYSQL_PASSWORD_FILE ; read u < $$MYSQL_USER_FILE ; mysql -p$$p -u$$u -e status | grep Uptime || (echo \"MariaDB is down\" && exit 1)"]
       interval: 30s
@@ -33,17 +41,51 @@ services:
       start_period: 5s
       retries: 20
 
-  phpmyadmin:
+  pma:
     image: phpmyadmin/phpmyadmin
-    hostname: phpmyadmin
+    hostname: pma
     <<: *default-opts
     environment:
-      PMA_HOST: db
+      << : *common-vars    
+      PMA_HOST: ${MYSQL_HOST}
       PMA_PORT: 3306
-    ports:
-      - '8380:80'
+    networks:
+      - private
+      - traefik-public
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: any
+      labels:
+        - "traefik.enable=true"
+        - "traefik.docker.network=traefik-public"
+        - "traefik.port=80"
+        - "traefik.tags=traefik-public"
+        - "traefik.redirectorservice.frontend.entryPoints=http"
+        - "traefik.redirectorservice.frontend.redirect.entryPoint=https"
+        - "traefik.webservice.frontend.entryPoints=https"
+        - "traefik.frontend.rule=Host:${FQDN_HOST}"
+        - "traefik.frontend.headers.SSLRedirect=true"
+        - "traefik.frontend.entryPoints=http,https"
+        - "traefik.frontend.passHostHeader=true"
+        - "traefik.frontend.auth.basic.usersFile=/auth/htpasswd"
     depends_on:
       - db
+
+networks:
+  private:
+    driver: overlay
+    attachable: true
+
+  traefik-public:
+    external: true
 
 volumes:
   db:
