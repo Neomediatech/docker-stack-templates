@@ -70,7 +70,6 @@ services:
       TZ: Europe/Rome
     depends_on:
       - db
-    command: ["tini", "--", "php-fpm"]
     healthcheck:
       test: ["CMD", "nc", "-w", "7", "-zv", "0.0.0.0", "9000"]
       interval: 30s
