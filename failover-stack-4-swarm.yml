@@ -76,6 +76,7 @@ services:
         - "traefik.frontend.entryPoints=http,https"
         - "traefik.frontend.passHostHeader=true"
         - "traefik.frontend.auth.basic.usersFile=/auth/htpasswd"
+        - "traefik.frontend.whiteList.sourceRange=${TRAEFIK_WHITELIST:-127.0.0.1/32}"
     depends_on:
       - db
 
