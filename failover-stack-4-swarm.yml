@@ -64,7 +64,7 @@ services:
         - "traefik.frontend.whiteList.sourceRange=${TRAEFIK_WHITELIST:-127.0.0.1/32}"
 
   app:
-    image: php:8-fpm-alpine
+    image: neomediatech/php-fpm-debian:8-fpm-redis
     hostname: app
     volumes:
       - app:/usr/share/nginx/html
