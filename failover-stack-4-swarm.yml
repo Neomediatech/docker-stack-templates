@@ -68,6 +68,7 @@ services:
     hostname: app
     volumes:
       - app:/usr/share/nginx/html
+      - logs:/logs
     environment:
       TZ: Europe/Rome
     depends_on:
@@ -193,3 +194,9 @@ volumes:
       type: none
       o: bind
       device: ${STACK_BASE_PATH}/redis/db
+  logs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/logs
