@@ -78,6 +78,8 @@ services:
       timeout: 30s
       start_period: 60s
       retries: 20
+    networks:
+      - private
 
   db:
     image: mariadb:10
