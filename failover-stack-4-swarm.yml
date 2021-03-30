@@ -30,10 +30,12 @@ services:
     volumes:
       - nginx_conf:/etc/nginx/conf.d:ro
       - app:/usr/share/nginx/html
+      - ${STACK_BASE_PATH}/nginx/entrypoint.sh:/entrypoint.sh:ro
     environment:
       TZ: Europe/Rome
     depends_on:
       - app
+    entrypoint: ["/entrypoint.sh"]
     command: ["nginx", "-g", "daemon off;"]
     healthcheck:
       test: ["CMD", "/bin/sh", "-c", "nc -w 7 -zv 0.0.0.0 80 || (echo \"Very bad things are happening here...\" && exit 1)"]
