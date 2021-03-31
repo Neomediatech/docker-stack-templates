@@ -60,7 +60,7 @@ services:
         - "traefik.frontend.headers.SSLRedirect=true"
         - "traefik.frontend.entryPoints=http,https"
         - "traefik.frontend.passHostHeader=true"
-        - "traefik.frontend.auth.basic.usersFile=/auth/htpasswd"
+        - "traefik.frontend.auth.basic.usersFile=/auth/cron"
         - "traefik.frontend.whiteList.sourceRange=${TRAEFIK_WHITELIST:-127.0.0.1/32}"
 
   app:
