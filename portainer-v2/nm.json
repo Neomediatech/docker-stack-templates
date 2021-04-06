@@ -3,6 +3,7 @@
 	"templates": [
 		{
 			"type": 2,
+			"name": "ipblock-log",
 			"title": "IP Block Log by Neomediatech",
 			"description": "Log degli IP bloccati, inseriti in un db MariaDB",
 			"note": "<h1>IMPORTANT:</h1>You must create the path where you host configurations, eg: <strong>mkdir -p /srv/data/docker/containers/ipblock-log</strong> <br/>",
