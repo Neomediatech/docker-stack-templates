@@ -19,7 +19,7 @@
 				"name": "DOMAIN",
 				"label": "DOMAIN",
 				"description": "Base domain used to create FQDN addresses for let's encrypt",
-        "default": "c.globalhub.it"
+			        "default": "c.globalhub.it"
 			}]
 		}
   ]
