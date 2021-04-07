@@ -33,7 +33,7 @@
 				 "label": "STACK_BASE_PATH",
 				 "description": "Path for the stack. Must exists before launching this stack!",
 			         "default": "/srv/data/docker/containers/ipblock-log"
-				},
+				}
 			]
 		}
   ]
