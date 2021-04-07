@@ -17,11 +17,24 @@
 				"stackfile": "ipblock-log.yml"
 			},
 			"env": [{
-				"name": "DOMAIN",
-				"label": "DOMAIN",
-				"description": "Base domain used to create FQDN addresses for let's encrypt",
-			        "default": "c.glob***.i*"
-			}]
+				 "name": "DOMAIN",
+				 "label": "DOMAIN",
+				 "description": "Base domain used to create FQDN addresses for let's encrypt",
+			         "default": "c.glob***.i*"
+				},
+				{
+				 "name": "TRAEFIK_WHITELIST",
+				 "label": "TRAEFIK_WHITELIST",
+				 "description": "elenco di classi/ip autorizzate ad attraversare traefik, separati da virgola",
+			         "default": "127.0.0.1, ..."
+				},
+				{
+				 "name": "STACK_BASE_PATH",
+				 "label": "STACK_BASE_PATH",
+				 "description": "Path for the stack. Must exists before launching this stack!",
+			         "default": "/srv/data/docker/containers/ipblock-log"
+				},
+			]
 		}
   ]
 } 
