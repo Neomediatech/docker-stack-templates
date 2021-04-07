@@ -77,7 +77,7 @@ services:
         - "traefik.http.routers.pma.tls=true"
         - "traefik.http.routers.pma.rule=Host(`ipblock-log.${DOMAIN}`)"
         - "traefik.http.routers.pma.service=pma"
-        - "traefik.http.routers.pma.middlewares=traefik-auth"
+        - "traefik.http.routers.pma.middlewares=nm-auth"
     depends_on:
       - db
 
@@ -109,17 +109,12 @@ services:
         condition: any
       labels:
         - "traefik.enable=true"
-        - "traefik.docker.network=traefik-public"
-        - "traefik.port=80"
-        - "traefik.tags=traefik-public"
-        - "traefik.redirectorservice.frontend.entryPoints=http"
-        - "traefik.redirectorservice.frontend.redirect.entryPoint=https"
-        - "traefik.webservice.frontend.entryPoints=https"
-        - "traefik.frontend.rule=Host:dnsbl.${DOMAIN}"
-        - "traefik.frontend.headers.SSLRedirect=true"
-        - "traefik.frontend.entryPoints=http,https"
-        - "traefik.frontend.passHostHeader=true"
-        - "traefik.frontend.auth.basic.usersFile=/auth/dnsbl"
+        - "traefik.http.routers.nginx.entrypoints=https"
+        - "traefik.http.routers.nginx.tls=true"
+        - "traefik.http.routers.nginx.rule=Host(`dnsbl.${DOMAIN}`)"
+        - "traefik.http.routers.nginx.service=nginx"
+        - "traefik.http.routers.nginx.middlewares=dnsbl-auth"
+        - "traefik.http.services.nginx.loadBalancer.passHostHeader=true"
     volumes:
       - app_conf:/etc/nginx/conf.d:ro
       - app_html:/usr/share/nginx/html
@@ -177,18 +172,12 @@ services:
         condition: any
       labels:
         - "traefik.enable=true"
-        - "traefik.docker.network=traefik-public"
-        - "traefik.port=80"
-        - "traefik.tags=traefik-public"
-        - "traefik.redirectorservice.frontend.entryPoints=http"
-        - "traefik.redirectorservice.frontend.redirect.entryPoint=https"
-        - "traefik.webservice.frontend.entryPoints=https"
-        - "traefik.frontend.rule=Host:ipblock.${DOMAIN}"
-        - "traefik.frontend.headers.SSLRedirect=true"
-        - "traefik.frontend.entryPoints=http,https"
-        - "traefik.frontend.passHostHeader=true"
-        - "traefik.frontend.whiteList.sourceRange=${TRAEFIK_WHITELIST:-127.0.0.1/32}"
-
+        - "traefik.http.routers.frontend.entrypoints=https"
+        - "traefik.http.routers.frontend.tls=true"
+        - "traefik.http.routers.frontend.rule=Host(`ipblock.${DOMAIN}`)"
+        - "traefik.http.routers.frontend.service=frontend"
+        - "traefik.http.routers.frontend.middlewares=nm-ipwhitelist"
+        - "traefik.http.services.frontend.loadBalancer.passHostHeader=true"
   redis:
     image: redis:5-alpine
     hostname: redis
@@ -268,17 +257,12 @@ services:
         condition: any
       labels:
         - "traefik.enable=true"
-        - "traefik.docker.network=traefik-public"
-        - "traefik.port=80"
-        - "traefik.tags=traefik-public"
-        - "traefik.redirectorservice.frontend.entryPoints=http"
-        - "traefik.redirectorservice.frontend.redirect.entryPoint=https"
-        - "traefik.webservice.frontend.entryPoints=https"
-        - "traefik.frontend.rule=Host:docs.dnsbl.${DOMAIN}"
-        - "traefik.frontend.headers.SSLRedirect=true"
-        - "traefik.frontend.entryPoints=http,https"
-        - "traefik.frontend.passHostHeader=true"
-        - "traefik.frontend.whiteList.sourceRange=${TRAEFIK_WHITELIST:-127.0.0.1/32}"
+        - "traefik.http.routers.docs.entrypoints=https"
+        - "traefik.http.routers.docs.tls=true"
+        - "traefik.http.routers.docs.rule=Host(`docs.dnsbl.${DOMAIN}`)"
+        - "traefik.http.routers.docs.service=docs"
+        - "traefik.http.routers.docs.middlewares=nm-ipwhitelist"
+        - "traefik.http.services.docs.loadBalancer.passHostHeader=true"
     volumes:
       - docs_conf:/etc/nginx/conf.d:ro
       - docs_html:/usr/share/nginx/html
@@ -305,17 +289,14 @@ services:
         condition: any
       labels:
         - "traefik.enable=true"
-        - "traefik.docker.network=traefik-public"
-        - "traefik.port=8081"
-        - "traefik.tags=traefik-public"
-        - "traefik.redirectorservice.frontend.entryPoints=http"
-        - "traefik.redirectorservice.frontend.redirect.entryPoint=https"
-        - "traefik.webservice.frontend.entryPoints=https"
-        - "traefik.frontend.rule=Host:redis.dnsbl.${DOMAIN}"
-        - "traefik.frontend.headers.SSLRedirect=true"
-        - "traefik.frontend.entryPoints=http,https"
-        - "traefik.frontend.passHostHeader=true"
-        - "traefik.frontend.whiteList.sourceRange=${TRAEFIK_WHITELIST:-127.0.0.1/32}"
+        - "traefik.http.routers.redis-commander.entrypoints=https"
+        - "traefik.http.routers.redis-commander.tls=true"
+        - "traefik.http.routers.redis-commander.rule=Host(`redis.dnsbl.${DOMAIN}`)"
+        - "traefik.http.routers.redis-commander.service=redis-commander"
+        - "traefik.http.routers.redis-commander.middlewares=nm-ipwhitelist"
+        - "traefik.http.services.redis-commander.loadBalancer.passHostHeader=true"
+        - "traefik.http.services.redis-commander.loadbalancer.server.port=8081"
+
     healthcheck:
       test: ["CMD", "/redis-commander/bin/healthcheck.js"]
       interval: 30s
