@@ -97,6 +97,41 @@
 				"url": "https://github.com/Neomediatech/dcc-docker",
 				"stackfile": "docker-compose.yml"
 			}
+		},
+		{
+			"type": 2,
+			"name": "echoip",
+			"title": "echoip",
+			"description": "Simple app to get your ip via curl (like icanhazip.com)",
+			"note": "nothing to note ;-)",
+			"categories": [
+				"Other"
+			],
+			"platform": "linux",
+			"logo": "https://github.com/Neomediatech/docker-stack-templates/raw/master/nm-logo.png",
+			"repository": {
+				"url": "https://github.com/Neomediatech/docker-stack-templates",
+				"stackfile": "portainer-v2/echoip.yml"
+			},
+			"env": [{
+				 "name": "STACK_BASE_PATH",
+				 "label": "STACK_BASE_PATH",
+				 "description": "Path for the stack. Must exists before launching this stack!",
+			         "default": "/srv/data/docker/containers/echoip"
+				},
+				{
+				 "name": "DOMAIN",
+				 "label": "DOMAIN",
+				 "description": "domain where to host this service",
+			         "default": "cdcd.it"
+				},
+				{
+				 "name": "GEOIP_LICENSE_KEY",
+				 "label": "GEOIP_LICENSE_KEY",
+				 "description": "link to how to get license key",
+			         "default": "...."
+				}
+			]
 		}
   ]
 } 
