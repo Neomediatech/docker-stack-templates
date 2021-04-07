@@ -79,6 +79,7 @@ services:
         - "traefik.http.routers.pma.service=pma"
         - "traefik.http.routers.pma.middlewares=nm-auth"
         - "traefik.http.services.pma.loadbalancer.server.port=80"
+        - "traefik.http.routers.pma.tls.certresolver=letsencrypt"
     depends_on:
       - db
 
@@ -117,6 +118,7 @@ services:
         - "traefik.http.routers.nginx.middlewares=dnsbl-auth"
         - "traefik.http.services.nginx.loadBalancer.passHostHeader=true"
         - "traefik.http.services.nginx.loadbalancer.server.port=80"
+        - "traefik.http.routers.nginx.tls.certresolver=letsencrypt"
     volumes:
       - app_conf:/etc/nginx/conf.d:ro
       - app_html:/usr/share/nginx/html
@@ -181,6 +183,7 @@ services:
         - "traefik.http.routers.frontend.middlewares=nm-ipwhitelist"
         - "traefik.http.services.frontend.loadBalancer.passHostHeader=true"
         - "traefik.http.services.frontend.loadbalancer.server.port=80"
+        - "traefik.http.routers.frontend.tls.certresolver=letsencrypt"
   redis:
     image: redis:5-alpine
     hostname: redis
@@ -267,6 +270,7 @@ services:
         - "traefik.http.routers.docs.middlewares=nm-ipwhitelist"
         - "traefik.http.services.docs.loadBalancer.passHostHeader=true"
         - "traefik.http.services.docs.loadbalancer.server.port=80"
+        - "traefik.http.routers.docs.tls.certresolver=letsencrypt"
     volumes:
       - docs_conf:/etc/nginx/conf.d:ro
       - docs_html:/usr/share/nginx/html
@@ -300,7 +304,7 @@ services:
         - "traefik.http.routers.redis-commander.middlewares=nm-ipwhitelist"
         - "traefik.http.services.redis-commander.loadBalancer.passHostHeader=true"
         - "traefik.http.services.redis-commander.loadbalancer.server.port=8081"
-
+        - "traefik.http.routers.redis-commander.tls.certresolver=letsencrypt"
     healthcheck:
       test: ["CMD", "/redis-commander/bin/healthcheck.js"]
       interval: 30s
