@@ -1,0 +1,41 @@
+# WARNING: This stack depends on traefik-v2.yml stack
+# STACK_BASE_PATH [base folder where to host files, must exists]
+# DOMAIN: base domain for LE certificates
+
+version: '3.7'
+
+services:
+  echoip:
+    image: neomediatech/echoip
+    hostname: echoip
+    networks:
+      - traefik-public
+    command: ["--trusted-header=X-Real-IP", "-r", "--city-db=/data/city.mmdb","--country-db=/data/country.mmdb","--asn-db=/data/asn.mmdb"]
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: any
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.echoip.entrypoints=https"
+        - "traefik.http.routers.echoip.tls=true"
+        - "traefik.http.routers.echoip.rule=Host(`ip.${DOMAIN}`)"
+        - "traefik.http.routers.echoip.service=echoip"
+        - "traefik.http.routers.echoip.middlewares=rate-limit"
+        - "traefik.http.services.echoip.loadbalancer.server.port=8080"
+        - "traefik.http.services.echoip.loadBalancer.passHostHeader=true"
+        - "traefik.http.routers.echoip.tls.certresolver=letsencrypt"
+    volumes:
+      - ${STACK_BASE_PATH}/index.html:/opt/echoip/index.html:ro
+      - ${STACK_BASE_PATH}/:/data
+
+networks:
+  traefik-public:
+    external: true
