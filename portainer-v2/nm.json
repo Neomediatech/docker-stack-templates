@@ -81,6 +81,22 @@
 			         "default": "/srv/data/docker/containers/rbldns"
 				}
 			]
+		},
+		{
+			"type": 2,
+			"name": "DCC",
+			"title": "DCC",
+			"description": "DCC",
+			"note": "https://www.rhyolite.com/dcc/",
+			"categories": [
+				"Other"
+			],
+			"platform": "linux",
+			"logo": "https://github.com/Neomediatech/docker-stack-templates/raw/master/nm-logo.png",
+			"repository": {
+				"url": "https://github.com/Neomediatech/dcc-docker",
+				"stackfile": "docker-compose.yml"
+			}
 		}
   ]
 } 
