@@ -78,6 +78,7 @@ services:
         - "traefik.http.routers.pma.rule=Host(`ipblock-log.${DOMAIN}`)"
         - "traefik.http.routers.pma.service=pma"
         - "traefik.http.routers.pma.middlewares=nm-auth"
+        - "traefik.http.services.pma.loadbalancer.server.port=80"
     depends_on:
       - db
 
@@ -115,6 +116,7 @@ services:
         - "traefik.http.routers.nginx.service=nginx"
         - "traefik.http.routers.nginx.middlewares=dnsbl-auth"
         - "traefik.http.services.nginx.loadBalancer.passHostHeader=true"
+        - "traefik.http.services.nginx.loadbalancer.server.port=80"
     volumes:
       - app_conf:/etc/nginx/conf.d:ro
       - app_html:/usr/share/nginx/html
@@ -178,6 +180,7 @@ services:
         - "traefik.http.routers.frontend.service=frontend"
         - "traefik.http.routers.frontend.middlewares=nm-ipwhitelist"
         - "traefik.http.services.frontend.loadBalancer.passHostHeader=true"
+        - "traefik.http.services.frontend.loadbalancer.server.port=80"
   redis:
     image: redis:5-alpine
     hostname: redis
@@ -263,6 +266,7 @@ services:
         - "traefik.http.routers.docs.service=docs"
         - "traefik.http.routers.docs.middlewares=nm-ipwhitelist"
         - "traefik.http.services.docs.loadBalancer.passHostHeader=true"
+        - "traefik.http.services.docs.loadbalancer.server.port=80"
     volumes:
       - docs_conf:/etc/nginx/conf.d:ro
       - docs_html:/usr/share/nginx/html
