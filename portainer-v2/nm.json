@@ -13,7 +13,7 @@
 			"platform": "linux",
 			"logo": "https://github.com/Neomediatech/docker-stack-templates/raw/master/ipblock-log.png",
 			"repository": {
-				"url": "https://github.com/Neomediatech/docker-stack-templates",
+				"url": "https://github.com/Neomediatech/docker-stack-templates/portainer-v2",
 				"stackfile": "ipblock-log.yml"
 			},
 			"env": [{
