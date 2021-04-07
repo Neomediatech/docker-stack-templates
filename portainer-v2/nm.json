@@ -35,6 +35,52 @@
 			         "default": "/srv/data/docker/containers/ipblock-log"
 				}
 			]
+		},
+		{
+			"type": 2,
+			"name": "rbldns",
+			"title": "RBLdns by Neomediatech",
+			"description": "lista rbl basata su file",
+			"note": "<h1>IMPORTANT:</h1>You must create the path where you host configurations, eg: <strong>mkdir -p /srv/data/docker/containers/rbldns</strong> <br/>",
+			"categories": [
+				"Other"
+			],
+			"platform": "linux",
+			"logo": "https://github.com/Neomediatech/docker-stack-templates/raw/master/nm-logo.png",
+			"repository": {
+				"url": "https://github.com/Neomediatech/rbldns",
+				"stackfile": "docker-compose.yml"
+			},
+			"env": [{
+				 "name": "RBL_DOMAIN",
+				 "label": "RBL_DOMAIN",
+				 "description": "Domain used to host the DNSBL lists",
+			         "default": "rep.cdcd.it"
+				},
+				{
+				 "name": "LOGGING",
+				 "label": "LOGGING",
+				 "description": "Enable DNS query logging? 1 -> Yes , 0 -> No",
+			         "default": "1"
+				},
+				{
+				 "name": "CUSTOM_ZONES",
+				 "label": "CUSTOM_ZONES",
+				 "description": "List of custom zones separated by comma (ex: mylist,otherlist.txt,third.list)",
+				},
+				{
+				 "name": "CUSTOM_CONFIG",
+				 "label": "CUSTOM_CONFIG",
+				 "description": "Add custom config (ex: mybl.domain.tld:ip4set:blfile.txt)",
+			         "default": "cbl.cdcd.it:ip4set:cbl.rbl asn.cdcd.it:generic:asndrop.strange-rbl auth.cdcd.it:ip4set:auth.rbl"
+				},
+				{
+				 "name": "STACK_BASE_PATH",
+				 "label": "STACK_BASE_PATH",
+				 "description": "Path for the stack. Must exists before launching this stack!",
+			         "default": "/srv/data/docker/containers/rbldns"
+				}
+			]
 		}
   ]
 } 
