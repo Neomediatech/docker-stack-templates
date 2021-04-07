@@ -66,7 +66,7 @@
 				{
 				 "name": "CUSTOM_ZONES",
 				 "label": "CUSTOM_ZONES",
-				 "description": "List of custom zones separated by comma (ex: mylist,otherlist.txt,third.list)",
+				 "description": "List of custom zones separated by comma (ex: mylist,otherlist.txt,third.list)"
 				},
 				{
 				 "name": "CUSTOM_CONFIG",
