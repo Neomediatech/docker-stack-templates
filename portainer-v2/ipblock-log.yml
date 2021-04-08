@@ -77,7 +77,7 @@ services:
         - "traefik.http.routers.pma.tls=true"
         - "traefik.http.routers.pma.rule=Host(`ipblock-log.${DOMAIN}`)"
         - "traefik.http.routers.pma.service=pma"
-        - "traefik.http.routers.pma.middlewares=nm-auth"
+        - "traefik.http.routers.pma.middlewares=nm-auth@file"
         - "traefik.http.services.pma.loadbalancer.server.port=80"
         - "traefik.http.routers.pma.tls.certresolver=letsencrypt"
     depends_on:
@@ -115,8 +115,7 @@ services:
         - "traefik.http.routers.nginx.tls=true"
         - "traefik.http.routers.nginx.rule=Host(`dnsbl.${DOMAIN}`)"
         - "traefik.http.routers.nginx.service=nginx"
-        - "traefik.http.routers.nginx.middlewares=dnsbl-auth"
-        - "traefik.http.services.nginx.loadBalancer.passHostHeader=true"
+        - "traefik.http.routers.nginx.middlewares=dnsbl-auth@file"
         - "traefik.http.services.nginx.loadbalancer.server.port=80"
         - "traefik.http.routers.nginx.tls.certresolver=letsencrypt"
     volumes:
@@ -180,8 +179,7 @@ services:
         - "traefik.http.routers.frontend.tls=true"
         - "traefik.http.routers.frontend.rule=Host(`ipblock.${DOMAIN}`)"
         - "traefik.http.routers.frontend.service=frontend"
-        - "traefik.http.routers.frontend.middlewares=nm-ipwhitelist"
-        - "traefik.http.services.frontend.loadBalancer.passHostHeader=true"
+        - "traefik.http.routers.frontend.middlewares=nm-ipwhitelist@file"
         - "traefik.http.services.frontend.loadbalancer.server.port=80"
         - "traefik.http.routers.frontend.tls.certresolver=letsencrypt"
   redis:
@@ -267,8 +265,7 @@ services:
         - "traefik.http.routers.docs.tls=true"
         - "traefik.http.routers.docs.rule=Host(`docs.dnsbl.${DOMAIN}`)"
         - "traefik.http.routers.docs.service=docs"
-        - "traefik.http.routers.docs.middlewares=nm-ipwhitelist"
-        - "traefik.http.services.docs.loadBalancer.passHostHeader=true"
+        - "traefik.http.routers.docs.middlewares=nm-ipwhitelist@file"
         - "traefik.http.services.docs.loadbalancer.server.port=80"
         - "traefik.http.routers.docs.tls.certresolver=letsencrypt"
     volumes:
@@ -301,8 +298,7 @@ services:
         - "traefik.http.routers.redis-commander.tls=true"
         - "traefik.http.routers.redis-commander.rule=Host(`redis.dnsbl.${DOMAIN}`)"
         - "traefik.http.routers.redis-commander.service=redis-commander"
-        - "traefik.http.routers.redis-commander.middlewares=nm-ipwhitelist"
-        - "traefik.http.services.redis-commander.loadBalancer.passHostHeader=true"
+        - "traefik.http.routers.redis-commander.middlewares=nm-ipwhitelist@file"
         - "traefik.http.services.redis-commander.loadbalancer.server.port=8081"
         - "traefik.http.routers.redis-commander.tls.certresolver=letsencrypt"
     healthcheck:
