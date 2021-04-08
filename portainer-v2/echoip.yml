@@ -25,12 +25,10 @@ services:
       labels:
         - "traefik.enable=true"
         - "traefik.http.routers.echoip.entrypoints=https"
-        - "traefik.http.routers.echoip.tls=true"
         - "traefik.http.routers.echoip.rule=Host(`ip.${DOMAIN}`)"
         - "traefik.http.routers.echoip.service=echoip"
         - "traefik.http.routers.echoip.middlewares=rate-limit@file"
         - "traefik.http.services.echoip.loadbalancer.server.port=8080"
-        - "traefik.http.services.echoip.loadBalancer.passHostHeader=true"
         - "traefik.http.routers.echoip.tls.certresolver=letsencrypt"
     volumes:
       - ${STACK_BASE_PATH}/index.html:/opt/echoip/index.html:ro
