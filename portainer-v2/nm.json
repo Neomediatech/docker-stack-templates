@@ -195,6 +195,29 @@
 			         "default": "20M"
 				}
 			]
-		}
+		},
+		{
+			"type": 2,
+			"name": "pyzor",
+			"title": "Pyzor server by neomediatech",
+			"description": "Stack composto da un'istanza Pyzor e Redis",
+			"note": "<h1>IMPORTANT:</h1>You must create the path where you host configurations, eg: <strong>mkdir -p /srv/data/docker/containers/pyzor-server</strong> <br/>",
+			"categories": [
+				"Other"
+			],
+			"platform": "linux",
+			"logo": "https://github.com/Neomediatech/docker-stack-templates/raw/master/nm-logo.png",
+			"repository": {
+				"url": "https://github.com/Neomediatech/pyzor-server",
+				"stackfile": "docker-compose.yml"
+			},
+			"env": [{
+				 "name": "STACK_BASE_PATH",
+				 "label": "STACK_BASE_PATH",
+				 "description": "Path for the stack. Must exists before launching this stack!",
+			         "default": "/srv/data/docker/containers/pyzor-server"
+				}
+			]
+		},
   ]
 } 
