@@ -161,6 +161,40 @@
 			         "default": "/srv/data/docker/containers/traefik"
 				}
 			]
+		},
+		{
+			"type": 2,
+			"name": "pma-ispc",
+			"title": "phpMyAdmin per db ISPConfig",
+			"description": "Container pma per db ispconfig",
+			"categories": [
+				"Other"
+			],
+			"platform": "linux",
+			"logo": "https://github.com/Neomediatech/docker-stack-templates/raw/master/portainer-v2/pma-ispc.png",
+			"repository": {
+				"url": "https://github.com/Neomediatech/docker-stack-templates",
+				"stackfile": "portainer-v2/pma-4-swarm-traefik.yml"
+			},
+			"env": [{
+				 "name": "DB_HOST",
+				 "label": "DB_HOST",
+				 "description": "Mysql/MariaDB server",
+			         "default": "10.2.0.1"
+				},
+				{
+				 "name": "FQDN_HOST",
+				 "label": "FQDN_HOST",
+				 "description": "hostname da utilizzare per raggiungere il servizio",
+			         "default": "pma-ispc.c..."
+				},
+				{
+				 "name": "UPLOAD_LIMIT",
+				 "label": "UPLOAD_LIMIT",
+				 "description": "limite di upload del file sql",
+			         "default": "20M"
+				}
+			]
 		}
   ]
 } 
