@@ -29,7 +29,6 @@ services:
         - "traefik.http.routers.echoip.service=echoip"
         - "traefik.http.routers.echoip.middlewares=rate-limit@file"
         - "traefik.http.services.echoip.loadbalancer.server.port=8080"
-        - "traefik.http.routers.echoip.tls.certresolver=letsencrypt"
     volumes:
       - ${STACK_BASE_PATH}/index.html:/opt/echoip/index.html:ro
       - ${STACK_BASE_PATH}/:/data
