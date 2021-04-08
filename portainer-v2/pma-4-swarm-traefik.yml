@@ -1,0 +1,51 @@
+# use to create a swarm template in Portainer
+# PMA_HOST= set the name of the MariaDB/MySQL host to connect to
+# UPLOAD_LIMIT= set the max size of the file allowed to upload
+# FQDN= [required] fqdn to use to reach services
+# this template depends on traefik
+
+version: '3.7'
+
+x-envs: &common-vars
+  TZ: Europe/Rome
+  PMA_HOST: ${DB_HOST:-db}
+  UPLOAD_LIMIT: ${UPLOAD_LIMIT:-20M}
+
+services:
+  pma:
+    image: phpmyadmin/phpmyadmin
+    hostname: pma
+    environment:
+      << : *common-vars    
+      PMA_HOST: ${DB_HOST}
+      PMA_PORT: 3306
+      UPLOAD_LIMIT: ${UPLOAD_LIMIT}
+    networks:
+      - private
+      - traefik-public
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: any
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.pma.entrypoints=https"
+        - "traefik.http.routers.pma.rule=Host(`${FQDN_HOST}`)"
+        - "traefik.http.routers.pma.service=pma"
+        - "traefik.http.routers.pma.middlewares=nm-auth@file"
+        - "traefik.http.services.pma.loadbalancer.server.port=80"
+        - "traefik.http.routers.pma.tls.certresolver=letsencrypt"
+networks:
+  private:
+    driver: overlay
+    attachable: true
+
+  traefik-public:
+    external: true
