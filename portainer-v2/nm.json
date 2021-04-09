@@ -135,7 +135,7 @@
 		},
 		{
 			"type": 2,
-			"name": "nginx-catchall",
+			"name": "catchall",
 			"title": "Nginx container to catch all 'unused' web traffic",
 			"description": "_",
 			"note": "<h1>IMPORTANT:</h1>You must create the path where you host configurations, eg: <strong>mkdir -p /srv/data/docker/containers/traefik</strong> <br/>",
