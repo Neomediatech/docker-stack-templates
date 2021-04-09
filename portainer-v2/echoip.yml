@@ -24,7 +24,7 @@ services:
         condition: any
       labels:
         - "traefik.enable=true"
-        - "traefik.http.routers.echoip.entrypoints=https"
+        - "traefik.http.routers.echoip.entrypoints=https, http"
         - "traefik.http.routers.echoip.rule=Host(`${FQDN_HOST}`)"
         - "traefik.http.routers.echoip.service=echoip"
         - "traefik.http.routers.echoip.middlewares=rate-limit@file"
