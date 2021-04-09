@@ -1,0 +1,64 @@
+[http]
+  [http.middlewares]
+    [http.middlewares.nm-auth]
+      [http.middlewares.nm-auth.basicAuth]
+        #users = ["foobar", "foobar"]
+        usersFile = "/auth/htpasswd"
+        realm = "Only VIPs can access here"
+        #removeHeader = true
+        #headerField = "foobar"
+
+    [http.middlewares.dnsbl-auth]
+      [http.middlewares.dnsbl-auth.basicAuth]
+        usersFile = "/auth/dnsbl"
+        realm = "Only VIPs can access here"
+
+    [http.middlewares.failover-auth]
+      [http.middlewares.failover-auth.basicAuth]
+        usersFile = "/auth/failover"
+        realm = "Only VIPs can access here"
+
+    [http.middlewares.nm-ipwhitelist]
+      [http.middlewares.nm-ipwhitelist.ipWhiteList]
+        # list of ip addresses or nets separated by comma
+        sourceRange = ["127.0.0.1"]
+        #[http.middlewares.Middleware11.ipWhiteList.ipStrategy]
+        #  depth = 42
+        #  excludedIPs = ["foobar", "foobar"]
+
+    [http.middlewares.portainer-edges-ipwhitelist]
+      [http.middlewares.portainer-edges-ipwhitelist.ipWhiteList]
+        # list of ip addresses or nets separated by comma
+        sourceRange = ["127.0.0.1"]
+
+    [http.middlewares.rate-limit]
+      [http.middlewares.rate-limit.rateLimit]
+        average = 4
+        period = 10
+        burst = 4
+        [http.middlewares.rate-limit.rateLimit.sourceCriterion]
+          #requestHeaderName = "foobar"
+          #requestHost = true
+          [http.middlewares.rate-limit.rateLimit.sourceCriterion.ipStrategy]
+            depth = 42
+            #excludedIPs = ["foobar", "foobar"]
+
+    [http.middlewares.redirect2https]
+      [http.middlewares.redirect2https.redirectscheme]
+        scheme = "https"
+        #port = "foobar"
+        permanent = true
+
+    # esempio di come concatenare più middlewares
+    [http.middlewares.chain-example]
+      [http.middlewares.chain-example.chain]
+        middlewares = ["nm-ipwhitelist@file", "nm-auth@file"]
+
+# prior to enable this section you have to create a self signed certificate
+# or buy one somewhere
+#[tls]
+#  [tls.stores]
+#    [tls.stores.default]
+#      [tls.stores.default.defaultCertificate]
+#        certFile = "/certs/default.crt"
+#        keyFile = "/certs/default.key"
