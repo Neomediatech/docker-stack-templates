@@ -1,0 +1,54 @@
+[global]
+  sendAnonymousUsage = false
+
+[entryPoints]
+  [entryPoints.http]
+    address = ":80"
+     # queste tre righe commentate permettono di impostare il redirect automatico
+     # della porta 80 verso la 443
+     # [entryPoints.http.http.redirections.entryPoint]
+     #  to = "https"
+     #  scheme = "https"
+  [entryPoints.https]
+    address = ":443"
+    [entryPoints.https.http]
+      [entryPoints.https.http.tls]
+        certResolver = "letsencrypt"
+
+[providers]
+  [providers.docker]
+    watch = true
+    exposedbydefault = false
+    swarmMode = true
+    network = "traefik-public"
+  [providers.file]
+    directory = "/conf/dynamic"
+    watch = true
+
+[api]
+  insecure = true
+  dashboard = true
+  debug = true
+
+[log]
+  #level = "DEBUG"
+  level = "INFO"
+  #filePath = "foobar"
+  #format = "foobar"
+
+[accessLog]
+  filePath = "/logs/access.log"
+  #format = "foobar"
+  #bufferingSize = 42
+  [accessLog.fields]
+    #defaultMode = "foobar"
+    [accessLog.fields.names]
+      StartUTC = "drop"
+
+[certificatesResolvers]
+  [certificatesResolvers.letsencrypt]
+    [certificatesResolvers.letsencrypt.acme]
+      email = "your-email@email.tld"
+      storage = "/certs/acme-v2.json"
+      [certificatesResolvers.letsencrypt.acme.httpChallenge]
+        entryPoint = "http"
