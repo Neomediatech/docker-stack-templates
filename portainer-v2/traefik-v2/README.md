@@ -6,7 +6,7 @@ STACK_BASE_PATH=/srv/data/docker/containers/traefik/
 mkdir -p $STACK_BASE_PATH && cd $STACK_BASE_PATH  
 mkdir -p auth certs conf/dynamic conf/static logs nginx/conf nginx/html  
 ```
-- ..
+- Set an email address at line 51 in [static/traefik.toml](static/traefik.toml) file
 - ..
 - ..
 
