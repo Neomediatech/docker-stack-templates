@@ -13,6 +13,7 @@ mkdir -p auth certs conf/dynamic conf/static logs nginx/conf nginx/html
   **BUT**, **BUT**, keep in mind that it will reveal its identity. YHBW.
 - customi\[s|z\]e line 24 and 32 in [conf/dynamic/dynamic.toml](conf/dynamic/dynamic.toml) if you need it.  
   On the bottom of the file you find a section to uncomment, if you want to use your own default certificate.
+- ``` export STACK_BASE_PATH=/srv/data/docker/containers/traefik/ ; export FQDN_HOST=your-full-hostname ; docker stack deploy -c docker-compose.yml traefik```
 
 ## Environment Variables
 | Name                | Description                                            | Default         |
