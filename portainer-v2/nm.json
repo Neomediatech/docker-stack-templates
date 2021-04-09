@@ -280,6 +280,29 @@
 			         "default": "hostname.ne.."
 				}
 			]
+		},
+		{
+			"type": 1,
+			"name": "redis-service",
+			"title": "Redis",
+			"description": "Redis di servizio senza scrittura dati su disco",
+			"note": "_",
+			"categories": [
+				"Other"
+			],
+			"platform": "linux",
+			"logo": "https://github.com/Neomediatech/docker-stack-templates/raw/master/portainer-v2/redis-logo.png",
+			"image": "redis:alpine",
+			"hostname": "redis-service",
+			"network": "bridge",
+			"ports": ["6400:6379/tcp"],
+			"volumes": [
+			  {
+			    "container": "/data",
+			    "bind": "/srv/data/docker/containers/redis-service/data"
+			  }
+			],
+			"restart_policy": "always"
 		}
   ]
 } 
