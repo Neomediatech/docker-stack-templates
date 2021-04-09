@@ -6,9 +6,13 @@ STACK_BASE_PATH=/srv/data/docker/containers/traefik/
 mkdir -p $STACK_BASE_PATH && cd $STACK_BASE_PATH  
 mkdir -p auth certs conf/dynamic conf/static logs nginx/conf nginx/html  
 ```
-- Set an email address at line 51 in [static/traefik.toml](static/traefik.toml) file
-- ..
-- ..
+- copy all files as the schema below
+- set an email address at line 51 in [static/traefik.toml](static/traefik.toml) file
+- add user(s) in [auth/](auth/) files
+- put your default ssl certificate in [certs/](certs/) directory, if you want. If you don't do it Traefik will generate one for you.  
+  **BUT**, **BUT**, keep in mind that it will reveal its identity. YHBW.
+- customi\[s|z\]e line 24 and 32 in [conf/dynamic/dynamic.toml](conf/dynamic/dynamic.toml) if you need it.  
+  On the bottom of the file you find a section to uncomment, if you want to use your own default certificate.
 
 ## Environment Variables
 | Name                | Description                                            | Default         |
@@ -44,5 +48,5 @@ mkdir -p auth certs conf/dynamic conf/static logs nginx/conf nginx/html
         └── ping.html
 ```
 ## Notes
-- see also other files in this repo
+- ..
 
