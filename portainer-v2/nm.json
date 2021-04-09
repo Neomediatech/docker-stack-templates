@@ -240,6 +240,7 @@
 				 "description": "FQDN to access phpmyadmin interface (used by traefik to redirect traffic & for let'encrypt ssl certificate",
 			         "default": "failover-pma.c.g.."
 				},
+				{
 				 "name": "FQDN_NGINX",
 				 "label": "FQDN_NGINX",
 				 "description": "FQDN to access our api interface (used by traefik to redirect traffic & for let'encrypt ssl certificate",
