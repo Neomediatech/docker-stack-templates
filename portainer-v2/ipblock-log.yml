@@ -73,11 +73,11 @@ services:
         condition: any
       labels:
         - "traefik.enable=true"
-        - "traefik.http.routers.pma.entrypoints=https, http"
-        - "traefik.http.routers.pma.rule=Host(`ipblock-log.${DOMAIN}`)"
-        - "traefik.http.routers.pma.service=pma"
-        - "traefik.http.routers.pma.middlewares=nm-auth@file, redirect2https@file"
-        - "traefik.http.services.pma.loadbalancer.server.port=80"
+        - "traefik.http.routers.pma-ipblock.entrypoints=https, http"
+        - "traefik.http.routers.pma-ipblock.rule=Host(`ipblock-log.${DOMAIN}`)"
+        - "traefik.http.routers.pma-ipblock.service=pma-ipblock"
+        - "traefik.http.routers.pma-ipblock.middlewares=nm-auth@file, redirect2https@file"
+        - "traefik.http.services.pma-ipblock.loadbalancer.server.port=80"
     depends_on:
       - db
 
