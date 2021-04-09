@@ -54,7 +54,7 @@ services:
     deploy:
       labels:
         - "traefik.enable=true"
-        - "traefik.http.routers.failover-api.entrypoints=https"
+        - "traefik.http.routers.failover-api.entrypoints=https, http"
         - "traefik.http.routers.failover-api.rule=Host(`${FQDN_NGINX}`)"
         - "traefik.http.routers.failover-api.service=failover-api"
         - "traefik.http.routers.failover-api.middlewares=failover-auth@file, redirect2https@file"
@@ -121,7 +121,7 @@ services:
         condition: any
       labels:
         - "traefik.enable=true"
-        - "traefik.http.routers.failover-pma.entrypoints=https"
+        - "traefik.http.routers.failover-pma.entrypoints=https, http"
         - "traefik.http.routers.failover-pma.rule=Host(`${FQDN_PMA}`)"
         - "traefik.http.routers.failover-pma.service=failover-pma"
         - "traefik.http.routers.failover-pma.middlewares=nm-auth@file, redirect2https@file"
