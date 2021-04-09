@@ -54,11 +54,11 @@ services:
     deploy:
       labels:
         - "traefik.enable=true"
-        - "traefik.http.routers.frontend.entrypoints=https"
-        - "traefik.http.routers.frontend.rule=Host(`${FQDN_NGINX}`)"
-        - "traefik.http.routers.frontend.service=pma"
-        - "traefik.http.routers.frontend.middlewares=failover-auth@file"
-        - "traefik.http.services.frontend.loadbalancer.server.port=80"
+        - "traefik.http.routers.failover-api.entrypoints=https"
+        - "traefik.http.routers.failover-api.rule=Host(`${FQDN_NGINX}`)"
+        - "traefik.http.routers.failover-api.service=failover-api"
+        - "traefik.http.routers.failover-api.middlewares=failover-auth@file"
+        - "traefik.http.services.failover-api.loadbalancer.server.port=80"
 
   app:
     image: neomediatech/php-fpm-debian:8-fpm-redis
@@ -121,11 +121,11 @@ services:
         condition: any
       labels:
         - "traefik.enable=true"
-        - "traefik.http.routers.pma.entrypoints=https"
-        - "traefik.http.routers.pma.rule=Host(`${FQDN_PMA}`)"
-        - "traefik.http.routers.pma.service=pma"
-        - "traefik.http.routers.pma.middlewares=nm-auth@file"
-        - "traefik.http.services.pma.loadbalancer.server.port=80"
+        - "traefik.http.routers.failover-pma.entrypoints=https"
+        - "traefik.http.routers.failover-pma.rule=Host(`${FQDN_PMA}`)"
+        - "traefik.http.routers.failover-pma.service=failover-pma"
+        - "traefik.http.routers.failover-pma.middlewares=nm-auth@file"
+        - "traefik.http.services.failover-pma.loadbalancer.server.port=80"
     depends_on:
       - db
 
