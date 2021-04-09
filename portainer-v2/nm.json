@@ -220,6 +220,46 @@
 			]
 		},
 		{
+			"type": 2,
+			"name": "failover",
+			"title": "Failover Stack",
+			"description": "API (& more maybe) to manage failover to servers Database utilizzato dai vari server per recuperare i cron (e magari altro in futuro)",
+			"note": "<h1>IMPORTANTE:</h1> Devi prima creare il percorso dove verranno ospitati i file, es: <strong>mkdir -p /srv/data/docker/containers/failover</strong> <br/>",
+			"categories": [
+				"Other"
+			],
+			"platform": "linux",
+			"logo": "https://github.com/Neomediatech/docker-stack-templates/raw/master/portainer-v2/failover.png",
+			"repository": {
+				"url": "https://github.com/Neomediatech/docker-stack-templates",
+				"stackfile": "portainer-v2/failover-stack-4-swarm.yml"
+			},
+			"env": [{
+				 "name": "FQDN_PMA",
+				 "label": "FQDN_PMA",
+				 "description": "FQDN to access phpmyadmin interface (used by traefik to redirect traffic & for let'encrypt ssl certificate",
+			         "default": "failover-pma.c.g.."
+				},
+				 "name": "FQDN_NGINX",
+				 "label": "FQDN_NGINX",
+				 "description": "FQDN to access our api interface (used by traefik to redirect traffic & for let'encrypt ssl certificate",
+			         "default": "failover-api.c.g.."
+				},
+				{
+				 "name": "TRAEFIK_WHITELIST",
+				 "label": "TRAEFIK_WHITELIST",
+				 "description": "(optional) elenco di classi/ip autorizzate ad attraversare traefik, separati da virgola",
+			         "default": "127.0.0.1"
+				},
+				{
+				 "name": "STACK_BASE_PATH",
+				 "label": "STACK_BASE_PATH",
+				 "description": "Path for the stack. Must exists before launching this stack!",
+			         "default": "/srv/data/docker/containers/failover"
+				}
+			]
+		},
+		{
 			"type": 1,
 			"name": "fail2ban",
 			"title": "Fail2Ban by Neomediatech",
