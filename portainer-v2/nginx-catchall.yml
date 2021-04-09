@@ -31,7 +31,7 @@ services:
         - "traefik.enable=true"
         - "traefik.http.routers.nginx-catchall.rule=(Host(`${FQDN_HOST}`) || HostRegexp(`{any:.+}`))"
         #- "traefik.http.routers.nginx-catchall.rule=Host(`${FQDN_HOST}`)"
-        - "traefik.http.routers.nginx-catchall.entrypoints=https"
+        - "traefik.http.routers.nginx-catchall.entrypoints=https, http"
         - "traefik.http.services.nginx-catchall.loadbalancer.server.port=80"
         - "traefik.http.routers.nginx-catchall.service=nginx-catchall"
         - "traefik.http.routers.nginx-catchall.priority=1"
