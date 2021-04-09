@@ -1,5 +1,9 @@
 # Traefik stack for docker swarm
-
+## Usage
+- open a shell on docker server then:  
+`STACK_BASE_PATH=/srv/data/docker/containers/traefik/`  
+`mkdir -p $STACK_BASE_PATH && cd $STACK_BASE_PATH`  
+`mkdir -p auth certs conf/dynamic conf/static logs nginx/conf nginx/html`  
 - ..
 - ..
 - ..
