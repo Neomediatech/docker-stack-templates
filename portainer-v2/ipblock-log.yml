@@ -76,7 +76,7 @@ services:
         - "traefik.http.routers.pma.entrypoints=https"
         - "traefik.http.routers.pma.rule=Host(`ipblock-log.${DOMAIN}`)"
         - "traefik.http.routers.pma.service=pma"
-        - "traefik.http.routers.pma.middlewares=nm-auth@file"
+        - "traefik.http.routers.pma.middlewares=nm-auth@file, redirect2https@file"
         - "traefik.http.services.pma.loadbalancer.server.port=80"
     depends_on:
       - db
@@ -112,7 +112,7 @@ services:
         - "traefik.http.routers.nginx.entrypoints=https"
         - "traefik.http.routers.nginx.rule=Host(`dnsbl.${DOMAIN}`)"
         - "traefik.http.routers.nginx.service=nginx"
-        - "traefik.http.routers.nginx.middlewares=dnsbl-auth@file"
+        - "traefik.http.routers.nginx.middlewares=dnsbl-auth@file, redirect2https@file"
         - "traefik.http.services.nginx.loadbalancer.server.port=80"
     volumes:
       - app_conf:/etc/nginx/conf.d:ro
@@ -174,7 +174,7 @@ services:
         - "traefik.http.routers.frontend.entrypoints=https"
         - "traefik.http.routers.frontend.rule=Host(`ipblock.${DOMAIN}`)"
         - "traefik.http.routers.frontend.service=frontend"
-        - "traefik.http.routers.frontend.middlewares=nm-ipwhitelist@file"
+        - "traefik.http.routers.frontend.middlewares=nm-ipwhitelist@file, redirect2https@file"
         - "traefik.http.services.frontend.loadbalancer.server.port=80"
   redis:
     image: redis:5-alpine
@@ -258,7 +258,7 @@ services:
         - "traefik.http.routers.docs.entrypoints=https"
         - "traefik.http.routers.docs.rule=Host(`docs.dnsbl.${DOMAIN}`)"
         - "traefik.http.routers.docs.service=docs"
-        - "traefik.http.routers.docs.middlewares=nm-ipwhitelist@file"
+        - "traefik.http.routers.docs.middlewares=nm-ipwhitelist@file, redirect2https@file"
         - "traefik.http.services.docs.loadbalancer.server.port=80"
     volumes:
       - docs_conf:/etc/nginx/conf.d:ro
@@ -289,7 +289,7 @@ services:
         - "traefik.http.routers.redis-commander.entrypoints=https"
         - "traefik.http.routers.redis-commander.rule=Host(`redis.dnsbl.${DOMAIN}`)"
         - "traefik.http.routers.redis-commander.service=redis-commander"
-        - "traefik.http.routers.redis-commander.middlewares=nm-ipwhitelist@file"
+        - "traefik.http.routers.redis-commander.middlewares=nm-ipwhitelist@file, redirect2https@file"
         - "traefik.http.services.redis-commander.loadbalancer.server.port=8081"
     healthcheck:
       test: ["CMD", "/redis-commander/bin/healthcheck.js"]
