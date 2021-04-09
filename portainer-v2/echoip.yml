@@ -1,6 +1,6 @@
 # WARNING: This stack depends on traefik-v2.yml stack
 # STACK_BASE_PATH [base folder where to host files, must exists]
-# DOMAIN: base domain for LE certificates
+# FQDN_HOST: FQDN to reach (and for LE certificate)
 
 version: '3.7'
 
@@ -25,7 +25,7 @@ services:
       labels:
         - "traefik.enable=true"
         - "traefik.http.routers.echoip.entrypoints=https"
-        - "traefik.http.routers.echoip.rule=Host(`ip.${DOMAIN}`)"
+        - "traefik.http.routers.echoip.rule=Host(`${FQDN_HOST}`)"
         - "traefik.http.routers.echoip.service=echoip"
         - "traefik.http.routers.echoip.middlewares=rate-limit@file"
         - "traefik.http.services.echoip.loadbalancer.server.port=8080"
