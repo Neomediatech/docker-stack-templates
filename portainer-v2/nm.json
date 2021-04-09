@@ -120,10 +120,10 @@
 			         "default": "/srv/data/docker/containers/echoip"
 				},
 				{
-				 "name": "DOMAIN",
-				 "label": "DOMAIN",
-				 "description": "domain where to host this service",
-			         "default": "cdcd.it"
+				 "name": "FQDN_HOST",
+				 "label": "FQDN_HOST",
+				 "description": "FQDN where to host this service",
+			         "default": "ip.cd..."
 				},
 				{
 				 "name": "GEOIP_LICENSE_KEY",
