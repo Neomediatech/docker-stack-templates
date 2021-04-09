@@ -1,0 +1,15 @@
+# Traefik stack for docker swarm
+
+- ..
+- ..
+- ..
+
+## Environment Variables
+| Name                | Description                                            | Default         |
+| ------------------- | ------------------------------------------------------ | --------------- |
+| FQDN_HOST           | FQDN (full hostname) used to access traefik dashboard and to create letsencrypt certificates | none |
+| STACK_BASE_PATH     | base folder where to host files, must exists prior to run the stack | /srv/data/docker/containers/traefik |
+
+## Notes
+- see also other files in this repo
+
