@@ -73,7 +73,7 @@ services:
         condition: any
       labels:
         - "traefik.enable=true"
-        - "traefik.http.routers.pma.entrypoints=https"
+        - "traefik.http.routers.pma.entrypoints=https, http"
         - "traefik.http.routers.pma.rule=Host(`ipblock-log.${DOMAIN}`)"
         - "traefik.http.routers.pma.service=pma"
         - "traefik.http.routers.pma.middlewares=nm-auth@file, redirect2https@file"
@@ -109,7 +109,7 @@ services:
         condition: any
       labels:
         - "traefik.enable=true"
-        - "traefik.http.routers.nginx.entrypoints=https"
+        - "traefik.http.routers.nginx.entrypoints=https, http"
         - "traefik.http.routers.nginx.rule=Host(`dnsbl.${DOMAIN}`)"
         - "traefik.http.routers.nginx.service=nginx"
         - "traefik.http.routers.nginx.middlewares=dnsbl-auth@file, redirect2https@file"
@@ -171,7 +171,7 @@ services:
         condition: any
       labels:
         - "traefik.enable=true"
-        - "traefik.http.routers.frontend.entrypoints=https"
+        - "traefik.http.routers.frontend.entrypoints=https, http"
         - "traefik.http.routers.frontend.rule=Host(`ipblock.${DOMAIN}`)"
         - "traefik.http.routers.frontend.service=frontend"
         - "traefik.http.routers.frontend.middlewares=nm-ipwhitelist@file, redirect2https@file"
@@ -255,7 +255,7 @@ services:
         condition: any
       labels:
         - "traefik.enable=true"
-        - "traefik.http.routers.docs.entrypoints=https"
+        - "traefik.http.routers.docs.entrypoints=https, http"
         - "traefik.http.routers.docs.rule=Host(`docs.dnsbl.${DOMAIN}`)"
         - "traefik.http.routers.docs.service=docs"
         - "traefik.http.routers.docs.middlewares=nm-ipwhitelist@file, redirect2https@file"
@@ -286,7 +286,7 @@ services:
         condition: any
       labels:
         - "traefik.enable=true"
-        - "traefik.http.routers.redis-commander.entrypoints=https"
+        - "traefik.http.routers.redis-commander.entrypoints=https, http"
         - "traefik.http.routers.redis-commander.rule=Host(`redis.dnsbl.${DOMAIN}`)"
         - "traefik.http.routers.redis-commander.service=redis-commander"
         - "traefik.http.routers.redis-commander.middlewares=nm-ipwhitelist@file, redirect2https@file"
