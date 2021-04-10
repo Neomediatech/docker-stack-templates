@@ -1,0 +1,86 @@
+{
+  "version": "2",
+	"templates": [
+		{
+			"type": 2,
+			"name": "HoneyPot",
+			"title": "HoneyPot",
+			"description": "Stack di container per collezionare tentativi di intrusione/spam",
+			"note": "<h1>Attenzione!</h1>Assicurati di aver creato il path: cd /tmp; wget https://raw.githubusercontent.com/Neomediatech/docker-stack-templates/master/honey-stack3-4-swarm.yml <br/> STACK_BASE_PATH=/srv/data/honeypot ; grep device honey-stack3-4-swarm.yml|grep -v '#'|awk '{print $2}'|while read dir; do eval mkdir -p $dir; done",
+			"categories": [
+				"Other"
+			],
+			"platform": "linux",
+			"logo": "https://raw.githubusercontent.com/Neomediatech/docker-stack-templates/master/honeypot.png",
+			"repository": {
+				"url": "https://github.com/Neomediatech/docker-stack-templates",
+				"stackfile": "honey-stack4-4-swarm.yml"
+			},
+			"env": [{
+				 "name": "OPENCANARY_NODE_ID",
+				 "label": "Opencanary Node ID",
+				 "description": " ",
+			         "default": "honey-customise"
+				},
+				{
+				 "name": "STACK_BASE_PATH",
+				 "label": "STACK_BASE_PATH",
+				 "description": "Path for the stack. Must exists before launching this stack!",
+			         "default": "/srv/data/honeypot"
+				}
+			]
+		},
+		{
+			"type": 1,
+			"name": "fail2ban",
+			"title": "Fail2Ban by Neomediatech",
+			"description": "Dockerized Fail2Ban",
+			"note": " ",
+			"categories": [
+				"Other"
+			],
+			"platform": "linux",
+			"logo": "https://raw.githubusercontent.com/Neomediatech/fail2ban/master/fail2ban_logo.png",
+			"image": "neomediatech/fail2ban:from-source",
+			"hostname": "fail2ban",
+			"network": "host",
+			"volumes": [
+			  {
+			    "container": "/data",
+			    "bind": "/srv/data/fail2ban/confs"
+			  },
+			  {
+			    "container": "/var/log",
+			    "bind": "/srv/data/honeypot/logs"
+			  }
+			],
+			"restart_policy": "always",
+			"privileged": true,
+			"env": [{
+				 "name": "ABUSEIPDB_APIKEY",
+				 "label": "ABUSEIPDB_APIKEY",
+				 "description": "_",
+			         "default": "see it in host container directory"
+				},
+				{
+				 "name": "NODE_NAME",
+				 "label": "NODE_NAME",
+				 "description": "_",
+			         "default": "same as canary node id"
+				},
+				{
+				 "name": "REDIS_HOST",
+				 "label": "REDIS_HOST",
+				 "description": " ",
+				 "default": "redis-antispam.n.. (maybe not needed anymore)"
+				},
+				{
+				 "name": "REDIS_PORT",
+				 "label": "REDIS_PORT",
+				 "description": "_",
+			         "default": "6399"
+				}
+			]
+		},
+  ]
+} 
