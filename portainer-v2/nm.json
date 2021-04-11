@@ -79,6 +79,12 @@
 				 "label": "STACK_BASE_PATH",
 				 "description": "Path for the stack. Must exists before launching this stack!",
 			         "default": "/srv/data/docker/containers/rbldns"
+				},
+				{
+				 "name": "PORT",
+				 "label": "PORT",
+				 "description": "Port to listen to",
+			         "default": "53"
 				}
 			]
 		},
