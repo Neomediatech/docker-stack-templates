@@ -387,7 +387,7 @@
 			    "readonly": true
 			  }
 			],
-			"restart_policy": "always"
+			"restart_policy": "always",
 			"env": [{
 				 "name": "RBL_DOMAIN",
 				 "label": "RBL_DOMAIN",
