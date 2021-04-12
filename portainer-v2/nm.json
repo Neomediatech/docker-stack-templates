@@ -353,7 +353,7 @@
 		},
 		{
 			"type": 1,
-			"name": "rbldns",
+			"name": "rbldns-container",
 			"title": "RBLdns by Neomediatech (container)",
 			"description": "lista rbl basata su file",
 			"note": "<h1>IMPORTANT:</h1>You must create the path where you host configurations, eg: <strong>mkdir -p /srv/data/docker/containers/rbldns</strong> <br/>",
