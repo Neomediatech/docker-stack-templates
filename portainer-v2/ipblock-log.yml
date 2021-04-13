@@ -1,9 +1,6 @@
-# !!! WIP !!!
-# WARNING: This stack depends on traefik.yml stack
+# WARNING: This stack depends on traefik-v2.yml stack
 # STACK_BASE_PATH [base folder where to host files, must exists]
 # DOMAIN: base domain for LE certificates
-# TODO: stunnel accepting connections instead of mariadb directly
-# remember to allow only trusted ip, by setting iptables rules (iptables -A INPUT -p tcp --dport 3306 -s [ip] -j ACCEPT)
 # STACK_BASE_PATH=/srv/data/docker/containers/ipblock-log ; grep device ipblock-log.yml|grep -v "#"|awk '{print $2}'|while read dir; do eval mkdir -p $dir; done
 # echo "db_root_password" > ${STACK_BASE_PATH}/db/data/db-root.pwd
 # echo "db_user_password" > ${STACK_BASE_PATH}/db/data/db-user.pwd
@@ -14,28 +11,25 @@ version: '3.7'
 
 x-envs: &common-vars
   TZ: Europe/Rome
-  MYSQL_ROOT_PASSWORD_FILE: /var/lib/mysql/db-root.pwd
-  MYSQL_PASSWORD_FILE: /var/lib/mysql/db-user.pwd
-  MYSQL_USER_FILE: /var/lib/mysql/db-user.txt
+  MYSQL_ROOT_PASSWORD_FILE: /common/db-root.pwd
+  MYSQL_PASSWORD_FILE: /common/db-user.pwd
+  MYSQL_USER_FILE: /common/db-user.txt
   MYSQL_HOST: ${MYSQL_HOST:-db}
 
 services:
   db:
     image: mariadb:10
     hostname: db
-    ports:
-      - target: 3306
-        published: 3306
-        mode: host
     command: >
       --transaction-isolation=READ-COMMITTED
       --binlog-format=ROW
     volumes:
       - db_data:/var/lib/mysql
       - db_scripts:/docker-entrypoint-initdb.d
+      - common:/common:ro
     environment:
       << : *common-vars
-      MYSQL_DATABASE_FILE: /var/lib/mysql/db-name.txt
+      MYSQL_DATABASE_FILE: /common/db-name.txt
     networks:
       - private
     deploy:
@@ -89,7 +83,7 @@ services:
     networks:
       - private
     volumes:
-      - db_data:/var/lib/mysql
+      - common:/var/lib/mysql:ro
       - crontabs:/var/spool/cron/crontabs
       - cron_scripts:/scripts
       - db_backups:/backups
@@ -137,8 +131,10 @@ services:
       - app_html:/usr/share/nginx/html
       - rbldnsd_data:/data
       - logs:/logs
+      - common:/common:ro
     environment:
-      TZ: Europe/Rome
+      << : *common-vars
+      MYSQL_DATABASE_FILE: /common/db-name.txt
     networks:
       - private
     #depends_on:
@@ -418,3 +414,10 @@ volumes:
       type: none
       o: bind
       device: ${STACK_BASE_PATH}/redis_logs/db
+
+  common:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/common
