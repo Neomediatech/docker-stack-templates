@@ -20,7 +20,7 @@ x-default-opts:
 
 services:
   nginx:
-    image: nginx:1.18
+    image: nginx:1.19
     hostname: nginx
     <<: *default-opts    
     ports:
