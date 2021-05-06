@@ -20,7 +20,7 @@ x-default-opts:
 
 services:
   nginx:
-    image: nginx:1.19
+    image: nginx:1.20
     hostname: nginx
     <<: *default-opts    
     ports:
@@ -45,7 +45,7 @@ services:
     stop_grace_period: 20s
 
   app:
-    image: nextcloud:19-fpm 
+    image: nextcloud:20-fpm 
     hostname: app
     <<: *default-opts    
     volumes:
@@ -64,7 +64,7 @@ services:
     stop_grace_period: 20s
 
   cron:
-    image: nextcloud:19-fpm
+    image: nextcloud:20-fpm
     hostname: cron
     <<: *default-opts
     volumes:
