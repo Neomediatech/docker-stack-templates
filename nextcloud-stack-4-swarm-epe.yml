@@ -20,8 +20,7 @@ x-default-opts:
 
 services:
   nginx:
-    image: nginx:1.17
-    #    restart: unless-stopped
+    image: nginx:1.18
     hostname: nginx
     <<: *default-opts    
     ports:
@@ -31,8 +30,9 @@ services:
         mode: host
     volumes:
       - /srv/data/nextcloud/nginx/nextcloud.conf:/etc/nginx/nginx.conf:ro
-#      - /srv/data/website/nginx/app.conf:/etc/nginx/conf.d/app.conf:ro
       - app:/var/www/html
+      - nc_custom_apps:/var/www/html/custom_apps
+      - nc_config:/var/www/html/config
       - logs:/var/log/nginx
       - /srv/data/nextcloud/nginx/entrypoint.sh:/entrypoint.sh:ro
     environment:
@@ -42,12 +42,6 @@ services:
       - app
     entrypoint: ["/entrypoint.sh"]
     command: ["nginx", "-g", "daemon off;"]
- #   healthcheck:
- #     test: ["CMD", "/bin/sh", "-c", "nc -w 7 -zv 0.0.0.0 80 || (echo \"Very bad things are happening here...\" && exit 1)"]
- #     interval: 30s
- #     timeout: 10s
- #     start_period: 90s
- #     retries: 6
     stop_grace_period: 20s
 
   app:
@@ -56,6 +50,8 @@ services:
     <<: *default-opts    
     volumes:
       - app:/var/www/html
+      - nc_custom_apps:/var/www/html/custom_apps
+      - nc_config:/var/www/html/config
       - testi:/testi
     environment:
       TZ: Europe/Rome
@@ -73,6 +69,8 @@ services:
     <<: *default-opts
     volumes:
       - app:/var/www/html
+      - nc_custom_apps:/var/www/html/custom_apps
+      - nc_config:/var/www/html/config
     environment:
       TZ: Europe/Rome
       << : *common-vars
@@ -103,7 +101,7 @@ services:
     command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW
 
   redis:
-    image: redis:5-alpine
+    image: redis:6-alpine
     hostname: redis
     <<: *default-opts
     environment:
@@ -142,9 +140,25 @@ volumes:
     driver_opts:
       type: none
       o: bind
-      device: /srv/data/nextcloud/app
+      device: /srv/data/nextcloud/app/html
+
+  nc_custom_apps:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /srv/data/nextcloud/app/custom_apps
+
+  nc_config:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /srv/data/nextcloud/app/config
+
   redis:
     driver: local
+
   testi:
     driver: local
     driver_opts:
