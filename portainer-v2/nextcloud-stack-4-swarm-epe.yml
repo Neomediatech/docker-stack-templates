@@ -2,12 +2,12 @@
 version: '3.7'
 
 x-environment: &common-vars
-  MYSQL_DATABASE_FILE: 
+  MYSQL_DATABASE_FILE: /run/secrets/nc-db-file.txt
   TZ: Europe/Rome
   UPLOAD_MAX_SIZE: 20G
-  MYSQL_ROOT_PASSWORD_FILE: 
-  MYSQL_PASSWORD_FILE: 
-  MYSQL_USER_FILE: 
+  MYSQL_ROOT_PASSWORD_FILE: /run/secrets/nc-db-root-pwd.txt
+  MYSQL_PASSWORD_FILE: /run/secrets/nc-db-pwd.txt
+  MYSQL_USER_FILE: /run/secrets/nc-db-user.txt
   
 x-default-opts: 
   &default-opts
