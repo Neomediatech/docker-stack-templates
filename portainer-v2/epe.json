@@ -48,7 +48,7 @@
 				},
 				{
 				 "name": "HONEYPOT",
-				 "label": "Is this exim container an Honeypot?",
+				 "label": "Am I a Honeypot?",
 				 "description": "Normally false",
 				 "select": [
 				  {
