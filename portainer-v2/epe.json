@@ -45,6 +45,22 @@
 				 "label": "STACK_BASE_PATH",
 				 "description": "Percorso base dello stack all'interno dell'host (deve esistere!)",
 			         "default": "/srv/data/email"
+				},
+				{
+				 "name": "HONEYPOT",
+				 "label": "Is this exim container an Honeypot?",
+				 "description": "Normally false",
+				 "select": [
+				  {
+				   "text": "false",
+				   "value": "false",
+				   "default": true
+				  },
+				  {
+				   "text": "true",
+				   "value": "true"
+				  }
+				 ]
 				}
 			]
 		},
