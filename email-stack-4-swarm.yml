@@ -36,6 +36,7 @@ services:
       - logs:/data/logs
       - common_data:/data/common
       - certs:/data/certs
+      - dovecot_conf:/etc/dovecot/conf.d
     environment:
       MAILSERVER_CERT: "${MAILSERVER_CERT}"
   
@@ -338,3 +339,9 @@ volumes:
       type: none
       o: bind
       device: /srv/data/databases/webmail
+  dovecot_conf:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/dovecot/conf
