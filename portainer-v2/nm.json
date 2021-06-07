@@ -350,6 +350,45 @@
 			  }
 			],
 			"restart_policy": "always"
+		},
+		{
+			"type": 1,
+			"name": "sshd",
+			"title": "SSHd by Neomediatech",
+			"description": "SSHd container",
+			"note": "_",
+			"categories": [
+				"Other"
+			],
+			"platform": "linux",
+			"logo": "https://raw.githubusercontent.com/Neomediatech/sshd/master/openssh_logo.png",
+			"image": "neomediatech/sshd:latest",
+			"hostname": "sshd",
+			"network": "bridge",
+			"ports": ["22222:22/tcp"],
+			"volumes": [
+			  {
+			    "container": "/etc/ssh",
+			    "bind": "/srv/data/docker/containers/sshd/conf"
+			  },
+			  {
+			    "container": "/home",
+			    "bind": "/srv/data/docker/containers/sshd/home"
+			  },
+			  {
+			    "container": "/root",
+			    "bind": "/srv/data/docker/containers/sshd/root"
+			  },
+			  {
+			    "container": "/data",
+			    "bind": "/srv/data/docker/containers/sshd/shadowdir"
+			  },
+			  {
+			    "container": "/var/log",
+			    "bind": "/srv/data/docker/containers/sshd/logs"
+			  }
+			],
+			"restart_policy": "always"
 		}
   ]
 } 
