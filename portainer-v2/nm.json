@@ -267,6 +267,31 @@
 			]
 		},
 		{
+			"type": 2,
+			"name": "sshd",
+			"title": "SSHd by Neomediatech",
+			"description": "SSHd container",
+			"note": "<b>STACK_BASE_PATH=/srv/data/docker/containers/sshd ; mkdir -p ${STACK_BASE_PATH}/{conf,home,root,shadowdir,logs}</b>",
+			"categories": [
+				"Other"
+			],
+			"platform": "linux",
+			"logo": "https://raw.githubusercontent.com/Neomediatech/sshd/master/openssh_logo.png",
+			"image": "neomediatech/sshd:latest",
+			"hostname": "sshd",
+			"repository": {
+				"url": "https://github.com/Neomediatech/sshd",
+				"stackfile": "docker-compose.yml"
+			},
+			"env": [{
+				 "name": "STACK_BASE_PATH",
+				 "label": "STACK_BASE_PATH",
+				 "description": "Path for the stack. Must exists before launching this stack!",
+			         "default": "/srv/data/docker/containers/sshd"
+				}
+			]
+		},
+		{
 			"type": 1,
 			"name": "fail2ban",
 			"title": "Fail2Ban by Neomediatech",
