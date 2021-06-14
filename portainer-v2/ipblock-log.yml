@@ -173,7 +173,7 @@ services:
         - "traefik.http.routers.frontend.middlewares=nm-ipwhitelist@file, redirect2https@file"
         - "traefik.http.services.frontend.loadbalancer.server.port=80"
   redis:
-    image: redis:5-alpine
+    image: redis:6-alpine
     hostname: redis
     environment:
       TZ: Europe/Rome
@@ -195,7 +195,7 @@ services:
     stop_grace_period: 1m
 
   redis-archive:
-    image: redis:5-alpine
+    image: redis:6-alpine
     hostname: redis-archive
     environment:
       TZ: Europe/Rome
@@ -217,7 +217,7 @@ services:
     stop_grace_period: 1m
 
   redis-logs:
-    image: redis:5-alpine
+    image: redis:6-alpine
     hostname: redis-logs
     environment:
       TZ: Europe/Rome
