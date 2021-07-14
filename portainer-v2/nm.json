@@ -414,6 +414,35 @@
 			  }
 			],
 			"restart_policy": "always"
+		},
+		{
+			"type": 1,
+			"name": "logspout",
+			"title": "Logspout from gliderlabs",
+			"description": "Log router for Docker containers that runs inside Docker",
+			"note": "!!WARNING!! WORK IN PROGRESS! USE AT YOU OWN RISK!",
+			"categories": [
+				"Other"
+			],
+			"platform": "linux",
+			"logo": "https://github.com/Neomediatech/docker-stack-templates/raw/master/nm-logo.png",
+			"image": "gliderlabs/logspout:latest",
+			"command": "syslog://10.205.33.1:514",
+			"hostname": "logspout",
+			"network": "bridge",
+			"ports": ["48181:80/tcp"],
+			"volumes": [
+			  {
+			    "container": "/var/run/docker.sock",
+			    "bind": "/var/run/docker.sock"
+			  },
+			  {
+			    "container": "/etc/localtime",
+			    "bind": "/etc/localtime",
+			    "readonly": true
+			  }
+			],
+			"restart_policy": "always"
 		}
   ]
 } 
