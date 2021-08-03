@@ -117,22 +117,6 @@ services:
       - redis
       - rspamd
 
-  clamav:
-    image: neomediatech/clamav:latest
-    hostname: clamav
-    <<: *default-opts    
-    volumes:
-      - clamav_defs:/var/lib/clamav
-    environment:
-      << : *common-vars
-    stop_grace_period: 1m
-    deploy:
-      restart_policy:
-        condition: any
-        delay: 15s
-        max_attempts: 20
-        window: 40s
-
   dovecot:
     image: neomediatech/dovecot-honey:latest
     hostname: dovecot-honey
@@ -241,38 +225,6 @@ services:
     volumes:
       - logs:/data
 
-  samba:
-    image: neomediatech/samba-honey:latest
-    hostname: samba
-    <<: *default-opts    
-    environment:
-      << : *common-vars
-    ports:
-      - target: 445
-        published: 23445
-        protocol: tcp
-        mode: host
-    volumes:
-      - logs:/var/log/samba
-      - samba_shares:/shares
-      - /srv/data/honeypot/samba/smb.conf:/etc/samba/smb.conf:ro
-
-  samba-139:
-    image: neomediatech/samba-honey:latest
-    hostname: samba-139
-    <<: *default-opts    
-    environment:
-      << : *common-vars
-    ports:
-      - target: 139
-        published: 23139
-        protocol: tcp
-        mode: host
-    volumes:
-      - logs:/var/log/samba
-      - samba_shares:/shares
-      - /srv/data/honeypot/samba/smb-139.conf:/etc/samba/smb.conf:ro
-
   roundcube:
     image: roundcube/roundcubemail
     hostname: roundcube
@@ -334,12 +286,6 @@ volumes:
       type: none
       o: bind
       device: ${STACK_BASE_PATH}/nginx/snippets
-  clamav_defs:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ${STACK_BASE_PATH}/clamav/defs
   logs:
     driver: local
     driver_opts:
@@ -364,12 +310,6 @@ volumes:
       type: none
       o: bind
       device: ${STACK_BASE_PATH}/roundcube/db/
-  samba_shares:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ${STACK_BASE_PATH}/samba/shares/
   dovecot_common:
     driver: local
     driver_opts:
