@@ -5,12 +5,7 @@ version: '2'
 
 x-default-opts: 
   &default-opts
-  deploy:
-    restart_policy:
-      condition: any
-      delay: 10s
-      max_attempts: 300
-      window: 120s
+  restart: unless-stopped
 
 x-environment: &common-vars
     TZ: Europe/Rome
