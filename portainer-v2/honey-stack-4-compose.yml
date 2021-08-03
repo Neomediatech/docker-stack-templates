@@ -46,10 +46,8 @@ services:
       - logs:/var/log/rspamd/
     environment:
       << : *common-vars
-      WAITFOR: clamav:clamav
     depends_on:
       - redis
-      - clamav
     stop_grace_period: 1m
 
   dcc:
@@ -110,10 +108,9 @@ services:
       - exim_good_data:/data/mail
     environment:
       << : *common-vars
-      WAITFOR: "dovecot:dovecot clamav:clamav redis:redis rspamd:rspamd"
+      WAITFOR: "dovecot:dovecot redis:redis rspamd:rspamd"
     depends_on:
       - dovecot
-      - clamav
       - redis
       - rspamd
 
