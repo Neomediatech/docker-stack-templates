@@ -1,6 +1,7 @@
 # use to create a swarm template in Portainer
 # STACK_BASE_PATH [base folder where to host files, must exists]
 # STACK_BASE_PATH=/srv/data/honeypot ; grep device honey-stack3-4-swarm.yml|grep -v "#"|awk '{print $2}'|while read dir; do eval mkdir -p $dir; done
+# LOGS_PATH=/srv/data/docker/containers/fail2ban/logs/honeypot
 version: '2'
 
 x-default-opts: 
@@ -288,7 +289,7 @@ volumes:
     driver_opts:
       type: none
       o: bind
-      device: ${STACK_BASE_PATH}/logs
+      device: ${LOGS_PATH}
   dovecot_good_data:
     driver: local
     driver_opts:
