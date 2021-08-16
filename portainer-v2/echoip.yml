@@ -10,7 +10,7 @@ services:
     hostname: echoip
     networks:
       - traefik-public
-    command: ["--trusted-header=X-Real-IP", "-r", "--city-db=/data/city.mmdb","--country-db=/data/country.mmdb","--asn-db=/data/asn.mmdb"]
+    command: ["-H", "X-Real-IP", "-r", "-c", "/data/city.mmdb","-f", "/data/country.mmdb","-a", "/data/asn.mmdb"]
     deploy:
       mode: replicated
       replicas: 1
