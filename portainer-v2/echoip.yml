@@ -30,7 +30,7 @@ services:
         - "traefik.http.routers.echoip.middlewares=rate-limit@file"
         - "traefik.http.services.echoip.loadbalancer.server.port=8080"
     volumes:
-      - ${STACK_BASE_PATH}/index.html:/opt/echoip/index.html:ro
+      - ${STACK_BASE_PATH}/index.html:/opt/echoip/html/index.html:ro
       - ${STACK_BASE_PATH}/:/data
 
 networks:
