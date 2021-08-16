@@ -231,7 +231,7 @@
 			],
 			"platform": "linux",
 			"logo": "https://raw.githubusercontent.com/Neomediatech/pdfsplit/master/pdfsplit-logo.png",
-			"image": "neomediatech/pdfsplit:latest",
+			"image": "neomediatech/pdfsplit:20.04",
 			"hostname": "pdfsplit",
 			"network": "bridge",
 			"ports": ["2223:22/tcp"],
