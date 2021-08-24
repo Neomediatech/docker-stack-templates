@@ -323,6 +323,11 @@
 			    "container": "/var/log/nginx-catchall",
 			    "bind": "/srv/data/docker/containers/traefik/logs",
 			    "readonly": true
+			  },
+			  {
+			    "container": "/var/log/sshd",
+			    "bind": "/srv/data/docker/containers/sshd/logs",
+			    "readonly": true
 			  }
 			],
 			"restart_policy": "always",
