@@ -1,0 +1,316 @@
+# use to create a swarm template in Portainer
+# STACK_BASE_PATH [base folder where to host files, must exists]
+# STACK_BASE_PATH=/srv/data/honeypot ; grep device honey-stack3-4-swarm.yml|grep -v "#"|awk '{print $2}'|while read dir; do eval mkdir -p $dir; done
+# LOGS_PATH=/srv/data/docker/containers/fail2ban/logs/honeypot
+version: '3.7'
+
+x-default-opts: 
+  &default-opts
+  restart: unless-stopped
+
+x-environment: &common-vars
+    TZ: Europe/Rome
+
+services:
+  redis:
+    image: redis:5-alpine
+    hostname: redis-honey
+    <<: *default-opts    
+    environment:
+      << : *common-vars
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis_db:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 10s
+      retries: 3
+    # according to https://github.com/moby/moby/pull/37701#issuecomment-448014841
+    # on docker 19.03 you will be able to set /proc/sys/net/core/somaxconn to 511 instead of default 128
+    # like this example below (maybe syntax will change)
+    #sysctls:
+    #  - net.core.somaxconn=511
+    stop_grace_period: 1m
+
+  rspamd:
+    image: neomediatech/rspamd-honey:latest
+    hostname: rspamd-honey
+    <<: *default-opts
+    ports:
+      - target: 11334
+        published: 11334
+        protocol: tcp
+        mode: host
+    volumes:
+      - rspamd_data:/var/lib/rspamd
+      - logs:/var/log/rspamd/
+    environment:
+      << : *common-vars
+    depends_on:
+      - redis
+    stop_grace_period: 1m
+
+  dcc:
+    image: neomediatech/dcc:latest
+    hostname: dcc-honey
+    <<: *default-opts    
+    environment:
+      << : *common-vars
+
+  nginx:
+    image: neomediatech/nginx-honey:latest
+    hostname: nginx-honey
+    <<: *default-opts
+    ports:
+      - target: 80
+        published: 80
+        protocol: tcp
+        mode: host
+      - target: 443
+        published: 443
+        protocol: tcp
+        mode: host    
+    volumes:
+      - web:/usr/share/nginx/html/
+      - nginx_confs:/data/
+      - nginx_snippets:/snippets/
+      - logs:/logs/
+    environment:
+      << : *common-vars
+    depends_on:
+      - php-fpm
+    healthcheck:
+      test: ["CMD", "/bin/sh", "-c", "nc -w 7 -zv 0.0.0.0 80 || (echo \"Very bad things are happening here...\" && exit 1)"]
+      interval: 30s
+      timeout: 10s
+      start_period: 90s
+      retries: 6
+
+  exim:
+    image: neomediatech/exim-honey-alpine:latest
+    hostname: exim-honey
+    <<: *default-opts    
+    ports:
+      - target: 25
+        published: 25
+        protocol: tcp
+        mode: host
+      - target: 465
+        published: 465
+        protocol: tcp
+        mode: host
+      - target: 587
+        published: 587
+        protocol: tcp
+        mode: host
+    volumes:
+      - logs:/var/log/exim/
+      - exim_good_data:/data/mail
+    environment:
+      << : *common-vars
+      WAITFOR: "dovecot:dovecot redis:redis rspamd:rspamd"
+    depends_on:
+      - dovecot
+      - redis
+      - rspamd
+
+  dovecot:
+    image: neomediatech/dovecot-honey:latest
+    hostname: dovecot-honey
+    <<: *default-opts
+    ports:
+      - target: 143
+        published: 143
+        protocol: tcp
+        mode: host
+      - target: 993
+        published: 993
+        protocol: tcp
+        mode: host
+      - target: 110
+        published: 110
+        protocol: tcp
+        mode: host
+      - target: 995
+        published: 995
+        protocol: tcp
+        mode: host
+    volumes:
+      - logs:/var/log/dovecot/
+      - dovecot_good_data:/data/dovecot
+      - dovecot_common:/data/common
+    environment:
+      << : *common-vars
+
+  php-fpm:
+    image: php:7.4-fpm-alpine
+    hostname: php-fpm
+    <<: *default-opts
+    volumes:
+      - web:/usr/share/nginx/html/
+      - logs:/var/www/html/
+    environment:
+      << : *common-vars
+    healthcheck:
+      test: ["CMD", "nc", "-w", "7", "-zv", "0.0.0.0", "9000"]
+      interval: 30s
+      timeout: 30s
+      start_period: 60s
+      retries: 20
+
+  opencanary:
+    image: neomediatech/opencanary:latest
+    hostname: opencanary
+    <<: *default-opts    
+    environment:
+      << : *common-vars
+      OPENCANARY_NODE_ID: "${OPENCANARY_NODE_ID:-opencanary}"
+    stop_grace_period: 20s
+    ports:
+      - target: 21
+        published: 21
+        protocol: tcp
+        mode: host
+      - target: 22
+        published: 2022
+        protocol: tcp
+        mode: host
+      - target: 23
+        published: 23
+        protocol: tcp
+        mode: host
+      - target: 2323
+        published: 2323
+        protocol: tcp
+        mode: host
+      - target: 5900
+        published: 5900
+        protocol: tcp
+        mode: host
+      - target: 3306
+        published: 3306
+        protocol: tcp
+        mode: host    
+      - target: 6379
+        published: 6379
+        protocol: tcp
+        mode: host    
+      - target: 1433
+        published: 1433
+        protocol: tcp
+        mode: host
+      - target: 3389
+        published: 3389
+        protocol: tcp
+        mode: host
+      - target: 8080
+        published: 8080
+        protocol: tcp
+        mode: host
+      - target: 69
+        published: 69
+        protocol: udp
+        mode: host
+      - target: 161
+        published: 161
+        protocol: udp
+        mode: host
+      - target: 123
+        published: 123
+        protocol: udp
+        mode: host
+    volumes:
+      - logs:/data
+
+  roundcube:
+    image: roundcube/roundcubemail
+    hostname: roundcube
+    <<: *default-opts    
+    environment:
+      << : *common-vars
+      ROUNDCUBEMAIL_DEFAULT_HOST: dovecot-good
+      ROUNDCUBEMAIL_SMTP_SERVER: nosmtp
+    stop_grace_period: 20s
+    ports:
+      - target: 80
+        published: 8880
+        protocol: tcp
+        mode: host
+    volumes:
+      - roundcube_data:/var/www/html/db/
+
+  dovecot-good:
+    image: neomediatech/dovecot:latest
+    hostname: dovecot
+    <<: *default-opts    
+    ports:
+      - target: 143
+        published: 31143
+        protocol: tcp
+        mode: host
+    volumes:
+      - logs:/data/logs
+      - dovecot_good_data:/data
+      
+volumes:
+  redis_db:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/redis/db
+  rspamd_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/rspamd/var
+  web:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/nginx/html
+  nginx_confs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/nginx/conf
+  nginx_snippets:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/nginx/snippets
+  logs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${LOGS_PATH}
+  dovecot_good_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/dovecot
+  exim_good_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/dovecot/home/honeyuser/Maildir/
+  roundcube_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/roundcube/db/
+  dovecot_common:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/dovecot/common/
