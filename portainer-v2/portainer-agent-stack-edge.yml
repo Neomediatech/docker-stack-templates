@@ -2,7 +2,7 @@ version: '3.2'
 
 services:
   portainer:
-    image: portainer/portainer
+    image: portainer/portainer-ce
     command: -H "tcp://tasks.portainer_agent:9001" --tlsskipverify
     ports:
       - "9000:9000"
