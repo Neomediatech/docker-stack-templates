@@ -1,0 +1,227 @@
+# use to create a swarm template in Portainer
+# STACK_BASE_PATH [base folder where to host files, must exists]
+# STACK_BASE_PATH=/srv/data/honeypot ; grep device honey-stack3-4-swarm.yml|grep -v "#"|awk '{print $2}'|while read dir; do eval mkdir -p $dir; done
+# LOGS_PATH=/srv/data/docker/containers/fail2ban/logs/honeypot
+version: '3.7'
+
+x-default-opts: 
+  &default-opts
+  restart: unless-stopped
+
+x-environment: &common-vars
+    TZ: Europe/Rome
+
+services:
+  honey:
+    image: neomediatech/honeypot-allinone
+    hostname: honeypot
+    <<: *default-opts    
+    environment:
+      << : *common-vars
+      OPENCANARY_NODE_ID: "${OPENCANARY_NODE_ID:-opencanary}"
+    volumes:
+      - clamav_defs:/var/lib/clamav
+      - clamav_unoff_defs:/var/lib/clamav-unofficial-sigs
+      - rspamd_data:/var/lib/rspamd
+      - data:/data
+      - nginx_confs:/data/
+      - nginx_snippets:/snippets/
+      - exim_spool:/var/spool/exim4
+      - exim_conf:/data/conf
+      - dovecot_common:/data/common
+      - web:/usr/share/nginx/html/
+      - logs:/var/log
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/locale.gen:/etc/locale.gen:ro
+
+      - redis_db:/data
+    stop_grace_period: 1m
+    ports:
+      - target: 11334
+        published: 11334
+        protocol: tcp
+        mode: host
+      - target: 80
+        published: 80
+        protocol: tcp
+        mode: host
+      - target: 443
+        published: 443
+        protocol: tcp
+        mode: host    
+      - target: 25
+        published: 25
+        protocol: tcp
+        mode: host
+      - target: 465
+        published: 465
+        protocol: tcp
+        mode: host
+      - target: 587
+        published: 587
+        protocol: tcp
+        mode: host
+      - target: 143
+        published: 143
+        protocol: tcp
+        mode: host
+      - target: 993
+        published: 993
+        protocol: tcp
+        mode: host
+      - target: 110
+        published: 110
+        protocol: tcp
+        mode: host
+      - target: 995
+        published: 995
+        protocol: tcp
+        mode: host
+      - target: 21
+        published: 21
+        protocol: tcp
+        mode: host
+      - target: 22
+        published: 2022
+        protocol: tcp
+        mode: host
+      - target: 23
+        published: 23
+        protocol: tcp
+        mode: host
+      - target: 2323
+        published: 2323
+        protocol: tcp
+        mode: host
+      - target: 5900
+        published: 5900
+        protocol: tcp
+        mode: host
+      - target: 3306
+        published: 3306
+        protocol: tcp
+        mode: host    
+      - target: 6379
+        published: 6379
+        protocol: tcp
+        mode: host    
+      - target: 1433
+        published: 1433
+        protocol: tcp
+        mode: host
+      - target: 3389
+        published: 3389
+        protocol: tcp
+        mode: host
+      - target: 8080
+        published: 8080
+        protocol: tcp
+        mode: host
+      - target: 69
+        published: 69
+        protocol: udp
+        mode: host
+      - target: 161
+        published: 161
+        protocol: udp
+        mode: host
+      - target: 123
+        published: 123
+        protocol: udp
+        mode: host
+
+#    healthcheck:
+#      test: ["CMD", "/bin/sh", "-c", "nc -w 7 -zv 0.0.0.0 80 || (echo \"Very bad things are happening here...\" && exit 1)"]
+#      interval: 30s
+#      timeout: 10s
+#      start_period: 90s
+#      retries: 6
+
+#    healthcheck:
+#      test: ["CMD", "nc", "-w", "7", "-zv", "0.0.0.0", "9000"]
+#      interval: 30s
+#      timeout: 30s
+#      start_period: 60s
+#      retries: 20
+
+#    healthcheck:
+#     test: ["CMD", "todo", "ping"]
+#     interval: 10s
+#     timeout: 10s
+#     retries: 3
+
+      
+volumes:
+  clamav_defs
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/clamav/defs
+  clamav_unoff_defs
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/clamav/unoff_defs
+  data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/data
+  rspamd_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/rspamd/var
+  web:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/nginx/html
+  nginx_confs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/nginx/conf
+  nginx_snippets:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/nginx/snippets
+  logs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${LOGS_PATH}
+  exim_conf:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/exim4/conf
+  exim_spool:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/exim4/spool
+  roundcube_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/roundcube/db/
+  dovecot_common:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/dovecot/common/
