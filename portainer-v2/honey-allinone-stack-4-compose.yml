@@ -23,6 +23,7 @@ services:
       - clamav_defs:/var/lib/clamav
       - clamav_unoff_defs:/var/lib/clamav-unofficial-sigs
       - rspamd_data:/var/lib/rspamd
+      - rspamd_conf:/data/rspamd/conf
       - data:/data
       - nginx_confs:/data/
       - nginx_snippets:/snippets/
@@ -153,13 +154,13 @@ services:
 
       
 volumes:
-  clamav_defs
+  clamav_defs:
     driver: local
     driver_opts:
       type: none
       o: bind
       device: ${STACK_BASE_PATH}/clamav/defs
-  clamav_unoff_defs
+  clamav_unoff_defs:
     driver: local
     driver_opts:
       type: none
@@ -177,6 +178,12 @@ volumes:
       type: none
       o: bind
       device: ${STACK_BASE_PATH}/rspamd/var
+  rspamd_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/rspamd/conf
   web:
     driver: local
     driver_opts:
