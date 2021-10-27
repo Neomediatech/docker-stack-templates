@@ -481,7 +481,13 @@
 				 "label": "LOGS_PATH",
 				 "description": "Path for logfiles. Must exists before launching this stack!",
 			         "default": "/srv/data/docker/containers/fail2ban/logs/honeypot"
-				}
+				},
+				{
+				 "name": "EXIM_LOGDIR",
+				 "label": "EXIM_LOGDIR",
+				 "description": "Path for Exim4 logfiles. Must exists before launching this stack!",
+			         "default": "/data/log"
+				}				
 			]
 		},
 		{
