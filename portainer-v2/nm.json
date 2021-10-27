@@ -487,7 +487,13 @@
 				 "label": "EXIM_LOGDIR",
 				 "description": "Path for Exim4 logfiles. Must exists before launching this stack!",
 			         "default": "/data/log"
-				}				
+				},
+				{
+				 "name": "MAILSERVER_CERT",
+				 "label": "MAILSERVER_CERT",
+				 "description": "FQDN server name for the SSL/TLS certificate, will not be automatically generated",
+			         "default": "noservername.domain.tld"
+				}
 			]
 		},
 		{
