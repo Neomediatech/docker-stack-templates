@@ -104,7 +104,7 @@ services:
         protocol: tcp
         mode: host    
       - target: 6379
-        published: 6379
+        published: 6380
         protocol: tcp
         mode: host    
       - target: 1433
