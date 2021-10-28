@@ -23,13 +23,8 @@ services:
       - clamav_defs:/var/lib/clamav
       - clamav_unoff_defs:/var/lib/clamav-unofficial-sigs
       - rspamd_data:/var/lib/rspamd
-      - rspamd_conf:/data/rspamd/conf
       - data:/data
-      - nginx_confs:/data/
-      - nginx_snippets:/snippets/
       - exim_spool:/var/spool/exim4
-      - exim_conf:/data/conf
-      - dovecot_common:/data/common
       - web:/usr/share/nginx/html/
       - logs:/var/log
       - /etc/timezone:/etc/timezone:ro
@@ -178,57 +173,21 @@ volumes:
       type: none
       o: bind
       device: ${STACK_BASE_PATH}/rspamd/var
-  rspamd_data:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ${STACK_BASE_PATH}/rspamd/conf
   web:
     driver: local
     driver_opts:
       type: none
       o: bind
       device: ${STACK_BASE_PATH}/nginx/html
-  nginx_confs:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ${STACK_BASE_PATH}/nginx/conf
-  nginx_snippets:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ${STACK_BASE_PATH}/nginx/snippets
   logs:
     driver: local
     driver_opts:
       type: none
       o: bind
       device: ${LOGS_PATH}
-  exim_conf:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ${STACK_BASE_PATH}/exim4/conf
   exim_spool:
     driver: local
     driver_opts:
       type: none
       o: bind
       device: ${STACK_BASE_PATH}/exim4/spool
-  roundcube_data:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ${STACK_BASE_PATH}/roundcube/db/
-  dovecot_common:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ${STACK_BASE_PATH}/dovecot/common/
