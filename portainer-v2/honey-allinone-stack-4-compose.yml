@@ -30,8 +30,6 @@ services:
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
       - /etc/locale.gen:/etc/locale.gen:ro
-
-      - redis_db:/data
     stop_grace_period: 1m
     ports:
       - target: 11334
