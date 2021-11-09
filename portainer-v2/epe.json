@@ -170,6 +170,20 @@
 		},
 		{
 			"type": 2,
+			"name": "pgsql_reports",
+			"title": "PostgreSQL Reports by Neomediatech",
+			"description": "Container per generare i reports PDF dal db PostgreSQL",
+			"note": "Accesso: http://172.16.217.15:87/report.php <br> AGGIUNGERE/MODIFICARE utenti e password di accesso: <br> - apri una console 'portainer' sul container <br> - lancia il comando <b>htpasswd /var/www/html/.pwd nomeutente </b><br>(dove 'nomeutente' è l'utente di cui si vuole creare/cambiare la password) <br> - digita due volte la password desiderata <br>",
+			"categories": ["database"],
+			"platform": "linux",
+			"logo": "https://github.com/Neomediatech/php-apache-debian-docker/raw/master/mysql-pgsql-reports-logo.png",
+			"repository": {
+				"url": "https://github.com/Neomediatech/php-apache-debian-docker",
+				"stackfile": "pgsql-report-stack-4-swarm.yml"
+			}
+		},
+		{
+			"type": 2,
 			"name": "tftp",
 			"title": "TFTP service by Neomediatech",
 			"description": "Servizio TFTP per boot di emergenza e installazione server",
