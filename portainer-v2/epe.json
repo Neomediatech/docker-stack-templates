@@ -200,7 +200,7 @@
 				 "label": "STACK_BASE_PATH",
 				 "description": "Percorso base dello stack all'interno dell'host (deve esistere!)",
 			         "default": "/srv/data/phppgadmin"
-				},
+				}
 			]
 		},
 		{
