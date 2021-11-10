@@ -190,7 +190,7 @@
 			"note": "Accesso: http://172.16.217.15:8282",
 			"categories": ["database"],
 			"platform": "linux",
-			"logo": "https://raw.githubusercontent.com/Neomediatech/docker-stack-templates/master/phppgadmin-logo.png",
+			"logo": "https://raw.githubusercontent.com/Neomediatech/docker-stack-templates/master/portainer-v2/phppgadmin-logo.png",
 			"repository": {
 				"url": "https://github.com/Neomediatech/docker-stack-templates",
 				"stackfile": "portainer-v2/phppgadmin-stack.yml"
