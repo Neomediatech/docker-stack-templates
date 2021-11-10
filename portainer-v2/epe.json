@@ -184,6 +184,27 @@
 		},
 		{
 			"type": 2,
+			"name": "phppgadmin",
+			"title": "phpPgAdmin by Neomediatech",
+			"description": "Interfaccia PHP per accedere a PostgreSQL",
+			"note": "Accesso: http://172.16.217.15:8282",
+			"categories": ["database"],
+			"platform": "linux",
+			"logo": "https://raw.githubusercontent.com/Neomediatech/docker-stack-templates/master/portainer-v2/phppgadmin-logo.png",
+			"repository": {
+				"url": "https://github.com/Neomediatech/docker-stack-templates",
+				"stackfile": "portainer-v2/nextcloud-stack-4-swarm-epe.yml"
+			}
+			"env": [{
+				 "name": "STACK_BASE_PATH",
+				 "label": "STACK_BASE_PATH",
+				 "description": "Percorso base dello stack all'interno dell'host (deve esistere!)",
+			         "default": "/srv/data/phppgadmin"
+				}
+			]
+		},
+		{
+			"type": 2,
 			"name": "tftp",
 			"title": "TFTP service by Neomediatech",
 			"description": "Servizio TFTP per boot di emergenza e installazione server",
