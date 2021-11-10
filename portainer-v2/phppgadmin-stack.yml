@@ -1,0 +1,34 @@
+# stack name "phppgadmin"
+# STACK_BASE_PATH [base folder where to host files, must exists]
+# STACK_BASE_PATH=/srv/data/phppgadmin ; grep device pgadmin-stack.yml|grep -v "#"|awk '{print $2}'|while read dir; do eval mkdir -p $dir; done
+
+version: '3.7'
+
+services:
+  app:
+    image: neomediatech/php-apache:7
+    hostname: phppgadmin
+    ports:
+      - target: 80
+        published: 8387
+        protocol: tcp
+        mode: host
+    volumes:
+      - app:/var/www/html
+      - logs:/var/log/apache2
+    environment:
+      TZ: Europe/Rome
+
+volumes:
+  logs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/logs
+  app:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/app
