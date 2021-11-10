@@ -10,7 +10,7 @@ services:
     hostname: phppgadmin
     ports:
       - target: 80
-        published: 8387
+        published: 8283
         protocol: tcp
         mode: host
     volumes:
