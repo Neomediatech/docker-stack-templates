@@ -96,8 +96,8 @@ services:
         published: 3306
         protocol: tcp
         mode: host    
-      - target: 6380
-        published: 6380
+      - target: 6379
+        published: 6379
         protocol: tcp
         mode: host    
       - target: 1433
