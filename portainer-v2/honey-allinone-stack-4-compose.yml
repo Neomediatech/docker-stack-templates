@@ -25,7 +25,6 @@ services:
       - rspamd_data:/var/lib/rspamd
       - data:/data
       - exim_spool:/var/spool/exim4
-      - web:/usr/share/nginx/html/
       - logs:/var/log
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
@@ -171,12 +170,6 @@ volumes:
       type: none
       o: bind
       device: ${STACK_BASE_PATH}/rspamd/var
-  web:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ${STACK_BASE_PATH}/nginx/html
   logs:
     driver: local
     driver_opts:
