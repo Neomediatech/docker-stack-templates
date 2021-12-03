@@ -9,7 +9,9 @@ x-default-opts:
   restart: unless-stopped
 
 x-environment: &common-vars
-    TZ: Europe/Rome
+    TZ: "Europe/Rome"
+    CLAMAV_ENABLED: "${CLAMAV_ENABLED:-yes}"
+    OPENCANARY_NODE_ID: "${OPENCANARY_NODE_ID:-opencanary}"
 
 services:
   honey:
@@ -18,7 +20,6 @@ services:
     <<: *default-opts    
     environment:
       << : *common-vars
-      OPENCANARY_NODE_ID: "${OPENCANARY_NODE_ID:-opencanary}"
     volumes:
       - clamav_defs:/var/lib/clamav
       - clamav_unoff_defs:/var/lib/clamav-unofficial-sigs
