@@ -471,6 +471,12 @@
 			         "default": "honey-customise"
 				},
 				{
+				 "name": "CLAMAV_ENABLED",
+				 "label": "Enable ClamAV Antivirus?",
+				 "description": "Enable ClamAV Antivirus? [yes (Default), no]",
+			         "default": "yes"
+				},
+				{
 				 "name": "STACK_BASE_PATH",
 				 "label": "STACK_BASE_PATH",
 				 "description": "Path for the stack. Must exists before launching this stack!",
