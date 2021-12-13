@@ -1,0 +1,26 @@
+version: '3.7'
+
+x-environment: &common-vars
+    TEST_VAR1: "default text"
+
+services:
+  test:
+    image: bash
+    hostname: test
+    env_file: /tmp/test.env
+    deploy:
+      replicas: 1    
+    command: -c 'while true; do date; sleep 5; done'
+    volumes:
+      - test_vol:/data
+    environment:
+      << : *common-vars
+      TEST_VAR2: "another default text"
+
+volumes:
+  test_vol:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /tmp/test
