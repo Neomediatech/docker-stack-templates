@@ -575,7 +575,7 @@
 			"name": "test",
 			"title": "Test stack",
 			"description": "A stack to do various tests",
-			"note": "<h1>Thi stack does nothing</h1>It launches a bash shell that echoes the current date every five seconds",
+			"note": "<h1>This stack does nothing</h1>It launches a bash shell that echoes the current date every five seconds",
 			"categories": ["tests"],
 			"platform": "linux",
 			"logo": "https://raw.githubusercontent.com/Neomediatech/docker-stack-templates/master/portainer-v2/man-at-intellectual-work.png",
