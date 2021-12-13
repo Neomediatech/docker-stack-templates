@@ -497,6 +497,53 @@
 			]
 		},
 		{
+			"type": 3,
+			"name": "honeypot",
+			"title": "HoneyPot All-In-One",
+			"description": "Compose stack per collezionare tentativi di intrusione/spam",
+			"note": "<h1>Attenzione!</h1>Assicurati di aver creato tutti i vari path",
+			"categories": [
+				"HoneyPot"
+			],
+			"platform": "linux",
+			"logo": "https://raw.githubusercontent.com/Neomediatech/docker-stack-templates/master/honeypot.png",
+			"repository": {
+				"url": "https://github.com/Neomediatech/docker-stack-templates",
+				"stackfile": "portainer-v2/honey-allinone-stack-4-compose.yml"
+			},
+			"env": [{
+				 "name": "OPENCANARY_NODE_ID",
+				 "label": "Opencanary Node ID",
+				 "description": " ",
+			         "default": "honey-customise"
+				},
+				{
+				 "name": "CLAMAV_ENABLED",
+				 "label": "Enable ClamAV Antivirus?",
+				 "description": "Enable ClamAV Antivirus? [yes (Default), no]",
+			         "default": "yes"
+				},
+				{
+				 "name": "STACK_BASE_PATH",
+				 "label": "STACK_BASE_PATH",
+				 "description": "Path for the stack. Must exists before launching this stack!",
+			         "default": "/srv/data/docker/containers/honeypot"
+				},
+				{
+				 "name": "LOGS_PATH",
+				 "label": "LOGS_PATH",
+				 "description": "Path for logfiles. Must exists before launching this stack!",
+			         "default": "/srv/data/docker/containers/fail2ban/logs/honeypot"
+				},
+				{
+				 "name": "MAILSERVER_CERT",
+				 "label": "MAILSERVER_CERT",
+				 "description": "FQDN server name for the SSL/TLS certificate, will not be automatically generated",
+			         "default": "noservername.domain.tld"
+				}
+			]
+		},
+		{
 			"type": 2,
 			"name": "HoneyPot",
 			"title": "HoneyPot",
