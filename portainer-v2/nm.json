@@ -549,6 +549,24 @@
 				 "label": "STACK_BASE_PATH",
 				 "description": "Path for the stack. Must exists before launching this stack!",
 			         "default": "/srv/data/docker/containers/nextcloud-app"
+				},
+				{
+				 "name": "NC_SHARE1",
+				 "label": "NC_SHARE1",
+				 "description": "_",
+			         "default": "share1"
+				},
+				{
+				 "name": "NC_SHARE2",
+				 "label": "NC_SHARE2",
+				 "description": "_",
+			         "default": "share2"
+				},
+				{
+				 "name": "NC_SHARE3",
+				 "label": "NC_SHARE3",
+				 "description": "_",
+			         "default": "share3"
 				}
 			]
 		}
