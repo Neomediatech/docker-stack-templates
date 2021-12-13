@@ -544,6 +544,6 @@
 				"url": "https://github.com/Neomediatech/docker-stack-templates",
 				"stackfile": "portainer-v2/nextcloud-stack-4-swarm-nm.yml"
 			}
-		},
+		}
   ]
 } 
