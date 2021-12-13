@@ -10,7 +10,7 @@ services:
     env_file: /data/test.env
     deploy:
       replicas: 1    
-    command: -c 'while true; do date; sleep 5; done'
+    command: -c 'while true; do date; export; echo '--------------------'; sleep 5; done'
     volumes:
       - test_vol:/data/${TEST_VOL}/subdir
     environment:
