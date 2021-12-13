@@ -296,7 +296,7 @@
 			"name": "fail2ban",
 			"title": "Fail2Ban by Neomediatech",
 			"description": "Dockerized Fail2Ban",
-			"note": "<h1>crea le varie directory: </h1>BASE_DIR='/srv/data/docker/containers/fail2ban' <br>mkdir -p $BASE_DIR/{action.d,db,filter.d,jail.d,log} && chmod 777 $BASE_DIR/{action.d,db,filter.d,jail.d,log}",
+			"note": "ENV parameters below can be omitted if you put them in /data/config.ini<br><h1>crea le varie directory: </h1>BASE_DIR='/srv/data/docker/containers/fail2ban' <br>mkdir -p $BASE_DIR/{action.d,db,filter.d,jail.d,log} && chmod 777 $BASE_DIR/{action.d,db,filter.d,jail.d,log}",
 			"categories": [
 				"Other"
 			],
@@ -347,7 +347,7 @@
 				{
 				 "name": "SSMTP_HOST",
 				 "label": "SSMTP_HOST",
-				 "description": "SMTP tu use to send notifications",
+				 "description": "SMTP to use to send notifications",
 				 "default": "10.40.50.5"
 				},
 				{
