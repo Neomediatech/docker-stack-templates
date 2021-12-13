@@ -569,6 +569,39 @@
 			         "default": "share3"
 				}
 			]
+		},
+		{
+			"type": 2,
+			"name": "test",
+			"title": "Test stack",
+			"description": "A stack to do various tests",
+			"note": "<h1>Thi stack does nothing</h1>It launches a bash shell that echoes the current date every five seconds",
+			"categories": ["tests"],
+			"platform": "linux",
+			"logo": "https://raw.githubusercontent.com/Neomediatech/docker-stack-templates/master/portainer-v2/man-at-intellectual-work.png",
+			"repository": {
+				"url": "https://github.com/Neomediatech/docker-stack-templates",
+				"stackfile": "portainer-v2/test.yml"
+			},
+			"env": [{
+				 "name": "TEST_VAR1",
+				 "label": "TEST_VAR1",
+				 "description": "Write some text or nothing",
+			         "default": ""
+				},
+				{
+				 "name": "TEST_VAR2",
+				 "label": "TEST_VAR2",
+				 "description": "Write some text or nothing",
+			         "default": ""
+				},
+				{
+				 "name": "TEST_VAR3",
+				 "label": "TEST_VAR3",
+				 "description": "Write some text or nothing",
+			         "default": ""
+				}
+			]
 		}
   ]
 } 
