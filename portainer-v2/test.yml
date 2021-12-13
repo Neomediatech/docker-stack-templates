@@ -12,7 +12,7 @@ services:
       replicas: 1    
     command: -c 'while true; do date; sleep 5; done'
     volumes:
-      - test_vol:/data
+      - test_vol:/data/${TEST_VOL}
     environment:
       << : *common-vars
       TEST_VAR2: "another default text"
