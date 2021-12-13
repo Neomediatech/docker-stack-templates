@@ -530,6 +530,20 @@
 			         "default": "/srv/data/docker/containers/fail2ban/logs/honeypot"
 				}
 			]
-		}
+		},
+		{
+			"type": 2,
+			"name": "nextcloud",
+			"title": "Nextcloud app",
+			"description": "Nextcloud, OnlyOffice, Nginx, MariaDB, FPM, Redis, cron",
+			"note": "<h1>WARNING!!!</h1> This stack needs 'db-name.txt' (put inside tis file the name of the Nextcloud database), 'db-nextcloud.pwd' (password for the Nextcloud database user), 'db-root.pwd' (password for the MariaDB root user), 'db-user.txt' (name for the Nextcloud database user) files in /var/lib/mysql container directory. Otherwise this stack will not works",
+			"categories": ["web", "storage"],
+			"platform": "linux",
+			"logo": "https://raw.githubusercontent.com/Neomediatech/docker-stack-templates/master/nextcloud-logo-nm.png",
+			"repository": {
+				"url": "https://github.com/Neomediatech/docker-stack-templates",
+				"stackfile": "portainer-v2/nextcloud-stack-4-swarm-nm.yml"
+			}
+		},
   ]
 } 
