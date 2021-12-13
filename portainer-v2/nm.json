@@ -536,7 +536,7 @@
 			"name": "nextcloud",
 			"title": "Nextcloud app",
 			"description": "Nextcloud, OnlyOffice, Nginx, MariaDB, FPM, Redis, cron",
-			"note": "<h1>WARNING!!!</h1> This stack needs 'db-name.txt' (put inside tis file the name of the Nextcloud database), 'db-nextcloud.pwd' (password for the Nextcloud database user), 'db-root.pwd' (password for the MariaDB root user), 'db-user.txt' (name for the Nextcloud database user) files in /var/lib/mysql container directory. Otherwise this stack will not works",
+			"note": "<h1>WARNING!!!</h1>Before starting this stack you need to create this files in /var/lib/mysql container directory:<br> - 'db-name.txt' (write in this file the name of the Nextcloud database)<br> - 'db-nextcloud.pwd' (password for the Nextcloud database user)<br> - 'db-root.pwd' (password for the MariaDB root user)<br> - 'db-user.txt' (name for the Nextcloud database user)<br><h2>Otherwise this stack will not works</h2>",
 			"categories": ["web", "storage"],
 			"platform": "linux",
 			"logo": "https://raw.githubusercontent.com/Neomediatech/docker-stack-templates/master/nextcloud-logo-nm.png",
