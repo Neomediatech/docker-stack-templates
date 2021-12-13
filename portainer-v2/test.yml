@@ -7,7 +7,7 @@ services:
   test:
     image: bash
     hostname: test
-    env_file: /tmp/test.env
+    env_file: /data/test.env
     deploy:
       replicas: 1    
     command: -c 'while true; do date; sleep 5; done'
