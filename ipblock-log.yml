@@ -195,13 +195,12 @@ services:
         - "traefik.frontend.whiteList.sourceRange=${TRAEFIK_WHITELIST:-127.0.0.1/32}"
 
   redis:
-    image: redis:5-alpine
+    image: redis:6-alpine
     hostname: redis
     environment:
       TZ: Europe/Rome
     networks:
       - private
-    command: ["redis-server", "--appendonly", "yes"]
     volumes:
       - redis_db:/data
     healthcheck:
@@ -217,13 +216,12 @@ services:
     stop_grace_period: 1m
 
   redis-archive:
-    image: redis:5-alpine
+    image: redis:6-alpine
     hostname: redis-archive
     environment:
       TZ: Europe/Rome
     networks:
       - private
-    command: ["redis-server", "--appendonly", "yes"]
     volumes:
       - redis_db_archive:/data
     healthcheck:
@@ -239,13 +237,12 @@ services:
     stop_grace_period: 1m
 
   redis-logs:
-    image: redis:5-alpine
+    image: redis:6-alpine
     hostname: redis-logs
     environment:
       TZ: Europe/Rome
     networks:
       - private
-    command: ["redis-server", "--appendonly", "yes"]
     volumes:
       - redis_db_logs:/data
     healthcheck:
