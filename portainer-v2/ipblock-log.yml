@@ -179,7 +179,6 @@ services:
       TZ: Europe/Rome
     networks:
       - private
-    command: ["redis-server", "--appendonly", "yes"]
     volumes:
       - redis_db:/data
     healthcheck:
@@ -201,7 +200,6 @@ services:
       TZ: Europe/Rome
     networks:
       - private
-    command: ["redis-server", "--appendonly", "yes"]
     volumes:
       - redis_db_archive:/data
     healthcheck:
@@ -223,7 +221,6 @@ services:
       TZ: Europe/Rome
     networks:
       - private
-    command: ["redis-server", "--appendonly", "yes"]
     volumes:
       - redis_db_logs:/data
     healthcheck:
