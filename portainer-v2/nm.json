@@ -724,6 +724,7 @@
 				 "description": " ",
 			         "default": "10.2.0.1"
 				},
+				{
 				 "name": "ROUNDCUBEMAIL_DB_HOST",
 				 "label": "Roundcube DB server",
 				 "description": " ",
