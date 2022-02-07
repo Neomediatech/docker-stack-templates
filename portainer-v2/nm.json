@@ -707,7 +707,7 @@
 			"type": 3,
 			"name": "roundcube",
 			"title": "Roundcube with Radicale by Neomediatech",
-			"description": "Compose stack with Roundcube Webmail client with Redis cache and Radicale CardDAV/CalDAV server",
+			"description": "Compose stack with Roundcube Webmail client with Redis cache and Radicale CardDAV/CalDAV server. Apache version",
 			"note": "<h1>WARNING!</h1>You must create all paths prior to run this stack",
 			"categories": [
 				"Webmail"
@@ -737,7 +737,43 @@
 			         "default": "/srv/data/docker/containers/roundcube"
 				}
 			]
+		},
+		{
+			"type": 3,
+			"name": "roundcube",
+			"title": "Roundcube with Radicale by Neomediatech",
+			"description": "Compose stack with Roundcube Webmail client with Redis cache and Radicale CardDAV/CalDAV server. FPM version",
+			"note": "<h1>WARNING!</h1>You must create all paths prior to run this stack",
+			"categories": [
+				"Webmail"
+			],
+			"platform": "linux",
+			"logo": "https://raw.githubusercontent.com/Neomediatech/docker-stack-templates/master/portainer-v2/roundcube-radicale-redis.png",
+			"repository": {
+				"url": "https://github.com/Neomediatech/docker-stack-templates",
+				"stackfile": "portainer-v2/roundcube_fpm-radicale-redis-stack-4-compose.yml"
+			},
+			"env": [{
+				 "name": "IMAP_HOST",
+				 "label": "IMAP authentication server",
+				 "description": " ",
+			         "default": "10.2.0.1"
+				},
+				{
+				 "name": "ROUNDCUBEMAIL_DB_HOST",
+				 "label": "Roundcube DB server",
+				 "description": " ",
+			         "default": "10.2.0.1"
+				},
+				{
+				 "name": "STACK_BASE_PATH",
+				 "label": "STACK_BASE_PATH",
+				 "description": "Path for the stack. Must exists before launching this stack!",
+			         "default": "/srv/data/docker/containers/roundcube"
+				}
+			]
 		}
+
 
   ]
 } 
