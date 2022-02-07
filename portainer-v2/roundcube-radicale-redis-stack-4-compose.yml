@@ -1,0 +1,130 @@
+# use to create a compose stack template in Portainer
+# STACK_BASE_PATH [base folder where to host files, must exists]
+# STACK_BASE_PATH=/srv/roundcube ; grep device roundcube-stack-4-compose.yml|grep -v "#"|awk '{print $2}'|while read dir; do eval mkdir -p $dir; done
+
+version: '3.7'
+
+x-default-opts: 
+  &default-opts
+  restart: unless-stopped
+
+x-environment: &common-vars
+    TZ: "Europe/Rome"
+
+services:
+  roundcube:
+    #image: neomediatech/roundcube:latest-fpm
+    image: neomediatech/roundcube:latest
+    container_name: roundcube
+    hostname: roundcube
+    <<: *default-opts    
+    ports:
+      #- 9001:9000
+      - 81:80
+    volumes:
+      - config:/var/roundcube/config
+      - html:/var/www/html
+      - pgp_keys:/var/www/roundcube_pgp_keys/
+      - tmp:/tmp/roundcube-temp
+      - db:/var/roundcube/db
+
+      #- php_config:/usr/local/etc/php/conf.d/zzz_roundcube-custom.ini:ro
+      #- logs:/var/log
+      - /etc/mime.types:/etc/mime.types:ro
+
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/locale.gen:/etc/locale.gen:ro
+    environment:
+      << : *common-vars
+      ROUNDCUBEMAIL_DB_TYPE: "${ROUNDCUBEMAIL_DB_TYPE:-mysql}"
+      ROUNDCUBEMAIL_DB_HOST: "${ROUNDCUBEMAIL_DB_HOST:-10.2.0.1}"
+      #ROUNDCUBEMAIL_DB_NAME: "${ROUNDCUBEMAIL_DB_NAME:-roundcubedb}"
+      #ROUNDCUBEMAIL_DB_USER: "${ROUNDCUBEMAIL_DB_USER:-roundcube}"
+      #ROUNDCUBEMAIL_DB_PASSWORD: "${ROUNDCUBEMAIL_DB_PASSWORD:-roundcube}"
+      ROUNDCUBEMAIL_SKIN: "${ROUNDCUBEMAIL_SKIN:-elastic}"
+      #ROUNDCUBEMAIL_DEFAULT_HOST: "${ROUNDCUBEMAIL_DEFAULT_HOST:-tls://mail.example.org}"
+      #ROUNDCUBEMAIL_SMTP_SERVER: "${ROUNDCUBEMAIL_SMTP_SERVER:-tls://mail.example.org}"
+  redis:
+    image: redis:alpine
+    container_name: redis
+    hostname: redis
+    <<: *default-opts    
+    volumes:
+      - redis:/data
+      #- logs:/var/log
+
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/locale.gen:/etc/locale.gen:ro
+    environment:
+      << : *common-vars
+  radicale:
+    image: neomediatech/radicale:latest
+    container_name: radicale
+    hostname: radicale
+    <<: *default-opts    
+    volumes:
+      - radicale:/data
+      #- logs:/var/log
+      - ${STACK_BASE_PATH}/radicale/radicale.conf:/radicale.conf:ro
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/locale.gen:/etc/locale.gen:ro
+    environment:
+      << : *common-vars
+      IMAP_HOST: "${IMAP_HOST:-10.2.0.1}"
+
+volumes:
+  config:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/config
+  html:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/www/html
+  pgp_keys:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/www/roundcube_pgp_keys
+  redis:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/redis/data
+  radicale:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/radicale/data
+  tmp:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/var/tmp
+  db:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/var/db
+
+
+#  php_config:
+#    driver: local
+#    driver_opts:
+#      type: none
+#      o: bind
+#      device: ${STACK_BASE_PATH}/zzz_roundcube-custom.ini
+#
+
