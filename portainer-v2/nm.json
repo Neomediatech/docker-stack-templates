@@ -713,7 +713,7 @@
 				"Webmail"
 			],
 			"platform": "linux",
-			"logo": "https://raw.githubusercontent.com/Neomediatech/docker-stack-templates/portainer-v2/roundcube-radicale-redis.png",
+			"logo": "https://raw.githubusercontent.com/Neomediatech/docker-stack-templates/master/portainer-v2/roundcube-radicale-redis.png",
 			"repository": {
 				"url": "https://github.com/Neomediatech/docker-stack-templates",
 				"stackfile": "portainer-v2/roundcube-radicale-redis-stack-4-compose.yml"
