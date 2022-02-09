@@ -62,6 +62,8 @@ services:
     container_name: radicale
     hostname: radicale
     <<: *default-opts    
+    ports:
+      - 5232:5232
     volumes:
       - radicale:/data
       #- logs:/var/log
