@@ -74,7 +74,7 @@ services:
       TZ: Europe/Rome
       WAITFOR: "tcp://dovecot:143 tcp://clamav:3310 tcp://redis:6379 tcp://rspamd:11333"
       EXIM_LOGDIR: ${EXIM_LOGDIR}
-      MAILSERVER_CERT: ${MAILSERVER_CERT}
+      MAILSERVER_CERT: ${MAILTESTER_FQDN}
     depends_on:
       - dovecot
       - clamav
