@@ -784,7 +784,7 @@
 			"logo": "https://raw.githubusercontent.com/Neomediatech/docker-stack-templates/master/email.png",
 			"repository": {
 				"url": "https://github.com/Neomediatech/docker-stack-templates",
-				"stackfile": "email-stack.yml"
+				"stackfile": "portainer-v2/mail-tester.yml"
 			},
 			"env": [{
 				 "name": "MAILSERVER_CERT",
@@ -819,9 +819,14 @@
 				   "value": "true"
 				  }
 				 ]
-				}
+				},
+                                {
+                                 "name": "TRAEFIK_WHITELIST",
+                                 "label": "TRAEFIK_WHITELIST",
+                                 "description": "(optional) elenco di classi/ip autorizzate ad attraversare traefik, separati da virgola",
+                                 "default": "127.0.0.1"
+                                }
 			]
 		}
-
   ]
 } 
