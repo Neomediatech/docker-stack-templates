@@ -109,17 +109,11 @@ services:
         window: 20s
       labels:
         - "traefik.enable=true"
-        - "traefik.docker.network=traefik-public"
-        - "traefik.port=80"
-        - "traefik.tags=traefik-public"
-        - "traefik.redirectorservice.frontend.entryPoints=http"
-        - "traefik.redirectorservice.frontend.redirect.entryPoint=https"
-        - "traefik.webservice.frontend.entryPoints=https"
-        - "traefik.frontend.rule=Host:${MAILTESTER_FQDN}"
-        - "traefik.frontend.headers.SSLRedirect=true"
-        - "traefik.frontend.entryPoints=http,https"
-        - "traefik.frontend.passHostHeader=true"
-        - "traefik.frontend.whiteList.sourceRange=${TRAEFIK_WHITELIST:-127.0.0.1/32}"
+        - "traefik.http.routers.mail-tester-webmail.entrypoints=https, http"
+        - "traefik.http.routers.mail-tester-webmail.rule=Host(`${MAILTESTER_FQDN}`)"
+        - "traefik.http.routers.mail-tester-webmail.service=mail-tester-webmail"
+        - "traefik.http.routers.mail-tester-webmail.middlewares=nm-ipwhitelist@file, nm-auth@file, redirect2https@file"
+        - "traefik.http.services.mail-tester-webmail.loadbalancer.server.port=80"
 
   clamav:
     image: neomediatech/clamav:latest
@@ -160,17 +154,11 @@ services:
         window: 20s
       labels:
         - "traefik.enable=true"
-        - "traefik.docker.network=traefik-public"
-        - "traefik.port=80"
-        - "traefik.tags=traefik-public"
-        - "traefik.redirectorservice.frontend.entryPoints=http"
-        - "traefik.redirectorservice.frontend.redirect.entryPoint=https"
-        - "traefik.webservice.frontend.entryPoints=https"
-        - "traefik.frontend.rule=Host:${RSPAMD_FQDN}"
-        - "traefik.frontend.headers.SSLRedirect=true"
-        - "traefik.frontend.entryPoints=http,https"
-        - "traefik.frontend.passHostHeader=true"
-        - "traefik.frontend.whiteList.sourceRange=${TRAEFIK_WHITELIST:-127.0.0.1/32}"
+        - "traefik.http.routers.mail-tester-rspamd.entrypoints=https, http"
+        - "traefik.http.routers.mail-tester-rspamd.rule=Host(`${RSPAMD_FQDN}`)"
+        - "traefik.http.routers.mail-tester-rspamd.service=mail-tester-rspamd"
+        - "traefik.http.routers.mail-tester-rspamd.middlewares=nm-ipwhitelist@file, nm-auth@file, redirect2https@file"
+        - "traefik.http.services.mail-tester-rspamd.loadbalancer.server.port=11334"
 
   dcc:
     image: neomediatech/dcc:latest
