@@ -825,12 +825,6 @@
 				   "value": "true"
 				  }
 				 ]
-				},
-                                {
-                                 "name": "TRAEFIK_WHITELIST",
-                                 "label": "TRAEFIK_WHITELIST",
-                                 "description": "(optional) elenco di classi/ip autorizzate ad attraversare traefik, separati da virgola",
-                                 "default": "127.0.0.1"
                                 }
 			]
 		}
