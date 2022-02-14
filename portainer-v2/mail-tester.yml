@@ -239,6 +239,14 @@ services:
     networks:
       - private
 
+networks:
+  private:
+    driver: overlay
+    attachable: true
+
+  traefik-public:
+    external: true
+
 volumes:
   common_data:
     driver: local
