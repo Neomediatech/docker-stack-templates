@@ -772,8 +772,56 @@
 			         "default": "/srv/data/docker/containers/roundcube"
 				}
 			]
+		},
+		{
+			"type": 2,
+			"name": "email",
+			"title": "Email by Neomediatech",
+			"description": "email stack",
+			"note": " ",
+			"categories": ["email"],
+			"platform": "linux",
+			"logo": "https://raw.githubusercontent.com/Neomediatech/docker-stack-templates/master/email.png",
+			"repository": {
+				"url": "https://github.com/Neomediatech/docker-stack-templates",
+				"stackfile": "email-stack.yml"
+			},
+			"env": [{
+				 "name": "MAILSERVER_CERT",
+				 "label": "MAILSERVER_CERT",
+				 "description": "FQDN del mailserver da utilizzare per il percorso del certificato (il certificato deve già esistere!)",
+			         "default": ""
+				},
+				{
+				 "name": "EXIM_LOGDIR",
+				 "label": "EXIM_LOGDIR",
+				 "description": "Path dei log di Exim (cambia solo se sai cosa stai facendo!)",
+			         "default": "/data/logs"
+				},
+				{
+				 "name": "STACK_BASE_PATH",
+				 "label": "STACK_BASE_PATH",
+				 "description": "Percorso base dello stack all'interno dell'host (deve esistere!)",
+			         "default": "/srv/data/docker/containers/[something]"
+				},
+				{
+				 "name": "HONEYPOT",
+				 "label": "Am I a Honeypot?",
+				 "description": "Normally false",
+				 "select": [
+				  {
+				   "text": "false",
+				   "value": "false",
+				   "default": true
+				  },
+				  {
+				   "text": "true",
+				   "value": "true"
+				  }
+				 ]
+				}
+			]
 		}
-
 
   ]
 } 
