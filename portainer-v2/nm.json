@@ -775,9 +775,9 @@
 		},
 		{
 			"type": 2,
-			"name": "email",
-			"title": "Email by Neomediatech",
-			"description": "email stack",
+			"name": "mail-tester",
+			"title": "Mail tester by Neomediatech",
+			"description": "Stack to check mail validity, NOT WORKING FOR NOW!",
 			"note": " ",
 			"categories": ["email"],
 			"platform": "linux",
