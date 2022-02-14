@@ -787,10 +787,16 @@
 				"stackfile": "portainer-v2/mail-tester.yml"
 			},
 			"env": [{
-				 "name": "MAILSERVER_CERT",
-				 "label": "MAILSERVER_CERT",
-				 "description": "FQDN del mailserver da utilizzare per il percorso del certificato (il certificato deve già esistere!)",
+				 "name": "MAILTESTER_FQDN",
+				 "label": "MAILTESTER_FQDN",
+				 "description": "FQDN for the Mail-tester web app",
 			         "default": ""
+				},
+				{
+				 "name": "RSPAMD_FQDN",
+				 "label": "RSPAMD_FQDN",
+				 "description": "FQDN for the Rspamd web ui",
+				 "default": ""
 				},
 				{
 				 "name": "EXIM_LOGDIR",

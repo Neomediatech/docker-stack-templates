@@ -41,7 +41,7 @@ services:
       - common_bin:/data/common_bin
       - dovecot_conf:/etc/dovecot/conf.d
     environment:
-      MAILSERVER_CERT: "${MAILSERVER_CERT}"
+      MAILSERVER_CERT: "${MAILTESTER_FQDN}"
     networks:
       - private
  
@@ -86,7 +86,6 @@ services:
   webmail:
     image: roundcube/roundcubemail:latest
     hostname: webmail
-    <<: *default-opts
     volumes:
       - webmail_app:/var/www/html
       - common_bin:/data/common_bin
@@ -116,7 +115,7 @@ services:
         - "traefik.redirectorservice.frontend.entryPoints=http"
         - "traefik.redirectorservice.frontend.redirect.entryPoint=https"
         - "traefik.webservice.frontend.entryPoints=https"
-        - "traefik.frontend.rule=Host:${MAILSERVER_CERT}"
+        - "traefik.frontend.rule=Host:${MAILTESTER_FQDN}"
         - "traefik.frontend.headers.SSLRedirect=true"
         - "traefik.frontend.entryPoints=http,https"
         - "traefik.frontend.passHostHeader=true"
@@ -139,12 +138,6 @@ services:
   rspamd:
     image: neomediatech/rspamd:latest
     hostname: rspamd
-    <<: *default-opts    
-    ports:
-      - target: 11334
-        published: 11334
-        protocol: tcp
-        mode: host
     volumes:
       - rspamd_conf:/data
       - rspamd_data:/var/lib/rspamd
@@ -158,6 +151,26 @@ services:
     stop_grace_period: 1m
     networks:
       - private
+      - traefik-public
+    deploy:
+      restart_policy:
+        condition: any
+        delay: 15s
+        #max_attempts: 3
+        window: 20s
+      labels:
+        - "traefik.enable=true"
+        - "traefik.docker.network=traefik-public"
+        - "traefik.port=80"
+        - "traefik.tags=traefik-public"
+        - "traefik.redirectorservice.frontend.entryPoints=http"
+        - "traefik.redirectorservice.frontend.redirect.entryPoint=https"
+        - "traefik.webservice.frontend.entryPoints=https"
+        - "traefik.frontend.rule=Host:${RSPAMD_FQDN}"
+        - "traefik.frontend.headers.SSLRedirect=true"
+        - "traefik.frontend.entryPoints=http,https"
+        - "traefik.frontend.passHostHeader=true"
+        - "traefik.frontend.whiteList.sourceRange=${TRAEFIK_WHITELIST:-127.0.0.1/32}"
 
   dcc:
     image: neomediatech/dcc:latest
@@ -170,11 +183,6 @@ services:
     image: neomediatech/razor:latest
     hostname: razor
     <<: *default-opts
-    ports:
-      - target: 9192
-        published: 9192
-        protocol: tcp
-        mode: host
     networks:
       - private
 
@@ -182,11 +190,6 @@ services:
     image: neomediatech/pyzor-cc:latest
     hostname: pyzor
     <<: *default-opts
-    ports:
-      - target: 5953
-        published: 5953
-        protocol: tcp
-        mode: host
     networks:
       - private
 
