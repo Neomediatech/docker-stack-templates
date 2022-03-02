@@ -45,6 +45,7 @@ services:
       ROUNDCUBEMAIL_SKIN: "${ROUNDCUBEMAIL_SKIN:-elastic}"
       #ROUNDCUBEMAIL_DEFAULT_HOST: "${ROUNDCUBEMAIL_DEFAULT_HOST:-tls://mail.example.org}"
       #ROUNDCUBEMAIL_SMTP_SERVER: "${ROUNDCUBEMAIL_SMTP_SERVER:-tls://mail.example.org}"
+      ROUNDCUBEMAIL_UPLOAD_MAX_FILESIZE: "${ROUNDCUBEMAIL_UPLOAD_MAX_FILESIZE:-20M}"
   redis:
     image: redis:alpine
     container_name: redis
