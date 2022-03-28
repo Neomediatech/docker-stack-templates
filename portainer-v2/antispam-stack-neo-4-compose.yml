@@ -174,10 +174,7 @@ services:
       MYSQL_USER: "${MYSQL_USER:-db_user}"
       MYSQL_PASSWORD: "${MYSQL_PASSWORD:-db_password}"
     ports:
-      - target: 3306
-        published: 3306
-        protocol: tcp
-        mode: host
+      - "127.0.0.1:3306:3306"
 
   cron:
     image: neomediatech/cron:latest
