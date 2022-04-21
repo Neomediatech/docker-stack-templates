@@ -30,6 +30,7 @@ services:
     environment:
       << : *common-vars
       MYSQL_DATABASE_FILE: /common/db-name.txt
+      MARIADB_AUTO_UPGRADE: "true"
     networks:
       - private
     deploy:
