@@ -94,6 +94,20 @@
 		},
 		{
 			"type": 2,
+			"name": "comunicazioni",
+			"title": "Invio comunicazioni e Split and Send by Neomediatech",
+			"description": "comunicazioni stack",
+			"note": " ",
+			"categories": ["web"],
+			"platform": "linux",
+			"logo": "https://raw.githubusercontent.com/Neomediatech/docker-stack-templates/master/epevda-logo.png",
+			"repository": {
+				"url": "https://github.com/Neomediatech/docker-stack-templates",
+				"stackfile": "portainer-v2/website-stack-4-swarm-debian-custom-fpm.yml"
+			}
+		},
+		{
+			"type": 2,
 			"name": "portainer",
 			"title": "Portainer by Neomediatech",
 			"description": "Portainer swarm stack",
