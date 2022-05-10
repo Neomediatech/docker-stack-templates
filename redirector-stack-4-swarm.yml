@@ -13,7 +13,7 @@ x-default-opts:
 
 services:
   redirector:
-    image: nginx:1.18-alpine
+    image: nginx:1.21-alpine
 #    restart: unless-stopped
     hostname: pusher
     <<: *default-opts    
@@ -39,7 +39,8 @@ services:
       - certbot
     extra_hosts:
       - "dockerhost:172.16.217.15"
-    command: "/bin/sh -c 'echo -n \"Waiting for certbot...\"; until ping certbot -c1 >/dev/null; do sleep 1; echo -n \"...\"; done; echo \"OK\"; while :; do sleep 22h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
+#    command: "/bin/sh -c 'echo -n \"Waiting for certbot...\"; until ping certbot -c1 >/dev/null; do sleep 1; echo -n \"...\"; done; echo \"OK\"; while :; do sleep 22h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
+    command: "/bin/sh -c 'while :; do sleep 22h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
 #    healthcheck:
 #      test: curl --fail -s http://localhost:5000/ || exit 1
 #      interval: 1m30s
