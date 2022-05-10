@@ -2,46 +2,24 @@
 version: '3.7'
 
 services:
-  nginx:
-    image: nginx:1.21-alpine
-    #    restart: unless-stopped
-    hostname: nginx
+  app:
+    image: neomediatech/php-fpm-debian:7.4-apache
+    hostname: app
     ports:
       - target: 80
         published: 83
         protocol: tcp
         mode: host
     volumes:
-      - /srv/data/comunicazioni/nginx/app.conf:/etc/nginx/conf.d/app.conf:ro
-      - app:/usr/share/nginx/html
-      - /srv/data/comunicazioni/nginx/htaccess.pwd:/etc/nginx/htaccess.pwd:rw
-      - logs:/var/log/nginx
-      - /srv/data/comunicazioni/nginx/entrypoint-nginx.sh:/entrypoint.sh:ro
-    environment:
-      TZ: Europe/Rome
-    depends_on:
-      - app
-    entrypoint: ["/entrypoint.sh"]
-    #command: "/bin/sh -c 'echo -n \"Waiting for app...\"; until ping app -c1 >/dev/null; do sleep 1; echo -n \"...\"; done; echo \"OK\"; nginx -g \"daemon off;\"'"
-    command: ["nginx", "-g", "daemon off;"]
-    healthcheck:
-      test: ["CMD", "/bin/sh", "-c", "nc -w 7 -zv 0.0.0.0 80 || (echo \"Very bad things are happening here...\" && exit 1)"]
-      interval: 30s
-      timeout: 10s
-      start_period: 90s
-      retries: 6
-    stop_grace_period: 20s
-
-  app:
-    image: neomediatech/php-fpm-debian:7.4-fpm
-    hostname: app
-    volumes:
-      - app:/usr/share/nginx/html
+      - app:/var/www/html
+      - /srv/data/comunicazioni/htaccess.pwd:/etc/apache2/htaccess.pwd:ro
     environment:
       TZ: Europe/Rome
     depends_on:
       - db
-    stop_grace_period: 20s
+    stop_grace_period: 5s
+    healthcheck:
+      disable: true
 
   db:
     image: mariadb:10.7
