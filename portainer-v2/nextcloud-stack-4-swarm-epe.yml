@@ -81,7 +81,7 @@ services:
     stop_grace_period: 20s
 
   db:
-    image: mariadb:10
+    image: mariadb:10.7
     hostname: db
     <<: *default-opts
     volumes:
