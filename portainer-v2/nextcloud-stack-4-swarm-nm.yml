@@ -20,7 +20,7 @@ x-vols: &vols
 
 services:
   db:
-    image: mariadb:10
+    image: mariadb:10.7
     hostname: db
     deploy:
       replicas: 1    
