@@ -13,6 +13,7 @@ services:
     volumes:
       - app:/var/www/html
       - /srv/data/comunicazioni/htaccess.pwd:/etc/apache2/htaccess.pwd:ro
+      - /srv/data/comunicazioni/1-custom.ini:/usr/local/etc/php/conf.d/1-custom.ini:ro
     environment:
       TZ: Europe/Rome
     depends_on:
