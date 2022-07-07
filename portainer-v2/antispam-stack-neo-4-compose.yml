@@ -56,7 +56,7 @@ services:
         mode: host
 
   redis-rspamd:
-    image: redis:6-alpine
+    image: redis:alpine
     hostname: redis-rspamd
     <<: *default-opts    
     volumes:
@@ -79,7 +79,7 @@ services:
       - net.core.somaxconn=511
 
   redis-rspamd-history:
-    image: redis:6-alpine
+    image: redis:alpine
     hostname: redis-rspamd-history
     <<: *default-opts    
     volumes:
@@ -149,6 +149,17 @@ services:
   dcc:
     image: neomediatech/dcc:latest
     hostname: dcc
+    <<: *default-opts    
+    volumes:
+      - *v-tz
+      - *v-ltime
+      - *v-lgen
+    environment:
+      << : *common-vars
+
+  olefy:
+    image: neomediatech/olefy:latest
+    hostname: olefy
     <<: *default-opts    
     volumes:
       - *v-tz
