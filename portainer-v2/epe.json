@@ -80,6 +80,20 @@
 		},
 		{
 			"type": 2,
+			"name": "website-old",
+			"title": "Website by Neomediatech",
+			"description": "OLD website stack",
+			"note": " ",
+			"categories": ["web"],
+			"platform": "linux",
+			"logo": "https://raw.githubusercontent.com/Neomediatech/docker-stack-templates/master/epevda-logo.png",
+			"repository": {
+				"url": "https://github.com/Neomediatech/docker-stack-templates",
+				"stackfile": "website-stack-4-swarm-debian-custom-fpm.yml"
+			}
+		},
+		{
+			"type": 2,
 			"name": "website",
 			"title": "Website by Neomediatech",
 			"description": "website stack",
@@ -89,7 +103,7 @@
 			"logo": "https://raw.githubusercontent.com/Neomediatech/docker-stack-templates/master/epevda-logo.png",
 			"repository": {
 				"url": "https://github.com/Neomediatech/docker-stack-templates",
-				"stackfile": "website-stack-4-swarm-debian-custom-fpm.yml"
+				"stackfile": "website-stack-4-swarm-debian-custom-apache.yml"
 			}
 		},
 		{

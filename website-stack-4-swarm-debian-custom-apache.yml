@@ -1,0 +1,78 @@
+# stack name "website"
+# stack di staging per la migrazione del sito verso Joomla 4
+version: '3.7'
+
+services:
+  app:
+    # ???? e i log dove li mettiamo ????
+    image: neomediatech/php:8.1-apache
+
+    hostname: app
+    ports:
+      - target: 80
+        published: 82
+        protocol: tcp
+        mode: host
+    volumes:
+      - app:/var/www/html
+      - /srv/data/website/htaccess.pwd:/etc/apache2/htaccess.pwd:rw
+      - /srv/data/website/1-custom.ini:/usr/local/etc/php/conf.d/1-custom.ini:ro
+    environment:
+      TZ: Europe/Rome
+    depends_on:
+      - db
+    healthcheck:
+      disable: true
+    stop_grace_period: 10s
+
+  db:
+    image: mariadb:10.5
+    hostname: db
+    volumes:
+      - db:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD_FILE: /var/lib/mysql/db-root.pwd
+      MYSQL_PASSWORD_FILE: /var/lib/mysql/db-website.pwd
+      MYSQL_DATABASE_FILE: /var/lib/mysql/db-name.txt
+      MYSQL_USER_FILE: /var/lib/mysql/db-user.txt
+      TZ: Europe/Rome
+    healthcheck:
+      test: ["CMD", "/bin/bash", "-c", "read p < $$MYSQL_PASSWORD_FILE ; read u < $$MYSQL_USER_FILE ; mysql -p$$p -u$$u -e status | grep Uptime || (echo \"MariaDB is down\" && exit 1)"]
+      interval: 30s
+      timeout: 30s
+      start_period: 5s
+      retries: 20
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    hostname: phpmyadmin
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+    ports:
+      - '8282:80'
+    depends_on:
+      - db
+
+volumes:
+  common_data:
+    driver: local
+  logs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /srv/data/logs/website
+  db:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /srv/data/databases/website
+  app:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /srv/data/website/app
+
