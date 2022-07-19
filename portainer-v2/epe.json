@@ -86,7 +86,7 @@
 			"note": " ",
 			"categories": ["web"],
 			"platform": "linux",
-			"logo": "https://raw.githubusercontent.com/Neomediatech/docker-stack-templates/master/epevda-logo.png",
+			"logo": "https://raw.githubusercontent.com/Neomediatech/docker-stack-templates/master/epevda-logo-no-access.png",
 			"repository": {
 				"url": "https://github.com/Neomediatech/docker-stack-templates",
 				"stackfile": "website-stack-4-swarm-debian-custom-fpm.yml"
