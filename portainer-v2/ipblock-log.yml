@@ -125,7 +125,7 @@ services:
     stop_grace_period: 20s
 
   app:
-    image: neomediatech/php-fpm-debian:7.4-fpm-redis
+    image: neomediatech/php:7.4-fpm-redis
     hostname: app
     volumes:
       - app_html:/usr/share/nginx/html
@@ -149,7 +149,7 @@ services:
       retries: 20
 
   frontend-app:
-    image: neomediatech/php-fpm-debian:7.4-apache-redis
+    image: neomediatech/php:7.4-apache-redis
     hostname: frontend-app
     volumes:
       - frontend-app_html:/var/www/html
