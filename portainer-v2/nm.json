@@ -808,7 +808,7 @@
 				 "name": "STACK_BASE_PATH",
 				 "label": "STACK_BASE_PATH",
 				 "description": "Percorso base dello stack all'interno dell'host (deve esistere!)",
-			         "default": "/srv/data/docker/containers/[something]"
+			         "default": "/srv/data/docker/containers/mail-tester"
 				},
 				{
 				 "name": "HONEYPOT",
@@ -825,7 +825,13 @@
 				   "value": "true"
 				  }
 				 ]
-                                }
+                                },
+				{
+				 "name": "QUEUE_CYCLE",
+				 "label": "QUEUE_CYCLE",
+				 "description": "Tempo di avvio della coda",
+			         "default": "10m"
+				}
 			]
 		},
 		{
