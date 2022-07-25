@@ -8,47 +8,25 @@
 
 version: '3.7'
 
-x-default-opts: 
+x-dns-opts: 
+  &dns-opts
+  dns:
+    - 10.2.0.3
+    - 8.8.8.8
+
+x-default-opts:
   &default-opts
   deploy:
     restart_policy:
-      #condition: on-failure
       condition: any
       delay: 15s
-      #max_attempts: 3
       window: 20s
   
 services:
-  dovecot:
-    image: neomediatech/dovecot:latest
-    hostname: dovecot
-    <<: *default-opts    
-    ports:
-      - target: 143
-        published: 143
-        protocol: tcp
-        mode: host
-      - target: 993
-        published: 993
-        protocol: tcp
-        mode: host
-    volumes:
-      - mailbox_files:/data/files
-      - mailbox_homes:/data/home
-      - logs:/data/logs
-      - common_data:/data/common
-      - certs:/data/certs
-      - common_bin:/data/common_bin
-      - dovecot_conf:/etc/dovecot/conf.d
-    environment:
-      MAILSERVER_CERT: "${MAILTESTER_FQDN}"
-    networks:
-      - private
- 
   exim:
-    image: neomediatech/exim:latest
+    image: neomediatech/exim:from-source
     hostname: exim
-    <<: *default-opts    
+    <<: [*default-opts, *dns-opts]
     ports:
       - target: 25
         published: 25
@@ -72,48 +50,41 @@ services:
       - exim_confs:/data/conf
     environment:
       TZ: Europe/Rome
-      WAITFOR: "tcp://dovecot:143 tcp://clamav:3310 tcp://redis:6379 tcp://rspamd:11333"
+
+      WAITFOR: "tcp://clamav:3310 tcp://redis:6379 tcp://rspamd:11333"
       EXIM_LOGDIR: ${EXIM_LOGDIR}
       MAILSERVER_CERT: ${MAILTESTER_FQDN}
+      EXIM_OPTIONS: ${EXIM_OPTIONS}
+      QUEUE_CYCLE: ${QUEUE_CYCLE}
     depends_on:
-      - dovecot
       - clamav
       - redis
       - rspamd
     networks:
       - private
 
-  webmail:
-    image: roundcube/roundcubemail:latest
-    hostname: webmail
+  app:
+    image: neomediatech/php:7.4-apache
+    hostname: app
     volumes:
-      - webmail_app:/var/www/html
-      - common_bin:/data/common_bin
-      - webmail_local_db:/var/roundcube/db
-      - webmail_tmp:/tmp/roundcube-temp
+      - app_html:/var/www/html
+      - logs:/logs
     environment:
-      ROUNDCUBEMAIL_DEFAULT_HOST: dovecot
-      ROUNDCUBEMAIL_SMTP_SERVER: exim
-      ROUNDCUBEMAIL_DB_TYPE: sqlite
       TZ: Europe/Rome
-    depends_on:
-      - exim
     networks:
       - private
       - traefik-public
     deploy:
       restart_policy:
         condition: any
-        delay: 15s
-        #max_attempts: 3
-        window: 20s
       labels:
         - "traefik.enable=true"
-        - "traefik.http.routers.mail-tester-webmail.entrypoints=https, http"
-        - "traefik.http.routers.mail-tester-webmail.rule=Host(`${MAILTESTER_FQDN}`)"
-        - "traefik.http.routers.mail-tester-webmail.service=mail-tester-webmail"
-        - "traefik.http.routers.mail-tester-webmail.middlewares=nm-ipwhitelist@file, nm-auth@file, redirect2https@file"
-        - "traefik.http.services.mail-tester-webmail.loadbalancer.server.port=80"
+        - "traefik.http.routers.mail-tester-frontend.entrypoints=https, http"
+        - "traefik.http.routers.mail-tester-frontend.rule=Host(`${MAILTESTER_FQDN}`)"
+        - "traefik.http.routers.mail-tester-frontend.service=mail-tester-frontend"
+        - "traefik.http.routers.mail-tester-frontend.middlewares=nm-ipwhitelist@file, redirect2https@file"
+        - "traefik.http.services.mail-tester-frontend.loadbalancer.server.port=80"
+        # - "traefik.http.routers.mail-tester-frontend.middlewares=nm-ipwhitelist@file, nm-auth@file, redirect2https@file"
 
   clamav:
     image: neomediatech/clamav:latest
@@ -134,6 +105,7 @@ services:
   rspamd:
     image: neomediatech/rspamd:latest
     hostname: rspamd
+    <<: *dns-opts
     volumes:
       - rspamd_conf:/data
       - rspamd_data:/var/lib/rspamd
@@ -165,21 +137,21 @@ services:
   dcc:
     image: neomediatech/dcc:latest
     hostname: dcc
-    <<: *default-opts    
+    <<: [*default-opts, *dns-opts]
     networks:
       - private
 
   razor:
     image: neomediatech/razor:latest
     hostname: razor
-    <<: *default-opts
+    <<: [*default-opts, *dns-opts]
     networks:
       - private
 
   pyzor:
     image: neomediatech/pyzor-cc:latest
     hostname: pyzor
-    <<: *default-opts
+    <<: [*default-opts, *dns-opts]
     networks:
       - private
 
@@ -189,58 +161,46 @@ services:
     <<: *default-opts    
     environment:
       TZ: Europe/Rome
-    command: ["redis-server", "--appendonly", "yes"]
     volumes:
       - redis_db:/data
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
+      interval: 60s
       timeout: 10s
       retries: 3
-    # according to https://github.com/moby/moby/pull/37701#issuecomment-448014841
-    # on docker 19.03 you will be able to set /proc/sys/net/core/somaxconn to 511 instead of default 128
-    # like this example below (maybe syntax will change)
-    #sysctls:
-    #  - net.core.somaxconn=511
-    stop_grace_period: 1m
     networks:
-      - private
+      private:
+        aliases:
+          - redis-rspamd-history
 
-  redis-rspamd-history:
+  redis-app:
     image: redis:6-alpine
-    hostname: redis-rspamd-history
+    hostname: redis-app
     <<: *default-opts    
     environment:
       TZ: Europe/Rome
-    command: ["redis-server", "--appendonly", "yes"]
     volumes:
-      - redis_history_db:/data
+      - redis_app:/data
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
+      interval: 60s
       timeout: 10s
       retries: 3
-    # according to https://github.com/moby/moby/pull/37701#issuecomment-448014841
-    # on docker 19.03 you will be able to set /proc/sys/net/core/somaxconn to 511 instead of default 128
-    # like this example below (maybe syntax will change)
-    #sysctls:
-    #  - net.core.somaxconn=511
-    stop_grace_period: 1m
     networks:
       - private
 
   spamassassin:
     image: neomediatech/spamassassin:latest
     hostname: spamassassin
-    <<: *default-opts
+    <<: [*default-opts, *dns-opts]
     environment:
       TZ: Europe/Rome
     volumes:
       - spamassassin_data:/var/lib/spamassassin
+      - logs:/var/log
     stop_grace_period: 1m
     networks:
       - private
-
 
 networks:
   private:
@@ -257,8 +217,6 @@ volumes:
       type: none
       o: bind
       device: ${STACK_BASE_PATH}/common
-  webmail_app:
-    driver: local
   clamav_defs:
     driver: local
     driver_opts:
@@ -277,12 +235,12 @@ volumes:
       type: none
       o: bind
       device: ${STACK_BASE_PATH}/redis/db
-  redis_history_db:
+  redis_app:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: ${STACK_BASE_PATH}/redis_history/db
+      device: ${STACK_BASE_PATH}/redis_app/db
   rspamd_data:
     driver: local
     driver_opts:
@@ -337,23 +295,16 @@ volumes:
       type: none
       o: bind
       device: ${STACK_BASE_PATH}/common/bin
-  webmail_local_db:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ${STACK_BASE_PATH}/webmail/db
-  webmail_tmp:
-    driver: local
-  dovecot_conf:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ${STACK_BASE_PATH}/dovecot/conf
   spamassassin_data:
     driver: local
     driver_opts:
       type: none
       o: bind
       device: ${STACK_BASE_PATH}/spamassassin/var
+  app_html:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/app/html
+
