@@ -3,7 +3,7 @@ version: '3.7'
 
 services:
   nginx:
-    image: nginx:1.18-alpine
+    image: nginx:1.22-alpine
     hostname: nginx
     ports:
       - target: 80
@@ -30,7 +30,7 @@ services:
     stop_grace_period: 20s
 
   app:
-    image: neomediatech/php-fpm-debian:latest
+    image: neomediatech/php:7.4-fpm
     hostname: app
     volumes:
       - app:/usr/share/nginx/html
@@ -41,7 +41,7 @@ services:
     stop_grace_period: 20s
 
   db:
-    image: mariadb:10.5
+    image: mariadb:10.7
     hostname: db
     volumes:
       - db:/var/lib/mysql
