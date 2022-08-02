@@ -2,24 +2,43 @@
 version: '3.7'
 
 services:
-  app:
-    image: neomediatech/php:8.1-apache
-    hostname: app
+  nginx:
+    image: nginx:1.22-alpine
+    hostname: nginx
     ports:
       - target: 80
         published: 85
         protocol: tcp
         mode: host
     volumes:
-      - app:/var/www/html
-      - logs:/var/log/apache
+      - /srv/data/intranet/nginx/app.conf:/etc/nginx/conf.d/app.conf:ro
+      - app:/usr/share/nginx/html
+      - logs:/var/log/nginx
+      - /srv/data/intranet/nginx/entrypoint-nginx.sh:/entrypoint.sh:ro
       - /srv/data/intranet/1-custom.ini:/usr/local/etc/php/conf.d/1-custom.ini:ro
     environment:
       TZ: Europe/Rome
     depends_on:
-      - db
+      - app
+    entrypoint: ["/entrypoint.sh"]
+    command: ["nginx", "-g", "daemon off;"]
     healthcheck:
-      disable: true
+      test: ["CMD", "/bin/sh", "-c", "nc -w 7 -zv 0.0.0.0 80 || (echo \"Very bad things are happening here...\" && exit 1)"]
+      interval: 30s
+      timeout: 10s
+      start_period: 90s
+      retries: 6
+    stop_grace_period: 20s
+
+  app:
+    image: neomediatech/php:7.4-fpm
+    hostname: app
+    volumes:
+      - app:/usr/share/nginx/html
+    environment:
+      TZ: Europe/Rome
+    depends_on:
+      - db
     stop_grace_period: 20s
 
   db:
