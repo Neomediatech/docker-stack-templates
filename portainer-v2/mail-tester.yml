@@ -156,7 +156,7 @@ services:
       - private
 
   redis:
-    image: redis:6-alpine
+    image: redis:7-alpine
     hostname: redis
     <<: *default-opts    
     environment:
@@ -174,7 +174,7 @@ services:
           - redis-rspamd-history
 
   redis-app:
-    image: redis:6-alpine
+    image: redis:7-alpine
     hostname: redis-app
     <<: *default-opts    
     environment:
