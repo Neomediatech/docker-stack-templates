@@ -6,7 +6,7 @@ version: '3.7'
 
 services:
   app:
-    image: neomediatech/php-apache:7
+    image: neomediatech/php:7.4-apache
     hostname: phppgadmin
     ports:
       - target: 80
