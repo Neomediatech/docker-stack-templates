@@ -8,18 +8,18 @@ x-default-opts:
       condition: any
       delay: 5s
       max_attempts: 3
-      window: 20s
+      window: 30s
 
 services:
   redis:
-    image: redis:5-alpine
+    image: redis:7-alpine
     environment:
       TZ: Europe/Rome
       VOL_PATH: "${VOL_PATH:-/srv/data/docker/containers/redis-no/db}"
       HOSTNAME: "${HOSTNAME:-redis-antispam-neo}"
       LISTEN: "${LISTEN:-6379}"
     hostname: ${HOSTNAME}
-    command: ["redis-server", "--appendonly", "yes", "--bind", "0.0.0.0", "--protected-mode", "no", "--always-show-logo", "no", "--appendfsync", "no"]
+    command: ["redis-server", "--bind", "0.0.0.0", "--protected-mode", "no", "--always-show-logo", "no", "--appendfsync", "no"]
     <<: *default-opts    
     ports:
       - target: 6379
@@ -30,9 +30,9 @@ services:
       - redis_data:/data
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
+      interval: 60s
       timeout: 10s
-      retries: 3
+      retries: 10
 
 volumes:
   redis_data:
