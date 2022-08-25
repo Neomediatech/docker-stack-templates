@@ -1,0 +1,32 @@
+# stack name "pgsql-reports"
+version: '3.7'
+
+services:
+  app:
+    image: neomediatech/php:7.4-apache
+    hostname: pgsql-reports
+    ports:
+      - target: 80
+        published: 8087
+        protocol: tcp
+        mode: host
+    volumes:
+      - app:/var/www/html
+      - logs:/var/log/apache2
+    environment:
+      TZ: Europe/Rome
+    stop_grace_period: 3s
+
+volumes:
+  logs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /srv/data/pgsql-reports/logs
+  app:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /srv/data/pgsql-reports/app

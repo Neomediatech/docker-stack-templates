@@ -204,10 +204,10 @@
 			"note": "Accesso: http://172.16.217.15:8087/report.php <br> AGGIUNGERE/MODIFICARE utenti e password di accesso: <br> - apri una console 'portainer' sul container <br> - lancia il comando <b>htpasswd /var/www/html/.pwd nomeutente </b><br>(dove 'nomeutente' è l'utente di cui si vuole creare/cambiare la password) <br> - digita due volte la password desiderata <br>",
 			"categories": ["database"],
 			"platform": "linux",
-			"logo": "https://github.com/Neomediatech/php-apache-debian-docker/raw/master/mysql-pgsql-reports-logo.png",
+			"logo": "https://raw.githubusercontent.com/Neomediatech/docker-stack-templates/master/portainer-v2/pgsql-reports-logo.png",
 			"repository": {
-				"url": "https://github.com/Neomediatech/php-apache-debian-docker",
-				"stackfile": "pgsql-report-stack-4-swarm.yml"
+				"url": "https://github.com/Neomediatech/docker-stack-templates",
+				"stackfile": "portainer-v2/pgsql-report-stack-4-swarm.yml"
 			}
 		},
 		{
