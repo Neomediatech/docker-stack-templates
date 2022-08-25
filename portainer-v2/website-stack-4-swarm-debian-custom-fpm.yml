@@ -3,7 +3,7 @@ version: '3.7'
 
 services:
   app:
-    image: neomediatech/php-fpm-debian:7.4-apache
+    image: neomediatech/php:7.4-apache
     hostname: app
     ports:
       - target: 80
@@ -23,7 +23,7 @@ services:
       disable: true
 
   db:
-    image: mariadb:10.7
+    image: mariadb:10.8
     hostname: db
     volumes:
       - db:/var/lib/mysql

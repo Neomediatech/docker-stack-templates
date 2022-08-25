@@ -166,12 +166,12 @@ services:
         mode: host
 
   redis:
-    image: redis:6-alpine
+    image: redis:7-alpine
     hostname: redis
     <<: *default-opts    
     environment:
       TZ: Europe/Rome
-    command: ["redis-server", "--appendonly", "yes"]
+    #command: ["redis-server", "--appendonly", "yes"]
     volumes:
       - redis_db:/data
     healthcheck:
@@ -187,12 +187,12 @@ services:
     stop_grace_period: 1m
 
   redis-rspamd-history:
-    image: redis:6-alpine
+    image: redis:7-alpine
     hostname: redis-rspamd-history
     <<: *default-opts    
     environment:
       TZ: Europe/Rome
-    command: ["redis-server", "--appendonly", "yes"]
+    #command: ["redis-server", "--appendonly", "yes"]
     volumes:
       - redis_history_db:/data
     healthcheck:
@@ -208,7 +208,7 @@ services:
     stop_grace_period: 1m
 
   db:
-    image: mariadb:10.5
+    image: mariadb:10.8
     hostname: db
     <<: *default-opts    
     volumes:
