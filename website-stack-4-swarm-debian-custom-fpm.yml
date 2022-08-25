@@ -1,9 +1,9 @@
-# stack name "website"
+# stack name "website-old"
 version: '3.7'
 
 services:
   nginx:
-    image: nginx:1.18-alpine
+    image: nginx:1.21-alpine
     #    restart: unless-stopped
     hostname: nginx
     ports:
@@ -12,11 +12,11 @@ services:
         protocol: tcp
         mode: host
     volumes:
-      - /srv/data/website/nginx/app.conf:/etc/nginx/conf.d/app.conf:ro
+      - /srv/data/website-old/nginx/app.conf:/etc/nginx/conf.d/app.conf:ro
       - app:/usr/share/nginx/html
-      - /srv/data/website/nginx/htaccess.pwd:/etc/nginx/htaccess.pwd:rw
+      - /srv/data/website-old/nginx/htaccess.pwd:/etc/nginx/htaccess.pwd:rw
       - logs:/var/log/nginx
-      - /srv/data/website/nginx/entrypoint-nginx.sh:/entrypoint.sh:ro
+      - /srv/data/website-old/nginx/entrypoint-nginx.sh:/entrypoint.sh:ro
     environment:
       TZ: Europe/Rome
     depends_on:
@@ -81,16 +81,16 @@ volumes:
     driver_opts:
       type: none
       o: bind
-      device: /srv/data/logs/website
+      device: /srv/data/logs/website-old
   db:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: /srv/data/databases/website
+      device: /srv/data/databases/website-old
   app:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: /srv/data/website/app
+      device: /srv/data/website-old/app

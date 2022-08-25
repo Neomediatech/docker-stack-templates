@@ -1,26 +1,28 @@
-# stack name "comunicazioni"
+# stack name "website"
 version: '3.7'
 
 services:
   app:
-    image: neomediatech/php:7.4-apache
+    # ???? e i log dove li mettiamo ????
+    image: neomediatech/php:8.1-apache
+
     hostname: app
     ports:
       - target: 80
-        published: 83
+        published: 82
         protocol: tcp
         mode: host
     volumes:
       - app:/var/www/html
-      - /srv/data/comunicazioni/htaccess.pwd:/etc/apache2/htaccess.pwd:ro
-      - /srv/data/comunicazioni/1-custom.ini:/usr/local/etc/php/conf.d/1-custom.ini:ro
+      - /srv/data/website/htaccess.pwd:/etc/apache2/htaccess.pwd:rw
+      - /srv/data/website/1-custom.ini:/usr/local/etc/php/conf.d/1-custom.ini:ro
     environment:
       TZ: Europe/Rome
     depends_on:
       - db
-    stop_grace_period: 3s
     healthcheck:
       disable: true
+    stop_grace_period: 5s
 
   db:
     image: mariadb:10.8
@@ -37,7 +39,7 @@ services:
       test: ["CMD", "/bin/bash", "-c", "read p < $$MYSQL_PASSWORD_FILE ; read u < $$MYSQL_USER_FILE ; mysql -p$$p -u$$u -e status | grep Uptime || (echo \"MariaDB is down\" && exit 1)"]
       interval: 30s
       timeout: 30s
-      start_period: 5s
+      start_period: 3s
       retries: 20
 
   phpmyadmin:
@@ -47,7 +49,7 @@ services:
       PMA_HOST: db
       PMA_PORT: 3306
     ports:
-      - '8383:80'
+      - '8282:80'
     depends_on:
       - db
 
@@ -59,16 +61,18 @@ volumes:
     driver_opts:
       type: none
       o: bind
-      device: /srv/data/logs/comunicazioni
+      device: /srv/data/logs/website
   db:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: /srv/data/databases/comunicazioni
+      device: /srv/data/databases/website
   app:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: /srv/data/comunicazioni/app
+      device: /srv/data/website/app
+
+
