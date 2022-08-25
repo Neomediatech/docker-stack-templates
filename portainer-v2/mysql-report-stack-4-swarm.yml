@@ -1,0 +1,33 @@
+# stack name "mysql-reports"
+version: '3.7'
+
+services:
+  app:
+    image: neomediatech/php:7.4-apache
+    hostname: mysql-reports
+    ports:
+      - target: 80
+        published: 88
+        protocol: tcp
+        mode: host
+    volumes:
+      - app:/var/www/html
+      - logs:/var/log/apache2
+    environment:
+      TZ: Europe/Rome
+#    entrypoint: ["/entrypoint.sh"]
+    stop_grace_period: 3s
+
+volumes:
+  logs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /srv/data/mysql-reports/logs
+  app:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /srv/data/mysql-reports/app
