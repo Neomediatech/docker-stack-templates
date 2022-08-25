@@ -23,7 +23,7 @@ services:
     stop_grace_period: 20s
 
   db:
-    image: mariadb:10.7
+    image: mariadb:10.8
     hostname: db
     volumes:
       - db:/var/lib/mysql
@@ -37,9 +37,9 @@ services:
       test: ["CMD", "/bin/bash", "-c", "read p < $$MYSQL_PASSWORD_FILE ; read u < $$MYSQL_USER_FILE ; mysql -p$$p -u$$u -e status | grep Uptime || (echo \"MariaDB is down\" && exit 1)"]
       interval: 30s
       timeout: 30s
-      start_period: 5s
+      start_period: 1s
       retries: 20
-    stop_grace_period: 20s
+    stop_grace_period: 5s
 
 volumes:
   common_data:
