@@ -109,8 +109,8 @@
 		{
 			"type": 2,
 			"name": "website-old",
-			"title": "Website by Neomediatech",
-			"description": "OLD website stack",
+			"title": "OLD Website by Neomediatech",
+			"description": "Vecchio sito",
 			"note": " ",
 			"categories": ["web"],
 			"platform": "linux",
