@@ -898,20 +898,20 @@
 			},
 			"env": [{
 				 "name": "AVAILABLE_TOOLS",
-				 "label": "testssl, ping, traceroute, nmap",
-				 "description": " ",
+				 "label": "AVAILABLE_TOOLS",
+				 "description": "limit the tools shown in the web frontend: testssl, ping, traceroute, nmap",
 			         "default": "testssl, ping, traceroute"
 				},
 				{
 				 "name": "RATE_LIMIT",
-				 "label": "(Optional) Rate limit",
-				 "description": "Limits the number of calls of a specific tool to a specific target (e.g. host). The value is set in milliseconds between consecutive calls.",
+				 "label": "RATE_LIMIT",
+				 "description": "(Optional) Rate limit - Limits the number of calls of a specific tool to a specific target (e.g. host). The value is set in milliseconds between consecutive calls.",
 			         "default": "60000"
 				},
 				{
 				 "name": "INTRO_TEXT",
-				 "label": "(Optional) Additional paragraph in front of the tool selection",
-				 "description": "Show an additional paragraph in front of the tool selection. This can be used to help the users in your specific environment. HTML tags are supported.",
+				 "label": "INTRO_TEXT",
+				 "description": "(Optional) Show an additional paragraph in front of the tool selection. This can be used to help the users in your specific environment. HTML tags are supported.",
 			         "default": ""
 				}
 			]
@@ -933,20 +933,61 @@
 			},
 			"env": [{
 				 "name": "AVAILABLE_TOOLS",
-				 "label": "testssl, ping, traceroute, nmap",
-				 "description": " ",
+				 "label": "AVAILABLE_TOOLS",
+				 "description": "limit the tools shown in the web frontend: testssl, ping, traceroute, nmap",
 			         "default": "testssl, ping, traceroute"
 				},
 				{
 				 "name": "RATE_LIMIT",
-				 "label": "(Optional) Rate limit",
-				 "description": "Limits the number of calls of a specific tool to a specific target (e.g. host). The value is set in milliseconds between consecutive calls.",
+				 "label": "RATE_LIMIT",
+				 "description": "(Optional) Rate limit - Limits the number of calls of a specific tool to a specific target (e.g. host). The value is set in milliseconds between consecutive calls.",
 			         "default": "60000"
 				},
 				{
 				 "name": "INTRO_TEXT",
-				 "label": "(Optional) Additional paragraph in front of the tool selection",
-				 "description": "Show an additional paragraph in front of the tool selection. This can be used to help the users in your specific environment. HTML tags are supported.",
+				 "label": "INTRO_TEXT",
+				 "description": "(Optional) Show an additional paragraph in front of the tool selection. This can be used to help the users in your specific environment. HTML tags are supported.",
+			         "default": ""
+				}
+			]
+		},
+		{
+			"type": 2,
+			"name": "webnettools",
+			"title": "testssl, ping, traceroute, ecc...via web (Traefik version)",
+			"description": "Versione per Swarm con Traefik",
+			"note": " ",
+			"categories": [
+				"Tools"
+			],
+			"platform": "linux",
+			"logo": "https://raw.githubusercontent.com/Neomediatech/docker-stack-templates/master/webnettools.png",
+			"repository": {
+				"url": "https://github.com/Neomediatech/docker-stack-templates",
+				"stackfile": "portainer-v2/webnettools.yml"
+			},
+			"env": [{
+				 "name": "FQDN_HOST",
+                                 "label": "FQDN_HOST",
+                                 "description": "FQDN where to host this service",
+                                 "default": "webnettools.s.g..."
+				},
+				{
+				 "name": "AVAILABLE_TOOLS",
+				 "label": "AVAILABLE_TOOLS",
+				 "description": "limit the tools shown in the web frontend: testssl, ping, traceroute, nmap",
+			         "default": "testssl, ping, traceroute"
+				},
+				{
+				 "name": "RATE_LIMIT",
+				 "label": "RATE_LIMIT",
+				 "description": "(Optional) Rate limit - Limits the number of calls of a specific tool to a specific target (e.g. host). The value is set in milliseconds between consecutive calls.",
+			         "default": "60000"
+				},
+				{
+				 "name": "INTRO_TEXT",
+				 "label": "INTRO_TEXT",
+				 "description": "(Optional) Show an additional paragraph in front of the tool selection. This can be used to help the users in your specific environment. HTML tags are supported.",
 			         "default": ""
 				}
 			]

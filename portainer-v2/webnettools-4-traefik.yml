@@ -1,0 +1,49 @@
+# WARNING: This stack depends on traefik-v2.yml stack
+
+version: '3.7'
+
+x-vol-tz: &v-tz /etc/timezone:/etc/timezone:ro
+x-vol-ltime: &v-ltime /etc/localtime:/etc/localtime:ro
+x-vol-lgen: &v-lgen /etc/locale.gen:/etc/locale.gen:ro
+x-vols: &vols
+  - *v-tz
+  - *v-ltime
+  - *v-lgen
+
+services:
+  app:
+    image: neomediatech/webnettools
+    hostname: webnettools
+    deploy:
+      replicas: 1    
+    restart: always
+    environment:
+      AVAILABLE_TOOLS:
+      RATE_LIMIT:
+      INTRO_TEXT:
+      TZ: Europe/Rome
+    networks:
+      - traefik-public
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: any
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.webnettools.entrypoints=https, http"
+        - "traefik.http.routers.webnettools.rule=Host(`${FQDN_HOST}`)"
+        - "traefik.http.routers.webnettools.service=webnettools"
+        - "traefik.http.routers.webnettools.middlewares=nm-auth@file, redirect2https@file"
+        - "traefik.http.services.webnettools.loadbalancer.server.port=8080"
+    volumes:
+      - *v-tz
+      - *v-ltime
+      - *v-lgen
+
