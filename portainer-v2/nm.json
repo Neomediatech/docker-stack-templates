@@ -886,9 +886,9 @@
 			"name": "webnettools",
 			"title": "testssl, ping, traceroute, ecc...via web",
 			"description": "Versione per Compose",
-			"note": "<h1>WARNING!</h1>You must create all paths prior to run this stack",
+			"note": " ",
 			"categories": [
-				"Antispam"
+				"Tools"
 			],
 			"platform": "linux",
 			"logo": "https://raw.githubusercontent.com/Neomediatech/docker-stack-templates/master/webnettools.png",
@@ -920,10 +920,10 @@
 			"type": 2,
 			"name": "webnettools",
 			"title": "testssl, ping, traceroute, ecc...via web",
-			"description": "Versione per Compose",
-			"note": "<h1>WARNING!</h1>You must create all paths prior to run this stack",
+			"description": "Versione per Swarm",
+			"note": " ",
 			"categories": [
-				"Antispam"
+				"Tools"
 			],
 			"platform": "linux",
 			"logo": "https://raw.githubusercontent.com/Neomediatech/docker-stack-templates/master/webnettools.png",
