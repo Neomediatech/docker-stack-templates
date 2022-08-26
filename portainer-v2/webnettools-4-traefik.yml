@@ -44,3 +44,7 @@ services:
       - *v-ltime
       - *v-lgen
 
+networks:
+  traefik-public:
+    external: true
+
