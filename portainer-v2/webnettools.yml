@@ -1,0 +1,32 @@
+version: '3.7'
+
+x-vol-tz: &v-tz /etc/timezone:/etc/timezone:ro
+x-vol-ltime: &v-ltime /etc/localtime:/etc/localtime:ro
+x-vol-lgen: &v-lgen /etc/locale.gen:/etc/locale.gen:ro
+x-vols: &vols
+  - *v-tz
+  - *v-ltime
+  - *v-lgen
+
+services:
+  app:
+    image: neomediatech/webnettools
+    hostname: webnettools
+    deploy:
+      replicas: 1    
+    restart: always
+    ports:
+      - target: 8080
+        published: 8095
+        protocol: tcp
+        mode: host
+    environment:
+      AVAILABLE_TOOLS:
+      RATE_LIMIT:
+      INTRO_TEXT:
+      TZ: Europe/Rome
+    volumes:
+      - *v-tz
+      - *v-ltime
+      - *v-lgen
+
