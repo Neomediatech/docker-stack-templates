@@ -903,7 +903,7 @@
 			         "default": "testssl, ping, traceroute"
 				},
 				{
-				 "name": "RATE_LIMIT=60000",
+				 "name": "RATE_LIMIT",
 				 "label": "(Optional) Rate limit",
 				 "description": "Limits the number of calls of a specific tool to a specific target (e.g. host). The value is set in milliseconds between consecutive calls.",
 			         "default": "60000"
@@ -938,7 +938,7 @@
 			         "default": "testssl, ping, traceroute"
 				},
 				{
-				 "name": "RATE_LIMIT=60000",
+				 "name": "RATE_LIMIT",
 				 "label": "(Optional) Rate limit",
 				 "description": "Limits the number of calls of a specific tool to a specific target (e.g. host). The value is set in milliseconds between consecutive calls.",
 			         "default": "60000"
