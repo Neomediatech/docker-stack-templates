@@ -964,7 +964,7 @@
 			"logo": "https://raw.githubusercontent.com/Neomediatech/docker-stack-templates/master/webnettools.png",
 			"repository": {
 				"url": "https://github.com/Neomediatech/docker-stack-templates",
-				"stackfile": "portainer-v2/webnettools.yml"
+				"stackfile": "portainer-v2/webnettools-4-traefik.yml"
 			},
 			"env": [{
 				 "name": "FQDN_HOST",
