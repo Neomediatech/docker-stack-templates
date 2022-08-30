@@ -197,6 +197,7 @@ services:
       TZ: Europe/Rome
     volumes:
       - spamassassin_data:/var/lib/spamassassin
+      - spamassassin_conf:/data/conf
       - logs:/var/log
     stop_grace_period: 1m
     networks:
@@ -301,6 +302,12 @@ volumes:
       type: none
       o: bind
       device: ${STACK_BASE_PATH}/spamassassin/var
+  spamassassin_conf:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/spamassassin/conf
   app_html:
     driver: local
     driver_opts:
