@@ -1,0 +1,65 @@
+# stack name "whois"
+# WARNING: This stack depends on traefik-v2.yml stack
+# You MUST set FQDN_HOST env var
+
+version: '3.7'
+
+x-vol-tz: &v-tz /etc/timezone:/etc/timezone:ro
+x-vol-ltime: &v-ltime /etc/localtime:/etc/localtime:ro
+x-vol-lgen: &v-lgen /etc/locale.gen:/etc/locale.gen:ro
+x-vols: &vols
+  - *v-tz
+  - *v-ltime
+  - *v-lgen
+
+services:
+  app:
+    image: neomediatech/php:8-apache
+    hostname: app
+    environment:
+      TZ: Europe/Rome
+    networks:
+      - traefik-public
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: any
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.whois.entrypoints=http,https"
+        - "traefik.http.routers.whois.rule=Host(`${FQDN_HOST}`)"
+        - "traefik.http.routers.whois.service=whois"
+#        - "traefik.http.routers.whois.middlewares=nm-ipwhitelist@file"
+#        - "traefik.http.routers.websiteastipaleo-pma.middlewares=nm-auth@file, redirect2https@file"
+        - "traefik.http.services.whois.loadbalancer.server.port=80"
+        - "traefik.http.middlewares.whois-ratelimit.ratelimit.average=${RATELIMIT_AVERAGE:-1}"
+        - "traefik.http.middlewares.whois-ratelimit.ratelimit.period=${RATELIMIT_PERIOD:-5s}"
+        - "traefik.http.routers.whois.middlewares=whois-ratelimit@docker"
+    volumes:
+      - *v-tz
+      - *v-ltime
+      - *v-lgen
+      - app:/var/www/html
+    healthcheck:
+      disable: true
+    stop_grace_period: 1s
+
+volumes:
+  app:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/app
+
+networks:
+  traefik-public:
+    external: true
+

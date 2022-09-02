@@ -991,6 +991,48 @@
 			         "default": ""
 				}
 			]
+		},
+		{
+			"type": 2,
+			"name": "whois",
+			"title": "Whois for web & cli via curl (Traefik version)",
+			"description": "Versione per Swarm con Traefik",
+			"note": "Rate limited by traefik",
+			"categories": [
+				"Tools"
+			],
+			"platform": "linux",
+			"logo": "https://raw.githubusercontent.com/Neomediatech/docker-stack-templates/master/nm-logo.png",
+			"repository": {
+				"url": "https://github.com/Neomediatech/docker-stack-templates",
+				"stackfile": "portainer-v2/whois-4-traefik.yml"
+			},
+			"env": [{
+                                 "name": "STACK_BASE_PATH",
+                                 "label": "STACK_BASE_PATH",
+                                 "description": "Base path inside the host (must exists!)",
+                                 "default": "/srv/data/docker/containers/whois"
+                                },
+                                {
+				 "name": "FQDN_HOST",
+                                 "label": "FQDN_HOST",
+                                 "description": "FQDN where to host this service",
+                                 "default": "whois.cd..."
+				},
+                                {
+                                 "name": "RATELIMIT_AVERAGE",
+                                 "label": "RATELIMIT_AVERAGE",
+                                 "description": "How many requests accepted per IP?",
+                                 "default": "1"
+                                },
+                                {
+                                 "name": "RATELIMIT_PERIOD",
+                                 "label": "RATELIMIT_PERIOD",
+                                 "description": "Time period to evaluate RATELIMIT_AVERAGE",
+                                 "default": "5s"
+                                }
+			]
 		}
+
   ]
 } 
