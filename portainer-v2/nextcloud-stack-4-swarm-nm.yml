@@ -20,7 +20,7 @@ x-vols: &vols
 
 services:
   db:
-    image: mariadb:10.7
+    image: mariadb:10.8
     hostname: db
     deploy:
       replicas: 1    
@@ -39,7 +39,7 @@ services:
       MYSQL_USER_FILE: /var/lib/mysql/db-user.txt
 
   app:
-    image: nextcloud:22-fpm
+    image: nextcloud:24-fpm
     hostname: nc
     deploy:
       replicas: 1    
@@ -85,7 +85,7 @@ services:
       - app
 
   cron:
-    image: nextcloud:22-fpm
+    image: nextcloud:24-fpm
     hostname: nc-cron
     deploy:
       replicas: 1    
@@ -140,7 +140,7 @@ services:
       - db
 
   redis:
-    image: redis:6-alpine
+    image: redis:7-alpine
     deploy:
       replicas: 1    
     restart: always
