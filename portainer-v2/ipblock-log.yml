@@ -149,7 +149,7 @@ services:
       retries: 20
 
   frontend-app:
-    image: neomediatech/php:7.4-apache-redis
+    image: neomediatech/php:7.4-apache
     hostname: frontend-app
     volumes:
       - frontend-app_html:/var/www/html
