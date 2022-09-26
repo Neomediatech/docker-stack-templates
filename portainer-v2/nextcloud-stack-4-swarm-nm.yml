@@ -120,6 +120,8 @@ services:
       - oo_redis:/var/lib/redis
       - oo_lib:/var/lib/onlyoffice
       - oo_fonts:/usr/share/fonts/truetype/custom
+    environment:
+      - JWT_ENABLED=false
     ports:
       - 8081:80
       - 8443:443
