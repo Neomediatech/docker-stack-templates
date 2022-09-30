@@ -1,0 +1,55 @@
+# WARNING: This stack depends on traefik-v2.yml stack
+
+version: '3.7'
+
+x-vol-tz: &v-tz /etc/timezone:/etc/timezone:ro
+x-vol-ltime: &v-ltime /etc/localtime:/etc/localtime:ro
+x-vol-lgen: &v-lgen /etc/locale.gen:/etc/locale.gen:ro
+x-vols: &vols
+  - *v-tz
+  - *v-ltime
+  - *v-lgen
+
+services:
+  app:
+    image: neomediatech/cvdupdate
+    hostname: cvdupdate
+    networks:
+      - traefik-public
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: any
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.cvdupdate.entrypoints=https, http"
+        - "traefik.http.routers.cvdupdate.rule=Host(`${FQDN_HOST}`)"
+        - "traefik.http.routers.cvdupdate.service=cvdupdate"
+        - "traefik.http.routers.cvdupdate.middlewares=nm-ipwhitelist@file, redirect2https@file"
+        - "traefik.http.services.cvdupdate.loadbalancer.server.port=80"
+    volumes:
+      - *v-tz
+      - *v-ltime
+      - *v-lgen
+      - clamav_defs:/var/www/html"
+
+networks:
+  traefik-public:
+    external: true
+
+volumes:
+  clamav_defs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/defs
+
+

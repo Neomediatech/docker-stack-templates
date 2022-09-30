@@ -1,0 +1,322 @@
+# use to create a compose stack template in Portainer
+# STACK_BASE_PATH [base folder where to host files, must exists]
+# STACK_BASE_PATH=/srv/smtp-relay-antispam ; grep device smtp-relay-antispam-stack-neo-4-compose.yml|grep -v "#"|awk '{print $2}'|while read dir; do eval mkdir -p $dir; done
+
+version: '3.7'
+
+x-default-opts: 
+  &default-opts
+  restart: unless-stopped
+
+x-environment: &common-vars
+    TZ: "Europe/Rome"
+
+x-vol-tz: &v-tz /etc/timezone:/etc/timezone:ro
+x-vol-ltime: &v-ltime /etc/localtime:/etc/localtime:ro
+x-vol-lgen: &v-lgen /etc/locale.gen:/etc/locale.gen:ro
+
+services:
+  dns:
+    image: neomediatech/bind9
+    hostname: dns
+    <<: *default-opts    
+    volumes:
+      - *v-tz
+      - *v-ltime
+      - *v-lgen
+    environment:
+      << : *common-vars 
+    networks:
+      default:
+        ipv4_address: 172.16.241.10
+
+  exim:
+    image: neomediatech/exim
+    hostname: exim
+    <<: *default-opts
+    volumes:
+      - exim_conf:/etc/exim4
+      - logs:/var/log/exim4
+      #- exim_logs:/var/log/exim4
+      - *v-tz
+      - *v-ltime
+      - *v-lgen
+    environment:
+      << : *common-vars 
+    dns:
+     - 172.16.241.10
+    ports:
+      - target: 25
+        published: 2525
+        protocol: tcp
+        mode: host
+      - target: 465
+        published: 25465
+        protocol: tcp
+        mode: host
+      - target: 587
+        published: 25587
+        protocol: tcp
+        mode: host
+
+  rspamd:
+    image: neomediatech/rspamd
+    hostname: rspamd
+    <<: *default-opts    
+    volumes:
+      - rspamd_conf:/data
+      - rspamd_lib:/var/lib/rspamd
+      - logs:/var/log/rspamd
+      - *v-tz
+      - *v-ltime
+      - *v-lgen
+    environment:
+      << : *common-vars 
+    dns:
+     - 172.16.241.10
+    ports:
+      - target: 11334
+        published: 11334
+        protocol: tcp
+        mode: host
+      - target: 11333
+        published: 11333
+        protocol: tcp
+        mode: host
+
+  redis-rspamd:
+    image: redis:alpine
+    hostname: redis-rspamd
+    <<: *default-opts    
+    volumes:
+      - redis_rspamd_db:/data
+      - *v-tz
+      - *v-ltime
+      - *v-lgen
+    environment:
+      << : *common-vars 
+    command: ["redis-server", "--slaveof", "10.2.0.1", "6379"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 60s
+      timeout: 10s
+      retries: 3
+    # according to https://github.com/moby/moby/pull/37701#issuecomment-448014841
+    # on docker 19.03 you will be able to set /proc/sys/net/core/somaxconn to 511 instead of default 128
+    # like this example below (maybe syntax will change)
+    sysctls:
+      - net.core.somaxconn=511
+
+  redis-rspamd-history:
+    image: redis:alpine
+    hostname: redis-rspamd-history
+    <<: *default-opts    
+    volumes:
+      - redis_rspamd_history_db:/data
+      - *v-tz
+      - *v-ltime
+      - *v-lgen
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 60s
+      timeout: 10s
+      retries: 3
+    # according to https://github.com/moby/moby/pull/37701#issuecomment-448014841
+    # on docker 19.03 you will be able to set /proc/sys/net/core/somaxconn to 511 instead of default 128
+    # like this example below (maybe syntax will change)
+    sysctls:
+      - net.core.somaxconn=511
+
+  clamav:
+    image: neomediatech/clamav:latest
+    hostname: clamav
+    <<: *default-opts    
+    volumes:
+      - clamav_defs:/var/lib/clamav
+      - clamav_unoff_defs:/var/lib/clamav-unofficial-sigs
+      - *v-tz
+      - *v-ltime
+      - *v-lgen
+      # /srv/${NAME}/pid:/run/clamav
+
+  pyzor:
+    image: neomediatech/pyzor-cc:latest
+    hostname: pyzor
+    <<: *default-opts    
+    volumes:
+      - *v-tz
+      - *v-ltime
+      - *v-lgen
+    environment:
+      << : *common-vars
+
+  pyzor-cc:
+    image: neomediatech/pyzor-cc:latest
+    hostname: pyzor-cc
+    <<: *default-opts    
+    volumes:
+      - *v-tz
+      - *v-ltime
+      - *v-lgen
+    environment:
+      << : *common-vars
+      LISTEN_PORT: "5954"
+      PYZOR_SERVER: "pyzor.s.globalhub.it"
+
+  razorfy:
+    image: neomediatech/razorfy:latest
+    hostname: razorfy
+    <<: *default-opts    
+    volumes:
+      - *v-tz
+      - *v-ltime
+      - *v-lgen
+    environment:
+      << : *common-vars
+      RAZORFY_DEBUG: "1"
+
+  dcc:
+    image: neomediatech/dcc:latest
+    hostname: dcc
+    <<: *default-opts    
+    volumes:
+      - *v-tz
+      - *v-ltime
+      - *v-lgen
+    environment:
+      << : *common-vars
+
+  olefy:
+    image: neomediatech/olefy:latest
+    hostname: olefy
+    <<: *default-opts    
+    volumes:
+      - *v-tz
+      - *v-ltime
+      - *v-lgen
+    environment:
+      << : *common-vars
+
+  exim-localdb:
+    image: mariadb:10
+    hostname: exim-localdb
+    <<: *default-opts
+    volumes:
+      - exim_db:/var/lib/mysql
+      - /var/run/mysqld/:/var/run/mysqld/
+      - *v-tz
+      - *v-ltime
+      - *v-lgen
+    environment:
+      << : *common-vars
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD:-put_your_password_here}"
+      MYSQL_DATABASE: "${MYSQL_DATABASE:-db_name}"
+      MYSQL_USER: "${MYSQL_USER:-db_user}"
+      MYSQL_PASSWORD: "${MYSQL_PASSWORD:-db_password}"
+    ports:
+      - "127.0.0.1:3306:3306"
+
+  cron:
+    image: neomediatech/cron:latest
+    hostname: cron
+    <<: *default-opts
+    volumes:
+      - crontabs:/var/spool/cron/crontabs
+      - cron_scripts:/scripts
+      - *v-tz
+      - *v-ltime
+      - *v-lgen
+    environment:
+      << : *common-vars
+
+volumes:
+  redis_rspamd_db:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/redis-rspamd/data
+
+  redis_rspamd_history_db:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/redis-rspamd-history/data
+
+  clamav_defs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/clamav/defs
+
+  clamav_unoff_defs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/clamav/unoff_defs
+
+  rspamd_conf:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/rspamd/conf
+
+  rspamd_lib:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/rspamd/var
+
+  exim_db:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/exim-localdb/data
+
+  crontabs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/cron/crontabs
+
+  cron_scripts:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/cron/scripts
+
+  logs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/logs
+
+  exim_conf:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/exim/conf
+
+  exim_logs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /var/log/exim4
+
+networks:
+  default:
+    ipam:
+      driver: default
+      config:
+        - subnet: "172.16.241.0/24"

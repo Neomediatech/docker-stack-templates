@@ -1032,7 +1032,37 @@
                                  "default": "5s"
                                 }
 			]
+		},
+		{
+			"type": 2,
+			"name": "cvdupdate",
+			"title": "ClamAV private signature repository (Traefik version)",
+			"description": "Versione per Swarm con Traefik",
+			"note": "_",
+			"categories": [
+				"Antivirus"
+			],
+			"platform": "linux",
+			"logo": "https://raw.githubusercontent.com/Neomediatech/docker-stack-templates/master/nm-logo.png",
+			"repository": {
+				"url": "https://github.com/Neomediatech/docker-stack-templates",
+				"stackfile": "portainer-v2/cvdupdate-4-traefik.yml"
+			},
+			"env": [{
+                                 "name": "STACK_BASE_PATH",
+                                 "label": "STACK_BASE_PATH",
+                                 "description": "Base path inside the host (must exists!)",
+                                 "default": "/srv/data/docker/containers/cvdupdate"
+                                },
+                                {
+				 "name": "FQDN_HOST",
+                                 "label": "FQDN_HOST",
+                                 "description": "FQDN where to host this service",
+                                 "default": "clamav-db.s.g.."
+				}
+			]
 		}
+
 
   ]
 } 
