@@ -43,7 +43,7 @@ services:
       MAILSERVER_CERT: "${MAILSERVER_CERT}"
   
   exim:
-    image: neomediatech/exim:latest
+    image: neomediatech/exim:4.93
     hostname: exim
     <<: *default-opts    
     ports:
