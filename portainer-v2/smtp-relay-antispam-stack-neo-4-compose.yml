@@ -85,6 +85,8 @@ services:
       - *v-tz
       - *v-ltime
       - *v-lgen
+    depends_on:
+      - dns
 
   pyzor:
     image: neomediatech/pyzor-cc:latest
@@ -96,6 +98,8 @@ services:
       - *v-lgen
     environment:
       << : *common-vars
+    depends_on:
+      - dns
 
   pyzor-cc:
     image: neomediatech/pyzor-cc:latest
@@ -109,6 +113,8 @@ services:
       << : *common-vars
       LISTEN_PORT: "5954"
       PYZOR_SERVER: "pyzor.s.globalhub.it"
+    depends_on:
+      - dns
 
   razorfy:
     image: neomediatech/razorfy:latest
@@ -121,6 +127,8 @@ services:
     environment:
       << : *common-vars
       RAZORFY_DEBUG: "1"
+    depends_on:
+      - dns
 
   dcc:
     image: neomediatech/dcc:latest
@@ -132,6 +140,8 @@ services:
       - *v-lgen
     environment:
       << : *common-vars
+    depends_on:
+      - dns
 
   olefy:
     image: neomediatech/olefy:latest
@@ -143,6 +153,8 @@ services:
       - *v-lgen
     environment:
       << : *common-vars
+    depends_on:
+      - dns
 
   exim-localdb:
     image: mariadb:10
@@ -193,6 +205,10 @@ services:
       - "127.0.0.1:11334:11334"
       - "127.0.0.1:11333:11333"
       - "10.2.2.2:11334:11334"
+    depends_on:
+      - dns
+      - redis-rspamd
+      - redis-rspamd-history
 
   exim:
     image: neomediatech/exim
@@ -231,6 +247,11 @@ services:
         ipv4_address: 172.16.243.20
     extra_hosts:
       - "thor:10.2.0.1"
+    depends_on:
+      - rspamd
+      - clamav
+      - dns
+      - exim-localdb
 
 volumes:
   redis_rspamd_db:
