@@ -1061,8 +1061,60 @@
                                  "default": "clamav-db.s.g.."
 				}
 			]
+		},
+		{
+			"type": 3,
+			"name": "smtp-relay-antispam",
+			"title": "SMTP Relay con antispam e antivirus",
+			"description": "Exim, Rspamd, ClamAV e vari altri servizi di supporto. versione per Compose",
+			"note": "<h1>WARNING!</h1>You must create all paths prior to run this stack<h2>NOTA INTERNA</h2>Per i dati di configurazione fai riferimento al file '.env' che trovi nella directory dello stack (oppure compila a piacimento)",
+			"categories": [
+				"Email","Antispam","SMTP Relay"
+			],
+			"platform": "linux",
+			"logo": "https://raw.githubusercontent.com/Neomediatech/docker-stack-templates/master/portainer-v2/smtp-relay-antispam.png",
+			"repository": {
+				"url": "https://github.com/Neomediatech/docker-stack-templates",
+				"stackfile": "portainer-v2/smtp-relay-antispam-stack-neo-4-compose.yml"
+			},
+			"env": [{
+				 "name": "MYSQL_ROOT_PASSWORD",
+				 "label": "Root password for MariaDB",
+				 "description": " ",
+			         "default": "put_your_password_here"
+				},
+				{
+				 "name": "MYSQL_DATABASE",
+				 "label": "Database name",
+				 "description": " ",
+			         "default": "your_database_name"
+				},
+				{
+				 "name": "MYSQL_USER",
+				 "label": "Database user",
+				 "description": " ",
+			         "default": "your_database_username"
+				},
+				{
+				 "name": "MYSQL_PASSWORD",
+				 "label": "Database password",
+				 "description": " ",
+			         "default": "your_database_password"
+				},
+				{
+				 "name": "STACK_BASE_PATH",
+				 "label": "STACK_BASE_PATH",
+				 "description": "Path for the stack. Must exists before launching this stack!",
+			         "default": "/srv/smtp-relay-antispam"
+				},
+                                {
+                                 "name": "MAILSERVER_CERT",
+                                 "label": "MAILSERVER_CERT",
+                                 "description": "FQDN server name for the SSL/TLS certificate, will not be automatically generated",
+                                 "default": "noservername.domain.tld"
+                                }
+			]
 		}
-
 
   ]
 } 

@@ -28,64 +28,10 @@ services:
       << : *common-vars 
     networks:
       default:
-        ipv4_address: 172.16.241.10
-
-  exim:
-    image: neomediatech/exim
-    hostname: exim
-    <<: *default-opts
-    volumes:
-      - exim_conf:/etc/exim4
-      - logs:/var/log/exim4
-      #- exim_logs:/var/log/exim4
-      - *v-tz
-      - *v-ltime
-      - *v-lgen
-    environment:
-      << : *common-vars 
-    dns:
-     - 172.16.241.10
-    ports:
-      - target: 25
-        published: 2525
-        protocol: tcp
-        mode: host
-      - target: 465
-        published: 25465
-        protocol: tcp
-        mode: host
-      - target: 587
-        published: 25587
-        protocol: tcp
-        mode: host
-
-  rspamd:
-    image: neomediatech/rspamd
-    hostname: rspamd
-    <<: *default-opts    
-    volumes:
-      - rspamd_conf:/data
-      - rspamd_lib:/var/lib/rspamd
-      - logs:/var/log/rspamd
-      - *v-tz
-      - *v-ltime
-      - *v-lgen
-    environment:
-      << : *common-vars 
-    dns:
-     - 172.16.241.10
-    ports:
-      - target: 11334
-        published: 11334
-        protocol: tcp
-        mode: host
-      - target: 11333
-        published: 11333
-        protocol: tcp
-        mode: host
+        ipv4_address: 172.16.243.10
 
   redis-rspamd:
-    image: redis:alpine
+    image: redis:7-alpine
     hostname: redis-rspamd
     <<: *default-opts    
     volumes:
@@ -108,7 +54,7 @@ services:
       - net.core.somaxconn=511
 
   redis-rspamd-history:
-    image: redis:alpine
+    image: redis:7-alpine
     hostname: redis-rspamd-history
     <<: *default-opts    
     volumes:
@@ -134,10 +80,11 @@ services:
     volumes:
       - clamav_defs:/var/lib/clamav
       - clamav_unoff_defs:/var/lib/clamav-unofficial-sigs
+      - clamav_conf:/etc/clamav
+      - clamav_conf:/usr/local/etc
       - *v-tz
       - *v-ltime
       - *v-lgen
-      # /srv/${NAME}/pid:/run/clamav
 
   pyzor:
     image: neomediatech/pyzor-cc:latest
@@ -213,8 +160,6 @@ services:
       MYSQL_DATABASE: "${MYSQL_DATABASE:-db_name}"
       MYSQL_USER: "${MYSQL_USER:-db_user}"
       MYSQL_PASSWORD: "${MYSQL_PASSWORD:-db_password}"
-    ports:
-      - "127.0.0.1:3306:3306"
 
   cron:
     image: neomediatech/cron:latest
@@ -228,6 +173,64 @@ services:
       - *v-lgen
     environment:
       << : *common-vars
+
+  rspamd:
+    image: neomediatech/rspamd
+    hostname: rspamd
+    <<: *default-opts
+    volumes:
+      - rspamd_conf:/data
+      - rspamd_lib:/var/lib/rspamd
+      - logs:/var/log/rspamd
+      - *v-tz
+      - *v-ltime
+      - *v-lgen
+    environment:
+      << : *common-vars
+    dns:
+     - 172.16.243.10
+    ports:
+      - "127.0.0.1:11334:11334"
+      - "127.0.0.1:11333:11333"
+      - "10.2.2.2:11334:11334"
+
+  exim:
+    image: neomediatech/exim
+    hostname: exim
+    <<: *default-opts
+    volumes:
+      - exim_conf:/etc/exim4
+      #- exim_conf:/data/exim4
+      - exim_spool:/var/spool/exim4
+      - exim_homes:/var/spool/virtual
+      - exim_logs:/var/log/exim4
+      - certs:/srv/certbot/certs
+      - certs:/data/certs
+      - *v-tz
+      - *v-ltime
+      - *v-lgen
+    environment:
+      << : *common-vars
+    dns:
+     - 172.16.243.10
+    ports:
+      - target: 25
+        published: 25
+        protocol: tcp
+        mode: host
+      - target: 465
+        published: 465
+        protocol: tcp
+        mode: host
+      - target: 587
+        published: 587
+        protocol: tcp
+        mode: host
+    networks:
+      default:
+        ipv4_address: 172.16.243.20
+    extra_hosts:
+      - "thor:10.2.0.1"
 
 volumes:
   redis_rspamd_db:
@@ -257,6 +260,13 @@ volumes:
       type: none
       o: bind
       device: ${STACK_BASE_PATH}/clamav/unoff_defs
+
+  clamav_conf:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/clamav/conf
 
   rspamd_conf:
     driver: local
@@ -307,6 +317,20 @@ volumes:
       o: bind
       device: ${STACK_BASE_PATH}/exim/conf
 
+  exim_spool:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/exim/spool
+
+  exim_homes:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/exim/homes
+
   exim_logs:
     driver: local
     driver_opts:
@@ -314,9 +338,18 @@ volumes:
       o: bind
       device: /var/log/exim4
 
+  certs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /srv/certbot/certs
+
 networks:
   default:
     ipam:
       driver: default
       config:
-        - subnet: "172.16.241.0/24"
+        - subnet: 172.16.243.0/24
+          ip_range: 172.16.243.128/25
+
