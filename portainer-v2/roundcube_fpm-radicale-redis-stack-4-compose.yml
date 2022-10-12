@@ -11,6 +11,10 @@ x-default-opts:
 x-environment: &common-vars
     TZ: "Europe/Rome"
 
+x-vol-tz: &v-tz /etc/timezone:/etc/timezone:ro
+x-vol-ltime: &v-ltime /etc/localtime:/etc/localtime:ro
+x-vol-lgen: &v-lgen /etc/locale.gen:/etc/locale.gen:ro
+
 services:
   dns:
     image: neomediatech/bind9
@@ -43,10 +47,9 @@ services:
       #- php_config:/usr/local/etc/php/conf.d/zzz_roundcube-custom.ini:ro
       #- logs:/var/log
       - /etc/mime.types:/etc/mime.types:ro
-
-      - /etc/timezone:/etc/timezone:ro
-      - /etc/localtime:/etc/localtime:ro
-      - /etc/locale.gen:/etc/locale.gen:ro
+      - *v-tz
+      - *v-ltime
+      - *v-lgen
     environment:
       << : *common-vars
       ROUNDCUBEMAIL_DB_TYPE: "${ROUNDCUBEMAIL_DB_TYPE:-mysql}"
@@ -69,10 +72,9 @@ services:
     volumes:
       - redis:/data
       #- logs:/var/log
-
-      - /etc/timezone:/etc/timezone:ro
-      - /etc/localtime:/etc/localtime:ro
-      - /etc/locale.gen:/etc/locale.gen:ro
+      - *v-tz
+      - *v-ltime
+      - *v-lgen
     environment:
       << : *common-vars
 
@@ -87,9 +89,9 @@ services:
       - radicale:/data
       #- logs:/var/log
       - ${STACK_BASE_PATH}/radicale/radicale.conf:/radicale.conf:ro
-      - /etc/timezone:/etc/timezone:ro
-      - /etc/localtime:/etc/localtime:ro
-      - /etc/locale.gen:/etc/locale.gen:ro
+      - *v-tz
+      - *v-ltime
+      - *v-lgen
     environment:
       << : *common-vars
       IMAP_HOST: "${IMAP_HOST:-10.2.0.1}"
