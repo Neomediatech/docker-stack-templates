@@ -1,6 +1,6 @@
 # use to create a compose stack template in Portainer
 # STACK_BASE_PATH [base folder where to host files, must exists]
-# STACK_BASE_PATH=/srv/roundcube ; grep device roundcube-stack-4-compose.yml|grep -v "#"|awk '{print $2}'|while read dir; do eval mkdir -p $dir; done
+# STACK_BASE_PATH=/srv/webmail ; grep device webmail-stack-4-compose.yml|grep -v "#"|awk '{print $2}'|while read dir; do eval mkdir -p $dir; done
 
 version: '3.7'
 

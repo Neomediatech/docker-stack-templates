@@ -775,7 +775,7 @@
 				 "name": "STACK_BASE_PATH",
 				 "label": "STACK_BASE_PATH",
 				 "description": "Path for the stack. Must exists before launching this stack!",
-			         "default": "/srv/data/docker/containers/roundcube"
+			         "default": "/srv/data/docker/containers/webmail"
 				},
                                 {
                                  "name": "ROUNDCUBEMAIL_UPLOAD_MAX_FILESIZE",
