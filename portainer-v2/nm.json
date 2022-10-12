@@ -735,7 +735,13 @@
 				 "label": "STACK_BASE_PATH",
 				 "description": "Path for the stack. Must exists before launching this stack!",
 			         "default": "/srv/data/docker/containers/roundcube"
-				}
+				},
+                                {
+                                 "name": "ROUNDCUBEMAIL_UPLOAD_MAX_FILESIZE",
+                                 "label": "ROUNDCUBEMAIL_UPLOAD_MAX_FILESIZE",
+                                 "description": "Max size to upload attachments",
+                                 "default": "20M"
+                                }
 			]
 		},
 		{
@@ -770,7 +776,13 @@
 				 "label": "STACK_BASE_PATH",
 				 "description": "Path for the stack. Must exists before launching this stack!",
 			         "default": "/srv/data/docker/containers/roundcube"
-				}
+				},
+                                {
+                                 "name": "ROUNDCUBEMAIL_UPLOAD_MAX_FILESIZE",
+                                 "label": "ROUNDCUBEMAIL_UPLOAD_MAX_FILESIZE",
+                                 "description": "Max size to upload attachments",
+                                 "default": "20M"
+                                }
 			]
 		},
 		{

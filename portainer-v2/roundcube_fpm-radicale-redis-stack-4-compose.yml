@@ -12,6 +12,20 @@ x-environment: &common-vars
     TZ: "Europe/Rome"
 
 services:
+  dns:
+    image: neomediatech/bind9
+    hostname: dns
+    <<: *default-opts
+    volumes:
+      - *v-tz
+      - *v-ltime
+      - *v-lgen
+    environment:
+      << : *common-vars
+    networks:
+      default:
+        ipv4_address: 172.16.244.10
+
   roundcube:
     image: neomediatech/roundcube:latest-fpm
     container_name: roundcube
@@ -44,6 +58,9 @@ services:
       #ROUNDCUBEMAIL_DEFAULT_HOST: "${ROUNDCUBEMAIL_DEFAULT_HOST:-tls://mail.example.org}"
       #ROUNDCUBEMAIL_SMTP_SERVER: "${ROUNDCUBEMAIL_SMTP_SERVER:-tls://mail.example.org}"
       ROUNDCUBEMAIL_UPLOAD_MAX_FILESIZE: "${ROUNDCUBEMAIL_UPLOAD_MAX_FILESIZE:-20M}"
+    dns:
+     - 172.16.244.10
+
   redis:
     image: redis:alpine
     container_name: redis
@@ -58,6 +75,7 @@ services:
       - /etc/locale.gen:/etc/locale.gen:ro
     environment:
       << : *common-vars
+
   radicale:
     image: neomediatech/radicale:latest
     container_name: radicale
@@ -75,6 +93,8 @@ services:
     environment:
       << : *common-vars
       IMAP_HOST: "${IMAP_HOST:-10.2.0.1}"
+    dns:
+     - 172.16.244.10
 
 volumes:
   config:
@@ -128,4 +148,12 @@ volumes:
 #      o: bind
 #      device: ${STACK_BASE_PATH}/zzz_roundcube-custom.ini
 #
+
+networks:
+  default:
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.16.244.0/24
+          ip_range: 172.16.244.128/25
 
