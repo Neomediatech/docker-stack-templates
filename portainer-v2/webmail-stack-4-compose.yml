@@ -32,7 +32,6 @@ services:
 
   roundcube:
     image: neomediatech/roundcube:latest-fpm
-    container_name: roundcube
     hostname: roundcube
     <<: *default-opts    
     ports:
@@ -66,7 +65,6 @@ services:
 
   redis:
     image: redis:alpine
-    container_name: redis
     hostname: redis
     <<: *default-opts    
     volumes:
@@ -80,7 +78,6 @@ services:
 
   radicale:
     image: neomediatech/radicale:latest
-    container_name: radicale
     hostname: radicale
     <<: *default-opts    
     ports:
