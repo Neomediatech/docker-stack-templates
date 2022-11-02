@@ -55,6 +55,7 @@ services:
       - nc_share1:/media/${NC_SHARE1}
       - nc_share2:/media/${NC_SHARE2}
       - nc_share3:/media/${NC_SHARE3}
+      - ${STACK_BASE_PATH}/fpm/www-custom.ini:/usr/local/etc/php-fpm.d/zz-custom.conf
     environment:
       << : *common-vars
       MYSQL_HOST : db
