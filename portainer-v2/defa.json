@@ -1,0 +1,368 @@
+{
+  "version": "2",
+	"templates": [
+                {
+                        "type": 3,
+                        "name": "website",
+                        "title": "Website by Neomediatech",
+                        "description": "website stack 4 compose",
+                        "note": " ",
+                        "categories": ["web"],
+                        "platform": "linux",
+                        "logo": "https://raw.githubusercontent.com/Neomediatech/docker-stack-templates/master/epevda-logo.png",
+                        "repository": {
+                                "url": "https://github.com/Neomediatech/docker-stack-templates",
+                                "stackfile": "portainer-v2/website-stack-4-swarm.yml"
+                        }
+                },
+		{
+			"type": 2,
+			"name": "ipblock-log",
+			"title": "IP Block Log by Neomediatech",
+			"description": "Log degli IP bloccati, inseriti in un db MariaDB",
+			"note": "<h1>IMPORTANT:</h1>You must create the path where you host configurations, eg: <strong>mkdir -p /srv/data/docker/containers/ipblock-log</strong> <br/>",
+			"categories": [
+				"Other"
+			],
+			"platform": "linux",
+			"logo": "https://github.com/Neomediatech/docker-stack-templates/raw/master/ipblock-log.png",
+			"repository": {
+				"url": "https://github.com/Neomediatech/docker-stack-templates",
+				"stackfile": "portainer-v2/ipblock-log.yml"
+			},
+			"env": [{
+				 "name": "DOMAIN",
+				 "label": "DOMAIN",
+				 "description": "Base domain used to create FQDN addresses for let's encrypt",
+			         "default": "c.glob***.i*"
+				},
+				{
+				 "name": "TRAEFIK_WHITELIST",
+				 "label": "TRAEFIK_WHITELIST",
+				 "description": "elenco di classi/ip autorizzate ad attraversare traefik, separati da virgola",
+			         "default": "127.0.0.1, ..."
+				},
+				{
+				 "name": "STACK_BASE_PATH",
+				 "label": "STACK_BASE_PATH",
+				 "description": "Path for the stack. Must exists before launching this stack!",
+			         "default": "/srv/data/docker/containers/ipblock-log"
+				}
+			]
+		},
+		{
+			"type": 2,
+			"name": "catchall",
+			"title": "Nginx container to catch all 'unused' web traffic",
+			"description": "_",
+			"note": "<h1>IMPORTANT:</h1>You must create the path where you host configurations, eg: <strong>mkdir -p /srv/data/docker/containers/traefik</strong> <br/>",
+			"categories": [
+				"Other"
+			],
+			"platform": "linux",
+			"logo": "https://github.com/Neomediatech/docker-stack-templates/raw/master/portainer-v2/nginx-catchall-traefik.png",
+			"repository": {
+				"url": "https://github.com/Neomediatech/docker-stack-templates",
+				"stackfile": "portainer-v2/nginx-catchall.yml"
+			},
+			"env": [{
+				 "name": "FQDN_HOST",
+				 "label": "FQDN_HOST",
+				 "description": "Full hostname",
+			         "default": "catchall.c.***"
+				},
+				{
+				 "name": "STACK_BASE_PATH",
+				 "label": "STACK_BASE_PATH",
+				 "description": "Path for the stack. Must exists before launching this stack!",
+			         "default": "/srv/data/docker/containers/traefik"
+				}
+			]
+		},
+		{
+			"type": 2,
+			"name": "pma-ispc",
+			"title": "phpMyAdmin per db ISPConfig",
+			"description": "Container pma per db ispconfig",
+			"categories": [
+				"Other"
+			],
+			"platform": "linux",
+			"logo": "https://github.com/Neomediatech/docker-stack-templates/raw/master/portainer-v2/pma-ispc.png",
+			"repository": {
+				"url": "https://github.com/Neomediatech/docker-stack-templates",
+				"stackfile": "portainer-v2/pma-4-swarm-traefik.yml"
+			},
+			"env": [{
+				 "name": "DB_HOST",
+				 "label": "DB_HOST",
+				 "description": "Mysql/MariaDB server",
+			         "default": "10.2.0.1"
+				},
+				{
+				 "name": "FQDN_HOST",
+				 "label": "FQDN_HOST",
+				 "description": "hostname da utilizzare per raggiungere il servizio",
+			         "default": "pma-ispc.c..."
+				},
+				{
+				 "name": "UPLOAD_LIMIT",
+				 "label": "UPLOAD_LIMIT",
+				 "description": "limite di upload del file sql",
+			         "default": "20M"
+				}
+			]
+		},
+		{
+			"type": 2,
+			"name": "failover",
+			"title": "Failover Stack",
+			"description": "API (& more maybe) to manage failover to servers Database utilizzato dai vari server per recuperare i cron (e magari altro in futuro)",
+			"note": "<h1>IMPORTANTE:</h1> Devi prima creare il percorso dove verranno ospitati i file, es: <strong>mkdir -p /srv/data/docker/containers/failover</strong> <br/>",
+			"categories": [
+				"Other"
+			],
+			"platform": "linux",
+			"logo": "https://github.com/Neomediatech/docker-stack-templates/raw/master/portainer-v2/failover.png",
+			"repository": {
+				"url": "https://github.com/Neomediatech/docker-stack-templates",
+				"stackfile": "portainer-v2/failover-stack-4-swarm.yml"
+			},
+			"env": [{
+				 "name": "FQDN_PMA",
+				 "label": "FQDN_PMA",
+				 "description": "FQDN to access phpmyadmin interface (used by traefik to redirect traffic & for let'encrypt ssl certificate",
+			         "default": "failover-pma.c.g.."
+				},
+				{
+				 "name": "FQDN_NGINX",
+				 "label": "FQDN_NGINX",
+				 "description": "FQDN to access our api interface (used by traefik to redirect traffic & for let'encrypt ssl certificate",
+			         "default": "failover-api.c.g.."
+				},
+				{
+				 "name": "TRAEFIK_WHITELIST",
+				 "label": "TRAEFIK_WHITELIST",
+				 "description": "(optional) elenco di classi/ip autorizzate ad attraversare traefik, separati da virgola",
+			         "default": "127.0.0.1"
+				},
+				{
+				 "name": "STACK_BASE_PATH",
+				 "label": "STACK_BASE_PATH",
+				 "description": "Path for the stack. Must exists before launching this stack!",
+			         "default": "/srv/data/docker/containers/failover"
+				}
+			]
+		},
+		{
+			"type": 2,
+			"name": "sshd",
+			"title": "SSHd by Neomediatech",
+			"description": "SSHd container",
+			"note": "<b>STACK_BASE_PATH=/srv/data/docker/containers/sshd ; mkdir -p ${STACK_BASE_PATH}/{conf,home,root,shadowdir,logs}</b>",
+			"categories": [
+				"Other"
+			],
+			"platform": "linux",
+			"logo": "https://raw.githubusercontent.com/Neomediatech/sshd/master/openssh_logo.png",
+			"image": "neomediatech/sshd:latest",
+			"hostname": "sshd",
+			"repository": {
+				"url": "https://github.com/Neomediatech/sshd",
+				"stackfile": "docker-compose.yml"
+			},
+			"env": [{
+				 "name": "STACK_BASE_PATH",
+				 "label": "STACK_BASE_PATH",
+				 "description": "Path for the stack. Must exists before launching this stack!",
+			         "default": "/srv/data/docker/containers/sshd"
+				}
+			]
+		},
+		{
+			"type": 1,
+			"name": "fail2ban",
+			"title": "Fail2Ban by Neomediatech",
+			"description": "Dockerized Fail2Ban",
+			"note": "<h2>ENV parameters below can be omitted if you put them in /data/config.ini</h2><h1>crea le varie directory: </h1>BASE_DIR='/srv/data/docker/containers/fail2ban' <br>mkdir -p $BASE_DIR/{action.d,db,filter.d,jail.d,log} && chmod 777 $BASE_DIR/{action.d,db,filter.d,jail.d,log}",
+			"categories": [
+				"Other"
+			],
+			"platform": "linux",
+			"logo": "https://raw.githubusercontent.com/Neomediatech/fail2ban/master/fail2ban_logo.png",
+			"image": "neomediatech/fail2ban:from-source",
+			"hostname": "fail2ban",
+			"network": "host",
+			"volumes": [
+			  {
+			    "container": "/data",
+			    "bind": "/srv/data/docker/containers/fail2ban/confs"
+			  },
+			  {
+			    "container": "/var/log",
+			    "bind": "/srv/data/docker/containers/fail2ban/logs"
+			  },
+			  {
+			    "container": "/var/log/dnsbl-ipset",
+			    "bind": "/var/log/dnsbl-ipset",
+			    "readonly": true
+			  },
+			  {
+			    "container": "/var/log/nginx-catchall",
+			    "bind": "/srv/data/docker/containers/traefik/logs",
+			    "readonly": true
+			  },
+			  {
+			    "container": "/var/log/sshd",
+			    "bind": "/srv/data/docker/containers/sshd/logs",
+			    "readonly": true
+			  }
+			],
+			"restart_policy": "always",
+			"privileged": true,
+			"env": [{
+				 "name": "F2B_DEST_EMAIL",
+				 "label": "F2B_DEST_EMAIL",
+				 "description": "_",
+			         "default": "supp..@ne.."
+				},
+				{
+				 "name": "F2B_SENDER",
+				 "label": "F2B_SENDER",
+				 "description": "_",
+			         "default": "hostname@ne.."
+				},
+				{
+				 "name": "SSMTP_HOST",
+				 "label": "SSMTP_HOST",
+				 "description": "SMTP to use to send notifications",
+				 "default": "10.40.50.5"
+				},
+				{
+				 "name": "SSMTP_HOSTNAME",
+				 "label": "SSMTP_HOSTNAME",
+				 "description": "_",
+			         "default": "hostname.ne.."
+				}
+			]
+		},
+		{
+			"type": 3,
+			"name": "webnettools",
+			"title": "testssl, ping, traceroute, ecc...via web",
+			"description": "Versione per Compose",
+			"note": " ",
+			"categories": [
+				"Tools"
+			],
+			"platform": "linux",
+			"logo": "https://raw.githubusercontent.com/Neomediatech/docker-stack-templates/master/webnettools.png",
+			"repository": {
+				"url": "https://github.com/Neomediatech/docker-stack-templates",
+				"stackfile": "portainer-v2/webnettools.yml"
+			},
+			"env": [{
+				 "name": "AVAILABLE_TOOLS",
+				 "label": "AVAILABLE_TOOLS",
+				 "description": "limit the tools shown in the web frontend: testssl, ping, traceroute, nmap",
+			         "default": "testssl, ping, traceroute"
+				},
+				{
+				 "name": "RATE_LIMIT",
+				 "label": "RATE_LIMIT",
+				 "description": "(Optional) Rate limit - Limits the number of calls of a specific tool to a specific target (e.g. host). The value is set in milliseconds between consecutive calls.",
+			         "default": "60000"
+				},
+				{
+				 "name": "INTRO_TEXT",
+				 "label": "INTRO_TEXT",
+				 "description": "(Optional) Show an additional paragraph in front of the tool selection. This can be used to help the users in your specific environment. HTML tags are supported.",
+			         "default": ""
+				}
+			]
+		},
+		{
+			"type": 2,
+			"name": "cvdupdate",
+			"title": "ClamAV private signature repository (Traefik version)",
+			"description": "Versione per Swarm con Traefik",
+			"note": "_",
+			"categories": [
+				"Antivirus"
+			],
+			"platform": "linux",
+			"logo": "https://raw.githubusercontent.com/Neomediatech/docker-stack-templates/master/nm-logo.png",
+			"repository": {
+				"url": "https://github.com/Neomediatech/docker-stack-templates",
+				"stackfile": "portainer-v2/cvdupdate-4-traefik.yml"
+			},
+			"env": [{
+                                 "name": "STACK_BASE_PATH",
+                                 "label": "STACK_BASE_PATH",
+                                 "description": "Base path inside the host (must exists!)",
+                                 "default": "/srv/data/docker/containers/cvdupdate"
+                                },
+                                {
+				 "name": "FQDN_HOST",
+                                 "label": "FQDN_HOST",
+                                 "description": "FQDN where to host this service",
+                                 "default": "clamav-db.s.g.."
+				}
+			]
+		},
+		{
+			"type": 3,
+			"name": "smtp-relay-antispam",
+			"title": "SMTP Relay con antispam e antivirus",
+			"description": "Exim, Rspamd, ClamAV e vari altri servizi di supporto. versione per Compose",
+			"note": "<h1>WARNING!</h1>You must create all paths prior to run this stack<h2>NOTA INTERNA</h2>Per i dati di configurazione fai riferimento al file '.env' che trovi nella directory dello stack (oppure compila a piacimento)",
+			"categories": [
+				"Email","Antispam","SMTP Relay"
+			],
+			"platform": "linux",
+			"logo": "https://raw.githubusercontent.com/Neomediatech/docker-stack-templates/master/portainer-v2/smtp-relay-antispam.png",
+			"repository": {
+				"url": "https://github.com/Neomediatech/docker-stack-templates",
+				"stackfile": "portainer-v2/smtp-relay-antispam-stack-neo-4-compose.yml"
+			},
+			"env": [{
+				 "name": "MYSQL_ROOT_PASSWORD",
+				 "label": "Root password for MariaDB",
+				 "description": " ",
+			         "default": "put_your_password_here"
+				},
+				{
+				 "name": "MYSQL_DATABASE",
+				 "label": "Database name",
+				 "description": " ",
+			         "default": "your_database_name"
+				},
+				{
+				 "name": "MYSQL_USER",
+				 "label": "Database user",
+				 "description": " ",
+			         "default": "your_database_username"
+				},
+				{
+				 "name": "MYSQL_PASSWORD",
+				 "label": "Database password",
+				 "description": " ",
+			         "default": "your_database_password"
+				},
+				{
+				 "name": "STACK_BASE_PATH",
+				 "label": "STACK_BASE_PATH",
+				 "description": "Path for the stack. Must exists before launching this stack!",
+			         "default": "/srv/smtp-relay-antispam"
+				},
+                                {
+                                 "name": "MAILSERVER_CERT",
+                                 "label": "MAILSERVER_CERT",
+                                 "description": "FQDN server name for the SSL/TLS certificate, will not be automatically generated",
+                                 "default": "noservername.domain.tld"
+                                }
+			]
+		}
+
+  ]
+} 
