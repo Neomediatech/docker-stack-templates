@@ -15,6 +15,7 @@ services:
       - app:/var/www/html
       - /srv/magento/htaccess.pwd:/etc/apache2/htaccess.pwd:rw
       - /srv/magento/1-custom.ini:/usr/local/etc/php/conf.d/1-custom.ini:ro
+      - /srv/magento/.composer:/var/www/.composer
     environment:
       TZ: Europe/Rome
     depends_on:
