@@ -23,17 +23,17 @@ services:
     healthcheck:
       disable: true
     stop_grace_period: 5s
-    deploy:
-      restart_policy:
-        condition: any
-      labels:
-        - "traefik.enable=true"
-        - "traefik.http.routers.magento.entrypoints=https, http"
-        - "traefik.http.routers.magento.rule=Host(`${FQDN_HOST}`)"
-        - "traefik.http.routers.magento.service=magento"
-        - "traefik.http.routers.magento.middlewares=redirect2https@file"
-        - "traefik.http.services.magento.loadbalancer.server.port=80"
-
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.magento.entrypoints=https, http"
+      - "traefik.http.routers.magento.rule=Host(`${FQDN_HOST}`)"
+      - "traefik.http.routers.magento.service=magento"
+      - "traefik.http.routers.magento.middlewares=redirect2https@file"
+      - "traefik.http.services.magento.loadbalancer.server.port=80"
+    networks:
+      - traefik_public
+      - default
+  
   db:
     image: mariadb:10.8
     hostname: db
@@ -82,4 +82,9 @@ volumes:
       type: none
       o: bind
       device: /srv/magento/app
+
+networks:
+  traefik_public:
+    external: true
+  default:
 

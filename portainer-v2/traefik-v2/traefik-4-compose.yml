@@ -6,7 +6,7 @@
 version: '3.7'
 services:
   traefik:
-    image: traefik:v2.4
+    image: traefik:v2.9
     hostname: traefik
     ports:
       - target: 80
@@ -29,7 +29,7 @@ services:
       - traefik_conf_dynamic:/conf
       - traefik_conf_static:/etc/traefik
     networks:
-      - traefik-public
+      - public
     deploy:
       mode: replicated
       replicas: 1
@@ -60,7 +60,7 @@ services:
         - "traefik.http.services.dummy-svc.loadbalancer.server.port=9999"
 
 networks:
-  traefik-public:
+  public:
  
 volumes:
   traefik_certs:
@@ -97,3 +97,4 @@ volumes:
       type: none
       o: bind
       device: ${STACK_BASE_PATH}/conf
+
