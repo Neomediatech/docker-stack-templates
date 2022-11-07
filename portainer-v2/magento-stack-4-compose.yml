@@ -6,16 +6,17 @@ services:
     # ???? e i log dove li mettiamo ????
     image: neomediatech/php:8.1-apache
     hostname: magento
+    user: www-data
     ports:
       - target: 80
         published: 182
         protocol: tcp
         mode: host
     volumes:
-      - app:/var/www/html
+      - app:/var/www
       - /srv/magento/htaccess.pwd:/etc/apache2/htaccess.pwd:rw
       - /srv/magento/1-custom.ini:/usr/local/etc/php/conf.d/1-custom.ini:ro
-      - /srv/magento/.composer:/var/www/.composer
+
     environment:
       TZ: Europe/Rome
     depends_on:
@@ -72,5 +73,4 @@ volumes:
       type: none
       o: bind
       device: /srv/magento/app
-
 
