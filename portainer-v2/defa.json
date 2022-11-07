@@ -3,6 +3,40 @@
 	"templates": [
                 {
                         "type": 3,
+                        "name": "traefik",
+                        "title": "Traefik by Neomediatech",
+                        "description": "Traefik stack 4 compose",
+                        "note": " ",
+                        "categories": ["web"],
+                        "platform": "linux",
+                        "logo": "https://github.com/Neomediatech/docker-stack-templates/raw/master/nm-logo.png",
+                        "repository": {
+                                "url": "https://github.com/Neomediatech/docker-stack-templates",
+                                "stackfile": "portainer-v2/traefik-v2/docker-compose.yml"
+                        },
+			"env": [{
+				 "name": "FQDN_HOST",
+				 "label": "FQDN_HOST",
+				 "description": "Host name used to access traefik interface",
+			         "default": "traefik.party******.*g"
+				},
+				{
+				 "name": "TRAEFIK_WHITELIST",
+				 "label": "TRAEFIK_WHITELIST",
+				 "description": "elenco di classi/ip autorizzate ad attraversare traefik, separati da virgola",
+			         "default": "127.0.0.1, ..."
+				},
+				{
+				 "name": "STACK_BASE_PATH",
+				 "label": "STACK_BASE_PATH",
+				 "description": "Path for the stack. Must exists before launching this stack!",
+			         "default": "/srv/traefik"
+				}
+			]
+
+                },
+                {
+                        "type": 3,
                         "name": "magento",
                         "title": "Magento by Neomediatech",
                         "description": "Magento stack 4 compose",
