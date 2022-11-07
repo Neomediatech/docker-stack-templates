@@ -16,7 +16,6 @@ services:
       - app:/var/www
       - /srv/magento/htaccess.pwd:/etc/apache2/htaccess.pwd:rw
       - /srv/magento/1-custom.ini:/usr/local/etc/php/conf.d/1-custom.ini:ro
-
     environment:
       TZ: Europe/Rome
     depends_on:
@@ -24,6 +23,16 @@ services:
     healthcheck:
       disable: true
     stop_grace_period: 5s
+    deploy:
+      restart_policy:
+        condition: any
+      labels:
+        - "traefik.enable=true"
+        - "traefik.http.routers.magento.entrypoints=https, http"
+        - "traefik.http.routers.magento.rule=Host(`${FQDN_HOST}`)"
+        - "traefik.http.routers.magento.service=magento"
+        - "traefik.http.routers.magento.middlewares=redirect2https@file"
+        - "traefik.http.services.magento.loadbalancer.server.port=80"
 
   db:
     image: mariadb:10.8

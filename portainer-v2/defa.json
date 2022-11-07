@@ -47,7 +47,14 @@
                         "repository": {
                                 "url": "https://github.com/Neomediatech/docker-stack-templates",
                                 "stackfile": "portainer-v2/magento-stack-4-compose.yml"
-                        }
+                        },
+                        "env": [{
+                                 "name": "FQDN_HOST",
+                                 "label": "FQDN_HOST",
+                                 "description": "Host name used to access traefik interface",
+                                 "default": "party******.*g"
+                                }
+                        ]
                 },
 		{
 			"type": 2,
