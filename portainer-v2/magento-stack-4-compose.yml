@@ -35,7 +35,7 @@ services:
       - default
   
   db:
-    image: mariadb:10.8
+    image: mariadb:10.4
     hostname: db
     volumes:
       - db:/var/lib/mysql
