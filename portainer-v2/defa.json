@@ -43,7 +43,7 @@
                         "note": " ",
                         "categories": ["web"],
                         "platform": "linux",
-                        "logo": "https://github.com/Neomediatech/docker-stack-templates/raw/master/nm-logo.png",
+                        "logo": "https://github.com/Neomediatech/docker-stack-templates/raw/master/portainer-v2/prestashop-logo.png",
                         "repository": {
                                 "url": "https://github.com/Neomediatech/docker-stack-templates",
                                 "stackfile": "portainer-v2/prestashop-stack-4-compose.yml"
@@ -77,7 +77,7 @@
                         "note": " ",
                         "categories": ["web"],
                         "platform": "linux",
-                        "logo": "https://github.com/Neomediatech/docker-stack-templates/raw/master/nm-logo.png",
+                        "logo": "https://github.com/Neomediatech/docker-stack-templates/raw/master/portainer-v2/magento-logo.png",
                         "repository": {
                                 "url": "https://github.com/Neomediatech/docker-stack-templates",
                                 "stackfile": "portainer-v2/magento-stack-4-compose.yml"
