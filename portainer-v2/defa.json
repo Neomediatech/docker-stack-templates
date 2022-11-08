@@ -100,7 +100,7 @@
                         "logo": "https://github.com/Neomediatech/docker-stack-templates/raw/master/portainer-v2/nm-logo.png",
                         "repository": {
                                 "url": "https://github.com/Neomediatech/docker-stack-templates",
-                                "stackfile": "portainer-v2/simple-smpt.yml"
+                                "stackfile": "portainer-v2/simple-smtp.yml"
                         },
                         "env": [{
 				 "name": "STACK_BASE_PATH",
