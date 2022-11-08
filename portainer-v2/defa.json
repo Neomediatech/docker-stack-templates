@@ -97,7 +97,7 @@
                         "note": " ",
                         "categories": ["email"],
                         "platform": "linux",
-                        "logo": "https://github.com/Neomediatech/docker-stack-templates/raw/master/portainer-v2/nm-logo.png",
+                        "logo": "https://github.com/Neomediatech/docker-stack-templates/raw/master/portainer-v2/simple-smtp.png",
                         "repository": {
                                 "url": "https://github.com/Neomediatech/docker-stack-templates",
                                 "stackfile": "portainer-v2/simple-smtp.yml"
