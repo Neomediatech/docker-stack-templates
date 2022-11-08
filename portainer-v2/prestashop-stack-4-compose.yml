@@ -1,0 +1,92 @@
+# stack name "prestashop"
+version: '3.7'
+
+services:
+  app:
+    image: neomediatech/php:7.4-apache
+    hostname: prestashop
+    user: www-data
+    volumes:
+      - app:/var/www
+      - ${STACK_BASE_PATH}/htaccess.pwd:/etc/apache2/htaccess.pwd:rw
+      - ${STACK_BASE_PATH}/1-custom.ini:/usr/local/etc/php/conf.d/1-custom.ini:ro
+    environment:
+      TZ: Europe/Sofia
+    depends_on:
+      - db
+    healthcheck:
+      disable: true
+    stop_grace_period: 5s
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.prestashop.entrypoints=https, http"
+      - "traefik.http.routers.prestashop.rule=Host(`${FQDN_HOST}`)"
+      - "traefik.http.routers.prestashop.service=prestashop"
+      - "traefik.http.routers.prestashop.middlewares=redirect2https@file"
+      - "traefik.http.services.prestashop.loadbalancer.server.port=80"
+    networks:
+      - traefik_public
+      - default
+  
+  db:
+    image: mariadb:10.8
+    hostname: db
+    volumes:
+      - db:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD_FILE: /var/lib/mysql/db-root.pwd
+      MYSQL_PASSWORD_FILE: /var/lib/mysql/db-pwd.txt
+      MYSQL_DATABASE_FILE: /var/lib/mysql/db-name.txt
+      MYSQL_USER_FILE: /var/lib/mysql/db-user.txt
+      TZ: Europe/Sofia
+    healthcheck:
+      test: ["CMD", "/bin/bash", "-c", "read p < $$MYSQL_PASSWORD_FILE ; read u < $$MYSQL_USER_FILE ; mysql -p$$p -u$$u -e status | grep Uptime || (echo \"MariaDB is down\" && exit 1)"]
+      interval: 60s
+      timeout: 30s
+      start_period: 3s
+      retries: 20
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    hostname: phpmyadmin
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+      UPLOAD_LIMIT: 20M
+    depends_on:
+      - db
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.pma.entrypoints=https, http"
+      - "traefik.http.routers.pma.rule=Host(`${PMA_FQDN}`)"
+      - "traefik.http.routers.pma.service=pma"
+      - "traefik.http.routers.pma.middlewares=redirect2https@file"
+      - "traefik.http.services.pma.loadbalancer.server.port=80"      
+    networks:
+      - traefik_public
+      - default
+
+volumes:
+  logs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/logs
+  db:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/db
+  app:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/app
+
+networks:
+  traefik_public:
+    external: true
+  default:
