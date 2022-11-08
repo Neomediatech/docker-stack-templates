@@ -145,9 +145,7 @@
 			"title": "SSHd by Neomediatech",
 			"description": "SSHd container",
 			"note": "<b>STACK_BASE_PATH=/srv/sshd ; mkdir -p ${STACK_BASE_PATH}/{conf,home,root,shadowdir,logs}</b>",
-			"categories": [
-				"Other"
-			],
+			"categories": ["other"],
 			"platform": "linux",
 			"logo": "https://raw.githubusercontent.com/Neomediatech/sshd/master/openssh_logo.png",
 			"image": "neomediatech/sshd:latest",
