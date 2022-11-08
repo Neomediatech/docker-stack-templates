@@ -1,4 +1,4 @@
-tack name "magento"
+# stack name "magento"
 version: '3.7'
 
 services:
@@ -7,11 +7,6 @@ services:
     image: neomediatech/php:8.1-apache
     hostname: magento
     user: www-data
-    ports:
-      - target: 80
-        published: 182
-        protocol: tcp
-        mode: host
     volumes:
       - app:/var/www
       - /srv/magento/htaccess.pwd:/etc/apache2/htaccess.pwd:rw
@@ -94,4 +89,3 @@ networks:
   traefik_public:
     external: true
   default:
-
