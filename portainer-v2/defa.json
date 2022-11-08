@@ -66,7 +66,6 @@
 				 "description": "Path for the stack. Must exists before launching this stack!",
 			         "default": "/srv/prestashop"
 				}
-
                         ]
                 },
                 {
@@ -88,6 +87,27 @@
                                  "description": "Host name used to access traefik interface",
                                  "default": "party******.*g"
                                 }
+                        ]
+                },
+                {
+                        "type": 3,
+                        "name": "smtp",
+                        "title": "SMTP by Neomediatech",
+                        "description": "Simple SMTP 4 compose",
+                        "note": " ",
+                        "categories": ["email"],
+                        "platform": "linux",
+                        "logo": "https://github.com/Neomediatech/docker-stack-templates/raw/master/portainer-v2/nm-logo.png",
+                        "repository": {
+                                "url": "https://github.com/Neomediatech/docker-stack-templates",
+                                "stackfile": "portainer-v2/simple-smpt.yml"
+                        },
+                        "env": [{
+				 "name": "STACK_BASE_PATH",
+				 "label": "STACK_BASE_PATH",
+				 "description": "Path for the stack. Must exists before launching this stack!",
+			         "default": "/srv/smtp"
+				}
                         ]
                 },
 		{
@@ -120,7 +140,7 @@
 			]
 		},
 		{
-			"type": 2,
+			"type": 3,
 			"name": "sshd",
 			"title": "SSHd by Neomediatech",
 			"description": "SSHd container",

@@ -1,0 +1,80 @@
+# use to create a compose stack template in Portainer
+# STACK_BASE_PATH [base folder where to host files, must exists]
+# STACK_BASE_PATH=/srv/smtp ; grep device smtp.yml|grep -v "#"|awk '{print $2}'|while read dir; do eval mkdir -p $dir; done
+
+version: '3.7'
+
+x-default-opts: 
+  &default-opts
+  restart: unless-stopped
+
+x-environment: &common-vars
+    TZ: ${TZ:-"Europe/Sofia"}
+
+x-vol-tz: &v-tz /etc/timezone:/etc/timezone:ro
+x-vol-ltime: &v-ltime /etc/localtime:/etc/localtime:ro
+x-vol-lgen: &v-lgen /etc/locale.gen:/etc/locale.gen:ro
+
+services:
+  exim:
+    image: neomediatech/exim
+    hostname: smtp
+    <<: *default-opts
+    volumes:
+      - exim_conf:/etc/exim4
+      - exim_spool:/var/spool/exim4
+      - exim_homes:/var/spool/virtual
+      - logs:/var/log/exim4
+      - certs:/srv/certbot/certs
+      - certs:/data/certs
+      - *v-tz
+      - *v-ltime
+      - *v-lgen
+    environment:
+      << : *common-vars
+
+    networks:
+      - prestashop_default
+      - default
+      
+volumes:
+  logs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/logs
+
+  exim_conf:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/conf
+
+  exim_spool:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/spool
+
+  exim_homes:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/homes
+
+  certs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /srv/certbot/certs
+
+networks:
+  default:
+  prestashop_default:
+    external: true
+
