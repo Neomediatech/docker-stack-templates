@@ -173,7 +173,7 @@
 			],
 			"platform": "linux",
 			"logo": "https://raw.githubusercontent.com/Neomediatech/fail2ban/master/fail2ban_logo.png",
-			"image": "neomediatech/fail2ban:from-source",
+			"image": "neomediatech/fail2ban:1.x",
 			"hostname": "fail2ban",
 			"network": "host",
 			"volumes": [
