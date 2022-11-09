@@ -3,7 +3,7 @@ version: '3.7'
 
 services:
   app:
-    image: neomediatech/php:7.4-apache
+    image: neomediatech/php:8.1-apache
     hostname: app
     ports:
       - target: 80
