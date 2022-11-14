@@ -20,7 +20,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.prestashop.entrypoints=https, http"
-      - "traefik.http.routers.prestashop.rule=Host(`${FQDN_HOST}`)"
+      - "traefik.http.routers.prestashop.rule=Host(`${FQDN_HOST}`,`www.${FQDN_HOST}`)"
       - "traefik.http.routers.prestashop.service=prestashop"
       - "traefik.http.routers.prestashop.middlewares=redirect2https@file"
       - "traefik.http.services.prestashop.loadbalancer.server.port=80"
