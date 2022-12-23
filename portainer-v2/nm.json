@@ -843,6 +843,12 @@
 				 "label": "QUEUE_CYCLE",
 				 "description": "Tempo di avvio della coda",
 			         "default": "10m"
+				},
+				{
+				 "name": "CLAMAV_START",
+				 "label": "CLAMAV_START",
+				 "description": "Avvio ClamAV? (yes/no)",
+			         "default": "yes"
 				}
 			]
 		},
