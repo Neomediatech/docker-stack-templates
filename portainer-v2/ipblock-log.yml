@@ -90,11 +90,12 @@ services:
     depends_on:
       - db
 
-  nginx:
-    image: nginx:1-alpine
-    hostname: nginx
+  app:
+    image: neomediatech/php:7.4-apache
+    hostname: app
     environment:
-      TZ: Europe/Rome
+      << : *common-vars
+      MYSQL_DATABASE_FILE: /common/db-name.txt
     networks:
       - private
       - traefik-public
@@ -103,19 +104,16 @@ services:
         condition: any
       labels:
         - "traefik.enable=true"
-        - "traefik.http.routers.nginx.entrypoints=https, http"
-        - "traefik.http.routers.nginx.rule=Host(`dnsbl.${DOMAIN}`)"
-        - "traefik.http.routers.nginx.service=nginx"
-        - "traefik.http.routers.nginx.middlewares=dnsbl-auth@file, redirect2https@file"
-        - "traefik.http.services.nginx.loadbalancer.server.port=80"
+        - "traefik.http.routers.ipblock-app.entrypoints=https, http"
+        - "traefik.http.routers.ipblock-app.rule=Host(`dnsbl.${DOMAIN}`)"
+        - "traefik.http.routers.ipblock-app.service=ipblock-app"
+        - "traefik.http.routers.ipblock-app.middlewares=dnsbl-auth@file, redirect2https@file"
+        - "traefik.http.services.ipblock-app.loadbalancer.server.port=80"
     volumes:
-      - app_conf:/etc/nginx/conf.d:ro
-      - app_html:/usr/share/nginx/html
-      - logs:/var/log/nginx
-    depends_on:
-      - app
-    #entrypoint: ["/entrypoint.sh"]
-    #command: "/bin/sh -c 'echo -n \"Waiting for app...\"; until ping app -c1 >/dev/null; do sleep 1; echo -n \"...\"; done; echo \"OK\"; nginx -g \"daemon off;\"'"
+      - app_html:/var/www/html
+      - logs:/logs
+      - rbldnsd_data:/data
+      - common:/common:ro
     healthcheck:
       test: ["CMD", "/bin/sh", "-c", "nc -w 7 -zv 0.0.0.0 80 || (echo \"Very bad things are happening here...\" && exit 1)"]
       interval: 30s
@@ -123,30 +121,7 @@ services:
       start_period: 60s
       retries: 6
     stop_grace_period: 20s
-
-  app:
-    image: neomediatech/php:7.4-fpm
-    hostname: app
-    volumes:
-      - app_html:/usr/share/nginx/html
-      - rbldnsd_data:/data
-      - logs:/logs
-      - common:/common:ro
-    environment:
-      << : *common-vars
-      MYSQL_DATABASE_FILE: /common/db-name.txt
-    networks:
-      - private
-    #depends_on:
-    #  - db
-    #entrypoint: ["/entrypoint.sh"]
-    #command: ["tini", "--", "php-fpm"]
-    healthcheck:
-      test: ["CMD", "nc", "-w", "7", "-zv", "0.0.0.0", "9000"]
-      interval: 30s
-      timeout: 30s
-      start_period: 60s
-      retries: 20
+    working_dir: /var/www/html
 
   frontend-app:
     image: neomediatech/php:7.4-apache
