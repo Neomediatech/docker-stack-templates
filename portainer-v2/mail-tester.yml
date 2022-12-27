@@ -98,6 +98,8 @@ services:
     volumes:
       - clamav_defs:/var/lib/clamav
       - clamav_unoff_defs:/var/lib/clamav-unofficial-sigs
+    environment:
+      CLAMAV_START: ${CLAMAV_START:-yes}
     stop_grace_period: 1m
     networks:
       - private
