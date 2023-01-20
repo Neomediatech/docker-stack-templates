@@ -13,8 +13,8 @@ x-environment: &common-vars
 
 services:
   roundcube:
-    #image: neomediatech/roundcube:latest-fpm
-    image: neomediatech/roundcube:latest
+    #image: neomediatech/roundcube:1.5.x-fpm
+    image: neomediatech/roundcube:1.5.x-apache
     container_name: roundcube
     hostname: roundcube
     <<: *default-opts    

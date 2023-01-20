@@ -13,7 +13,7 @@ x-environment: &common-vars
 
 services:
   roundcube:
-    image: roundcube/roundcubemail:latest-fpm
+    image: roundcube/roundcubemail:1.5.x-fpm
     container_name: roundcube
     hostname: roundcube
     <<: *default-opts    

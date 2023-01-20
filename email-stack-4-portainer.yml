@@ -58,7 +58,7 @@ services:
       << : *common-vars
 
   webmail:
-    image: roundcube/roundcubemail:latest-fpm
+    image: roundcube/roundcubemail:1.5.x-fpm
     hostname: webmail
     volumes:
       - /srv/data/email/webmail/roundcube-config.php:/var/roundcube/config/roundcube-config.php:ro
