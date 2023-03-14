@@ -1,6 +1,6 @@
 # use to create a compose stack template in Portainer
 # STACK_BASE_PATH [base folder where to host files, must exists]
-# STACK_BASE_PATH=/srv/webmail-apache ; grep device roundcube-radicale-redis-stack-4-compose.yml|grep -v "#"|awk '{print $2}'|while read dir; do eval mkdir -p $dir; done
+# STACK_BASE_PATH=/srv/webmail-apache ; grep device webmail-roundcube-radicale-redis-apache-stack-4-compose.yml|grep -v "#"|awk '{print $2}'|while read dir; do eval mkdir -p $dir; done
 
 version: '3.7'
 
