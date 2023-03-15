@@ -1,10 +1,19 @@
 # stack name "prestashop"
 version: '3.7'
 
+x-default-opts: 
+  &default-opts
+  deploy:
+    restart_policy:
+      condition: always
+      delay: 5s
+      window: 20s
+
 services:
   app:
     image: neomediatech/php:7.4-apache
     hostname: prestashop
+    <<: *default-opts
     user: www-data
     volumes:
       - app:/var/www
@@ -31,6 +40,7 @@ services:
   db:
     image: mariadb:10.8
     hostname: db
+    <<: *default-opts
     volumes:
       - db:/var/lib/mysql
     environment:
@@ -49,6 +59,7 @@ services:
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
     hostname: phpmyadmin
+    <<: *default-opts
     environment:
       PMA_HOST: db
       PMA_PORT: 3306
