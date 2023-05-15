@@ -45,7 +45,7 @@ services:
     stop_grace_period: 20s
 
   app:
-    image: nextcloud:24-fpm 
+    image: nextcloud:25-fpm 
     hostname: app
     <<: *default-opts    
     volumes:
@@ -64,7 +64,7 @@ services:
     stop_grace_period: 20s
 
   cron:
-    image: nextcloud:24-fpm
+    image: nextcloud:25-fpm
     hostname: cron
     <<: *default-opts
     volumes:
