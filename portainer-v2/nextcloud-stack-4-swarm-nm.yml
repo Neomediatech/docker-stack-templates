@@ -121,8 +121,7 @@ services:
       - oo_redis:/var/lib/redis
       - oo_lib:/var/lib/onlyoffice
       - oo_fonts:/usr/share/fonts/truetype/custom
-    environment:
-      - JWT_ENABLED=false
+      - oo_conf:/etc/onlyoffice/documentserver
     ports:
       - 8081:80
       - 8443:443
@@ -257,3 +256,11 @@ volumes:
       type: none
       o: bind
       device: ${STACK_BASE_PATH}/onlyoffice/redis/data
+
+  oo_conf:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/onlyoffice/conf
+
