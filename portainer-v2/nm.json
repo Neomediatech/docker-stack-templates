@@ -1158,6 +1158,12 @@
 				 "description": " ",
 			         "default": "/srv/certbot"
 				},
+                                {
+				 "name": "EXTRA_HOST",
+				 "label": "extra host to add to dns internal resolution",
+				 "description": " ",
+			         "default": "thor:10.2.0.1"
+				},
 				{
 				 "name": "STACK_BASE_PATH",
 				 "label": "STACK_BASE_PATH",
