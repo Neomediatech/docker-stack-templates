@@ -1,0 +1,104 @@
+# use to create a compose stack template in Portainer
+# STACK_BASE_PATH [base folder where to host files, must exists]
+# STACK_BASE_PATH=/srv/data/docker/containers/honeypot ; grep device rescue-ip-stack-4-compose.yml|grep -v "#"|awk '{print $2}'|while read dir; do eval mkdir -p $dir; done
+# LISTEN_IP= ip address to listen to
+# CERTBOT_BASE_PATH= path to certbot container
+version: '3.7'
+
+x-default-opts: 
+  &default-opts
+  restart: unless-stopped
+
+x-environment: &common-vars
+    TZ: "Europe/Rome"
+
+x-vol-tz: &v-tz /etc/timezone:/etc/timezone:ro
+x-vol-ltime: &v-ltime /etc/localtime:/etc/localtime:ro
+x-vol-lgen: &v-lgen /etc/locale.gen:/etc/locale.gen:ro
+
+services:
+  redis:
+    image: redis:7-alpine
+    hostname: redis
+    <<: *default-opts    
+    volumes:
+      - redis_data:/data
+      - *v-tz
+      - *v-ltime
+      - *v-lgen
+    environment:
+      << : *common-vars 
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 60s
+      timeout: 10s
+      retries: 3
+    sysctls:
+      - net.core.somaxconn=511
+
+  app:
+    image: neomediatech/php:8-apache
+    hostname: app
+    <<: *default-opts
+    volumes:
+      - app_html:/var/www/html
+      - acme_challenge:/var/www/html/.well-known
+      - certbot_certs:/etc/apache2/ssl
+      - apache_conf:/etc/apache2/sites-available
+      - *v-tz
+      - *v-ltime
+      - *v-lgen
+    environment:
+      << : *common-vars
+    ports:
+      - target: 80
+        host_ip: ${LISTEN_IP:-127.1.0.1}
+        published: 80
+        protocol: tcp
+        mode: host
+      - target: 443
+        host_ip: ${LISTEN_IP:-127.1.0.1}
+        published: 443
+        protocol: tcp
+        mode: host
+    extra_hosts:
+      - ${EXTRA_HOST:-"myhost:127.2.0.1"}
+    depends_on:
+      - redis
+
+volumes:
+  redis_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/redis/data
+
+  app_html:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/app/html
+
+  acme_challenge:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${CERTBOT_BASE_PATH:-/srv/certbot}/www/.well-known
+
+  certbot_certs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${CERTBOT_BASE_PATH:-/srv/certbot}/certs
+
+  apache_conf:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/apache/conf
+
