@@ -62,7 +62,7 @@ services:
         protocol: tcp
         mode: host
     extra_hosts:
-      - ${EXTRA_HOST:-"myhost:127.2.0.1"}
+      - ${EXTRA_HOST:-myhost:127.2.0.1}
     depends_on:
       - redis
 
