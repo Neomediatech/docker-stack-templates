@@ -499,6 +499,12 @@
                                  "label": "DNSBL_IPSET_START",
                                  "description": "Start dnsbl-ipset.sh script? (Default yes, no to not start it)",
                                  "default": "yes"
+                                },
+                                {
+                                 "name": "RSPAMD_START",
+                                 "label": "RSPAMD_START",
+                                 "description": "Start Rspamd? (Default yes, no to not start it)",
+                                 "default": "yes"
                                 }
 			]
 		},
@@ -552,6 +558,12 @@
                                  "label": "DNSBL_IPSET_START",
                                  "description": "Start dnsbl-ipset.sh script? (Default yes, no to not start it)",
                                  "default": "yes"
+                                },
+                                {
+                                 "name": "RSPAMD_START",
+                                 "label": "RSPAMD_START",
+                                 "description": "Start Rspamd? (Default yes, no to not start it)",
+                                 "default": "yes"
                                 }
 			]
 		},
@@ -592,6 +604,12 @@
                                  "name": "DNSBL_IPSET_START",
                                  "label": "DNSBL_IPSET_START",
                                  "description": "Start dnsbl-ipset.sh script? (Default yes, no to not start it)",
+                                 "default": "yes"
+                                },
+                                {
+                                 "name": "RSPAMD_START",
+                                 "label": "RSPAMD_START",
+                                 "description": "Start Rspamd? (Default yes, no to not start it)",
                                  "default": "yes"
                                 }
 			]
