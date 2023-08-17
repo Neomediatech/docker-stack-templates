@@ -27,6 +27,12 @@
 				 "label": "STACK_BASE_PATH",
 				 "description": "Path for the stack. Must exists before launching this stack!",
 			         "default": "/srv/data/honeypot"
+				},
+				{
+				 "name": "DNSBL_IPSET_START",
+				 "label": "DNSBL_IPSET_START",
+				 "description": "Start dnsbl-ipset.sh script? (Default yes, no to not start it)",
+			         "default": "yes"
 				}
 			]
 		},

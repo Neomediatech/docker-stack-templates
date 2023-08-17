@@ -12,6 +12,7 @@ x-environment: &common-vars
     TZ: "Europe/Rome"
     CLAMAV_ENABLED: "${CLAMAV_ENABLED:-yes}"
     OPENCANARY_NODE_ID: "${OPENCANARY_NODE_ID:-opencanary}"
+    DNSBL_IPSET_START: "${DNSBL_IPSET_START:-yes}"
 
 services:
   honey:
