@@ -559,18 +559,18 @@
 				 "description": "Path for logfiles. Must exists before launching this stack!",
 			         "default": "/srv/data/docker/containers/fail2ban/logs/honeypot"
 				},
-                                {
-                                 "name": "CLAMAV_ENABLED",
-                                 "label": "Enable ClamAV Antivirus?",
-                                 "description": "Enable ClamAV Antivirus? [yes (Default), no]",
-                                 "default": "yes"
-                                },
 				{
 				 "name": "MAILSERVER_CERT",
 				 "label": "MAILSERVER_CERT",
 				 "description": "FQDN server name for the SSL/TLS certificate, will not be automatically generated",
 			         "default": "noservername.domain.tld"
 				},
+                                {
+                                 "name": "CLAMAV_ENABLED",
+                                 "label": "Enable ClamAV Antivirus?",
+                                 "description": "Enable ClamAV Antivirus? [yes (Default), no]",
+                                 "default": "yes"
+                                },
                                 {
                                  "name": "DNSBL_IPSET_START",
                                  "label": "DNSBL_IPSET_START",
