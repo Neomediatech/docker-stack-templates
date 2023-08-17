@@ -465,22 +465,16 @@
 				"stackfile": "portainer-v2/honey-allinone-stack-4-compose.yml"
 			},
 			"env": [{
+                                 "name": "STACK_BASE_PATH",
+                                 "label": "STACK_BASE_PATH",
+                                 "description": "Path for the stack. Must exists before launching this stack!",
+                                 "default": "/srv/data/docker/containers/honeypot"
+                                },
+                                {
 				 "name": "OPENCANARY_NODE_ID",
 				 "label": "Opencanary Node ID",
 				 "description": " ",
 			         "default": "honey-customise"
-				},
-				{
-				 "name": "CLAMAV_ENABLED",
-				 "label": "Enable ClamAV Antivirus?",
-				 "description": "Enable ClamAV Antivirus? [yes (Default), no]",
-			         "default": "yes"
-				},
-				{
-				 "name": "STACK_BASE_PATH",
-				 "label": "STACK_BASE_PATH",
-				 "description": "Path for the stack. Must exists before launching this stack!",
-			         "default": "/srv/data/docker/containers/honeypot"
 				},
 				{
 				 "name": "LOGS_PATH",
@@ -494,6 +488,12 @@
 				 "description": "FQDN server name for the SSL/TLS certificate, will not be automatically generated",
 			         "default": "noservername.domain.tld"
 				},
+                                {
+                                 "name": "CLAMAV_ENABLED",
+                                 "label": "Enable ClamAV Antivirus?",
+                                 "description": "Enable ClamAV Antivirus? [yes (Default), no]",
+                                 "default": "yes"
+                                },
                                 {
                                  "name": "DNSBL_IPSET_START",
                                  "label": "DNSBL_IPSET_START",
@@ -542,22 +542,16 @@
 				"stackfile": "portainer-v2/honey-allinone-stack-4-compose.yml"
 			},
 			"env": [{
+                                 "name": "STACK_BASE_PATH",
+                                 "label": "STACK_BASE_PATH",
+                                 "description": "Path for the stack. Must exists before launching this stack!",
+                                 "default": "/srv/data/docker/containers/honeypot"
+                                },
+                                {
 				 "name": "OPENCANARY_NODE_ID",
 				 "label": "Opencanary Node ID",
 				 "description": " ",
 			         "default": "honey-customise"
-				},
-				{
-				 "name": "CLAMAV_ENABLED",
-				 "label": "Enable ClamAV Antivirus?",
-				 "description": "Enable ClamAV Antivirus? [yes (Default), no]",
-			         "default": "yes"
-				},
-				{
-				 "name": "STACK_BASE_PATH",
-				 "label": "STACK_BASE_PATH",
-				 "description": "Path for the stack. Must exists before launching this stack!",
-			         "default": "/srv/data/docker/containers/honeypot"
 				},
 				{
 				 "name": "LOGS_PATH",
@@ -565,6 +559,12 @@
 				 "description": "Path for logfiles. Must exists before launching this stack!",
 			         "default": "/srv/data/docker/containers/fail2ban/logs/honeypot"
 				},
+                                {
+                                 "name": "CLAMAV_ENABLED",
+                                 "label": "Enable ClamAV Antivirus?",
+                                 "description": "Enable ClamAV Antivirus? [yes (Default), no]",
+                                 "default": "yes"
+                                },
 				{
 				 "name": "MAILSERVER_CERT",
 				 "label": "MAILSERVER_CERT",
@@ -619,16 +619,16 @@
 				"stackfile": "portainer-v2/honey-stack-4-compose-v3.yml"
 			},
 			"env": [{
+                                 "name": "STACK_BASE_PATH",
+                                 "label": "STACK_BASE_PATH",
+                                 "description": "Path for the stack. Must exists before launching this stack!",
+                                 "default": "/srv/data/docker/containers/honeypot"
+                                },
+                                {
 				 "name": "OPENCANARY_NODE_ID",
 				 "label": "Opencanary Node ID",
 				 "description": " ",
 			         "default": "honey-customise"
-				},
-				{
-				 "name": "STACK_BASE_PATH",
-				 "label": "STACK_BASE_PATH",
-				 "description": "Path for the stack. Must exists before launching this stack!",
-			         "default": "/srv/data/docker/containers/honeypot"
 				},
 				{
 				 "name": "LOGS_PATH",
@@ -636,6 +636,12 @@
 				 "description": "Path for logfiles. Must exists before launching this stack!",
 			         "default": "/srv/data/docker/containers/fail2ban/logs/honeypot"
 				},
+                                {
+                                 "name": "CLAMAV_ENABLED",
+                                 "label": "Enable ClamAV Antivirus?",
+                                 "description": "Enable ClamAV Antivirus? [yes (Default), no]",
+                                 "default": "yes"
+                                },
                                 {
                                  "name": "DNSBL_IPSET_START",
                                  "label": "DNSBL_IPSET_START",
