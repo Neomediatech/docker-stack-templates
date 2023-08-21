@@ -710,7 +710,13 @@
 				 "label": "NC_SHARE3",
 				 "description": "_",
 			         "default": "share3"
-				}
+				},
+                                {
+                                 "name": "JWT_SECRET",
+                                 "label": "JWT_SECRET",
+                                 "description": "Put here the secret taken from Nextcloud config.php (jwt_secret parameter)",
+                                 "default": "Set_here_the_secret_password_taken_from_Nextcloud_config.php"
+                                }
 			]
 		},
 		{
