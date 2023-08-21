@@ -710,6 +710,12 @@
 				 "label": "NC_SHARE3",
 				 "description": "_",
 			         "default": "share3"
+				},
+				{
+				 "name": "JWT_HEADER",
+				 "label": "JWT_HEADER",
+				 "description": "_",
+			         "default": "AuthorizationJwt"
 				}
 			]
 		},
