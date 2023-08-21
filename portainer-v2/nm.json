@@ -294,7 +294,7 @@
 		{
 			"type": 1,
 			"name": "fail2ban",
-			"title": "Fail2Ban by Neomediatech",
+			"title": "Fail2Ban by Neomediatech (on Ubuntu 20.04)",
 			"description": "Dockerized Fail2Ban",
 			"note": "<h2>ENV parameters below can be omitted if you put them in /data/config.ini</h2><h1>crea le varie directory: </h1>BASE_DIR='/srv/data/docker/containers/fail2ban' <br>mkdir -p $BASE_DIR/{action.d,db,filter.d,jail.d,log} && chmod 777 $BASE_DIR/{action.d,db,filter.d,jail.d,log}",
 			"categories": [
@@ -302,7 +302,7 @@
 			],
 			"platform": "linux",
 			"logo": "https://raw.githubusercontent.com/Neomediatech/fail2ban/master/fail2ban_logo.png",
-			"image": "neomediatech/fail2ban:from-source",
+			"image": "neomediatech/fail2ban:ubuntu-20.04-latest",
 			"hostname": "fail2ban",
 			"network": "host",
 			"volumes": [
@@ -358,6 +358,74 @@
 				}
 			]
 		},
+		{
+			"type": 1,
+			"name": "fail2ban",
+			"title": "Fail2Ban by Neomediatech (on Ubuntu 22.04)",
+			"description": "Dockerized Fail2Ban",
+			"note": "<h2>ENV parameters below can be omitted if you put them in /data/config.ini</h2><h1>crea le varie directory: </h1>BASE_DIR='/srv/data/docker/containers/fail2ban' <br>mkdir -p $BASE_DIR/{action.d,db,filter.d,jail.d,log} && chmod 777 $BASE_DIR/{action.d,db,filter.d,jail.d,log}",
+			"categories": [
+				"Other"
+			],
+			"platform": "linux",
+			"logo": "https://raw.githubusercontent.com/Neomediatech/fail2ban/master/fail2ban_logo.png",
+			"image": "neomediatech/fail2ban:ubuntu-22.04",
+			"hostname": "fail2ban",
+			"network": "host",
+			"volumes": [
+			  {
+			    "container": "/data",
+			    "bind": "/srv/data/docker/containers/fail2ban/confs"
+			  },
+			  {
+			    "container": "/var/log",
+			    "bind": "/srv/data/docker/containers/fail2ban/logs"
+			  },
+			  {
+			    "container": "/var/log/dnsbl-ipset",
+			    "bind": "/var/log/dnsbl-ipset",
+			    "readonly": true
+			  },
+			  {
+			    "container": "/var/log/nginx-catchall",
+			    "bind": "/srv/data/docker/containers/traefik/logs",
+			    "readonly": true
+			  },
+			  {
+			    "container": "/var/log/sshd",
+			    "bind": "/srv/data/docker/containers/sshd/logs",
+			    "readonly": true
+			  }
+			],
+			"restart_policy": "always",
+			"privileged": true,
+			"env": [{
+				 "name": "F2B_DEST_EMAIL",
+				 "label": "F2B_DEST_EMAIL",
+				 "description": "_",
+			         "default": "supp..@ne.."
+				},
+				{
+				 "name": "F2B_SENDER",
+				 "label": "F2B_SENDER",
+				 "description": "_",
+			         "default": "hostname@ne.."
+				},
+				{
+				 "name": "SSMTP_HOST",
+				 "label": "SSMTP_HOST",
+				 "description": "SMTP to use to send notifications",
+				 "default": "10.40.50.5"
+				},
+				{
+				 "name": "SSMTP_HOSTNAME",
+				 "label": "SSMTP_HOSTNAME",
+				 "description": "_",
+			         "default": "hostname.ne.."
+				}
+			]
+		},
+
 		{
 			"type": 1,
 			"name": "redis-service",
