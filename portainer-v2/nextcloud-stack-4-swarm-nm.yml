@@ -123,6 +123,8 @@ services:
       - oo_lib:/var/lib/onlyoffice
       - oo_fonts:/usr/share/fonts/truetype/custom
       - oo_conf:/etc/onlyoffice/documentserver
+    environment:
+      JWT_HEADER: "AuthorizationJwt"
     ports:
       - 8081:80
       - 8443:443
