@@ -58,6 +58,7 @@ services:
       - ${STACK_BASE_PATH}/fpm/www-custom.ini:/usr/local/etc/php-fpm.d/zz-custom.conf
     environment:
       << : *common-vars
+      JWT_HEADER: "AuthorizationJwt"
       MYSQL_HOST : db
     depends_on:
       - db
