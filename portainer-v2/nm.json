@@ -1355,7 +1355,7 @@
 			"logo": "https://raw.githubusercontent.com/Neomediatech/clamav/master/clamav_neo.png",
 			"image": "neomediatech/clamav:latest",
 			"hostname": "clamav",
-			"network": "host",
+			"network": "bridge",
                         "ports": ["3310:3310/tcp"],
 			"volumes": [
 			  {
