@@ -1341,6 +1341,37 @@
 			         "default": "/srv/data/docker/containers/rescue_ip"
 				}
 			]
+		},
+		{
+			"type": 1,
+			"name": "clamav",
+			"title": "ClamAV by Neomediatech",
+			"description": "Dockerized ClamAV",
+			"note": "<h2>For custom configs put clamd.conf and/or freshclam.conf in 'conf' host folder</h2><h1>make folders: </h1>BASE_DIR='/srv/data/docker/containers/clamav' <br>mkdir -p $BASE_DIR/{defs,unoff-defs,conf} && chmod 777 $BASE_DIR/{defs,unoff-defs}",
+			"categories": [
+				"AntiVirus"
+			],
+			"platform": "linux",
+			"logo": "https://raw.githubusercontent.com/Neomediatech/clamav/master/clamav_neo.png",
+			"image": "neomediatech/clamav:latest",
+			"hostname": "clamav",
+			"network": "host",
+                        "ports": ["3310:3310/tcp"],
+			"volumes": [
+			  {
+			    "container": "/data",
+			    "bind": "/srv/data/docker/containers/clamav/conf"
+			  },
+			  {
+			    "container": "/var/lib/clamav",
+			    "bind": "/srv/data/docker/containers/clamav/defs"
+			  },
+			  {
+			    "container": "/var/lib/clamav-unofficial-sigs",
+			    "bind": "/srv/data/docker/containers/clamav/unoff-defs"
+			  }
+			],
+			"restart_policy": "always"
 		}
 
   ]
