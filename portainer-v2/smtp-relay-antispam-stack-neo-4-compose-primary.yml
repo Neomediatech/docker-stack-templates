@@ -1,0 +1,307 @@
+# use to create a compose stack template in Portainer
+# STACK_BASE_PATH [base folder where to host files, must exists]
+# STACK_BASE_PATH=/srv/smtp-relay-antispam ; grep device smtp-relay-antispam-stack-neo-4-compose-primary.yml|grep -v "#"|awk '{print $2}'|while read dir; do eval mkdir -p $dir; done
+# Custom stack for our primary SMTP relay server (Ermes)
+
+version: '3.8'
+
+x-default-opts: 
+  &default-opts
+  restart: always
+
+x-environment: &common-vars
+    TZ: "Europe/Rome"
+
+x-vol-tz: &v-tz /etc/timezone:/etc/timezone:ro
+x-vol-ltime: &v-ltime /etc/localtime:/etc/localtime:ro
+x-vol-lgen: &v-lgen /etc/locale.gen:/etc/locale.gen:ro
+
+services:
+  dns:
+    image: neomediatech/bind9
+    hostname: dns
+    <<: *default-opts    
+    volumes:
+      - *v-tz
+      - *v-ltime
+      - *v-lgen
+    environment:
+      << : *common-vars 
+    networks:
+      default:
+        ipv4_address: 172.16.243.10
+
+  redis-rspamd:
+    image: redis:7-alpine
+    hostname: redis-rspamd
+    <<: *default-opts    
+    volumes:
+      - redis_rspamd_db:/data
+      - *v-tz
+      - *v-ltime
+      - *v-lgen
+    environment:
+      << : *common-vars 
+    command: ["redis-server", "--slaveof", "10.2.0.1", "6379"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 60s
+      timeout: 10s
+      retries: 3
+    sysctls:
+      - net.core.somaxconn=511
+    ports:
+    - "127.0.0.1:6379:6379"
+
+  redis-rspamd-history:
+    image: redis:7-alpine
+    hostname: redis-rspamd-history
+    <<: *default-opts    
+    volumes:
+      - redis_rspamd_history_db:/data
+      - *v-tz
+      - *v-ltime
+      - *v-lgen
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 60s
+      timeout: 10s
+      retries: 3
+    sysctls:
+      - net.core.somaxconn=511
+    ports:
+    - "127.0.0.1:6380:6379"
+    - "10.2.0.4:6380:6379"
+
+  pyzor:
+    image: neomediatech/pyzor-cc:latest
+    hostname: pyzor
+    <<: *default-opts    
+    volumes:
+      - *v-tz
+      - *v-ltime
+      - *v-lgen
+    environment:
+      << : *common-vars
+    depends_on:
+      - dns
+    ports:
+    - "127.0.0.1:5953:5953"
+
+  pyzor-cc:
+    image: neomediatech/pyzor-cc:latest
+    hostname: pyzor-cc
+    <<: *default-opts    
+    volumes:
+      - *v-tz
+      - *v-ltime
+      - *v-lgen
+    environment:
+      << : *common-vars
+      LISTEN_PORT: "5954"
+      PYZOR_SERVER: "pyzor.s.globalhub.it"
+    depends_on:
+      - dns
+    ports:
+    - "127.0.0.1:5954:5954"
+
+  razorfy:
+    image: neomediatech/razorfy:latest
+    hostname: razorfy
+    <<: *default-opts    
+    volumes:
+      - *v-tz
+      - *v-ltime
+      - *v-lgen
+    environment:
+      << : *common-vars
+      RAZORFY_DEBUG: "1"
+    depends_on:
+      - dns
+    ports:
+    - "127.0.0.1:11342:11342"
+
+  dcc:
+    image: neomediatech/dcc:latest
+    hostname: dcc
+    <<: *default-opts    
+    volumes:
+      - *v-tz
+      - *v-ltime
+      - *v-lgen
+    environment:
+      << : *common-vars
+    depends_on:
+      - dns
+    ports:
+    - "127.0.0.1:10030:10030"
+
+  olefy:
+    image: neomediatech/olefy:latest
+    hostname: olefy
+    <<: *default-opts    
+    volumes:
+      - *v-tz
+      - *v-ltime
+      - *v-lgen
+    environment:
+      << : *common-vars
+    depends_on:
+      - dns
+    ports:
+    - "127.0.0.1:10050:10050"
+
+  exim-localdb:
+    image: mariadb:10
+    hostname: exim-localdb
+    <<: *default-opts
+    volumes:
+      - exim_db:/var/lib/mysql
+      - /var/run/mysqld/:/var/run/mysqld/
+      - *v-tz
+      - *v-ltime
+      - *v-lgen
+    environment:
+      << : *common-vars
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD:-put_your_password_here}"
+      MYSQL_DATABASE: "${MYSQL_DATABASE:-db_name}"
+      MYSQL_USER: "${MYSQL_USER:-db_user}"
+      MYSQL_PASSWORD: "${MYSQL_PASSWORD:-db_password}"
+    ports:
+    - "127.0.0.1:3306:3306"
+
+  cron:
+    image: neomediatech/cron:latest
+    hostname: cron
+    <<: *default-opts
+    volumes:
+      - crontabs:/var/spool/cron/crontabs
+      - cron_scripts:/scripts
+      - *v-tz
+      - *v-ltime
+      - *v-lgen
+    environment:
+      << : *common-vars
+
+volumes:
+  redis_rspamd_db:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/redis-rspamd/data
+
+  redis_rspamd_history_db:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/redis-rspamd-history/data
+
+  clamav_defs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/clamav/defs
+
+  clamav_unoff_defs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/clamav/unoff_defs
+
+  clamav_conf:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/clamav/conf
+
+  rspamd_conf:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/rspamd/conf
+
+  rspamd_lib:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/rspamd/var
+
+  exim_db:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/exim-localdb/data
+
+  crontabs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/cron/crontabs
+
+  cron_scripts:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/cron/scripts
+
+  logs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/logs
+
+  exim_conf:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/exim/conf
+
+  exim_spool:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/exim/spool
+
+  exim_homes:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/exim/homes
+
+  exim_logs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /var/log/exim4
+
+  certs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /srv/certbot/certs
+
+networks:
+  default:
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.16.243.0/24
+          ip_range: 172.16.243.128/25
+
+

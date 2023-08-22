@@ -1305,6 +1305,59 @@
 		},
 		{
 			"type": 3,
+			"name": "smtp-relay-antispam",
+			"title": "SMTP Relay con antispam e antivirus (ERMES version)",
+			"description": "Versione senza Exim, Rspamd e ClamAV, stack dedicato a ERMES, SMTP primario. Versione per Compose",
+			"note": "<h1>WARNING!</h1>You must create all paths prior to run this stack<h2>NOTA INTERNA</h2>Per i dati di configurazione fai riferimento al file '.env' che trovi nella directory dello stack, oppure compila a piacimento, oppure avvia da riga di comando con lo script apposito, presente nella directory dello stack",
+			"categories": [
+				"Email","Antispam","SMTP Relay"
+			],
+			"platform": "linux",
+			"logo": "https://raw.githubusercontent.com/Neomediatech/docker-stack-templates/master/portainer-v2/smtp-relay-antispam.png",
+			"repository": {
+				"url": "https://github.com/Neomediatech/docker-stack-templates",
+				"stackfile": "portainer-v2/smtp-relay-antispam-stack-neo-4-compose-primary.yml"
+			},
+			"env": [{
+				 "name": "MYSQL_ROOT_PASSWORD",
+				 "label": "MYSQL_ROOT_PASSWORD",
+				 "description": "Root password for MariaDB",
+			         "default": "put_your_password_here"
+				},
+				{
+				 "name": "MYSQL_DATABASE",
+				 "label": "MYSQL_DATABASE",
+				 "description": "Database name",
+			         "default": "your_database_name"
+				},
+				{
+				 "name": "MYSQL_USER",
+				 "label": "MYSQL_USER",
+				 "description": "Database user",
+			         "default": "your_database_username"
+				},
+				{
+				 "name": "MYSQL_PASSWORD",
+				 "label": "MYSQL_PASSWORD",
+				 "description": "Database password",
+			         "default": "your_database_password"
+				},
+				{
+				 "name": "STACK_BASE_PATH",
+				 "label": "STACK_BASE_PATH",
+				 "description": "Path for the stack. Must exists before launching this stack!",
+			         "default": "/srv/smtp-relay-antispam"
+				},
+                                {
+                                 "name": "MAILSERVER_CERT",
+                                 "label": "MAILSERVER_CERT",
+                                 "description": "FQDN server name for the SSL/TLS certificate, will not be automatically generated",
+                                 "default": "noservername.domain.tld"
+                                }
+			]
+		},
+		{
+			"type": 3,
 			"name": "rescue-ip",
 			"title": "Web app per il check di un indirizzo IP nella nostra blacklist",
 			"description": "Applicazione web per verificare la presenza di un indirizzo IP nelle nostre blacklist e per chiederne la rimozione",
