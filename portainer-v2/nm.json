@@ -1267,26 +1267,26 @@
 			},
 			"env": [{
 				 "name": "MYSQL_ROOT_PASSWORD",
-				 "label": "Root password for MariaDB",
-				 "description": " ",
+				 "label": "MYSQL_ROOT_PASSWORD",
+				 "description": "Root password for MariaDB",
 			         "default": "put_your_password_here"
 				},
 				{
 				 "name": "MYSQL_DATABASE",
-				 "label": "Database name",
-				 "description": " ",
+				 "label": "MYSQL_DATABASE",
+				 "description": "Database name",
 			         "default": "your_database_name"
 				},
 				{
 				 "name": "MYSQL_USER",
-				 "label": "Database user",
-				 "description": " ",
+				 "label": "MYSQL_USER",
+				 "description": "Database user",
 			         "default": "your_database_username"
 				},
 				{
 				 "name": "MYSQL_PASSWORD",
-				 "label": "Database password",
-				 "description": " ",
+				 "label": "MYSQL_PASSWORD",
+				 "description": "Database password",
 			         "default": "your_database_password"
 				},
 				{
