@@ -13,6 +13,7 @@ services:
     command: -c 'while true; do date; export; echo '--------------------'; sleep 5; done'
     volumes:
       - test_vol:/data/${TEST_VOL}/subdir
+      - env_vol:/data
     environment:
       << : *common-vars
       TEST_VAR2: "another default text"
@@ -24,3 +25,11 @@ volumes:
       type: none
       o: bind
       device: /tmp/test
+
+  env_vol:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /tmp/env_vol
+
