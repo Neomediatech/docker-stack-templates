@@ -1,0 +1,63 @@
+# use to create a compose stack template in Portainer
+# STACK_BASE_PATH [base folder where to host files, must exists]
+# STACK_BASE_PATH=/srv/update-ipsets ; grep device update-ipsets-stack-4-compose.yml|grep -v "#"|awk '{print $2}'|while read dir; do eval mkdir -p $dir; done
+
+version: '3.8'
+
+x-default-opts: 
+  &default-opts
+  restart: always
+
+x-environment: &common-vars
+    TZ: "Europe/Rome"
+
+x-vol-tz: &v-tz /etc/timezone:/etc/timezone:ro
+x-vol-ltime: &v-ltime /etc/localtime:/etc/localtime:ro
+x-vol-lgen: &v-lgen /etc/locale.gen:/etc/locale.gen:ro
+
+services:
+  app:
+    image: neomediatech/update-ipsets:latest
+    hostname: update-ipsets
+    <<: *default-opts
+    volumes:
+      - *v-tz
+      - *v-ltime
+      - *v-lgen
+      - data:/data
+    environment:
+      << : *common-vars
+      SLEEP: ${SLEEP:-600}
+      ENV_IPSETS_APPLY: ${ENV_IPSETS_APPLY:-0}
+    cap_add:
+      - NET_ADMIN
+
+  web:
+    image:nginx:alpine
+    hostname: web
+    <<: *default-opts
+    volumes:
+      - *v-tz
+      - *v-ltime
+      - *v-lgen
+      - web_data:/usr/share/nginx/html
+    environment:
+      << : *common-vars
+    ports:
+      - "18280:80"
+
+volumes:
+  data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}
+
+  web_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/ipsets/web
+
