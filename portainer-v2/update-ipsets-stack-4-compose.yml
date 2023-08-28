@@ -33,7 +33,7 @@ services:
       - NET_ADMIN
 
   web:
-    image:nginx:alpine
+    image: nginx:alpine
     hostname: web
     <<: *default-opts
     volumes:
