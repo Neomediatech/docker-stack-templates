@@ -11,8 +11,7 @@ version: '3.7'
 x-dns-opts: 
   &dns-opts
   dns:
-    - 10.2.0.3
-    - 8.8.8.8
+    - 10.2.0.20
 
 x-default-opts:
   &default-opts
@@ -24,7 +23,7 @@ x-default-opts:
   
 services:
   exim:
-    image: neomediatech/exim:from-source
+    image: neomediatech/exim:4.96-from-source
     hostname: exim
     <<: [*default-opts, *dns-opts]
     ports:
