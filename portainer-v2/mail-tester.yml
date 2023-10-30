@@ -106,7 +106,7 @@ services:
   rspamd:
     image: neomediatech/rspamd:latest
     hostname: rspamd
-    <<: *dns-opts
+    <<: [*default-opts, *dns-opts]
     volumes:
       - rspamd_conf:/data
       - rspamd_data:/var/lib/rspamd
