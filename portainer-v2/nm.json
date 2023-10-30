@@ -788,6 +788,52 @@
 			]
 		},
 		{
+			"type": 3,
+			"name": "nextcloud",
+			"title": "Nextcloud app (compose version)",
+			"description": "Nextcloud, OnlyOffice, Nginx, MariaDB, FPM, Redis, cron",
+			"note": "<h1>WARNING!!!</h1>Before starting this stack you need to create this files in /var/lib/mysql container directory:<br> - 'db-name.txt' (write in this file the name of the Nextcloud database)<br> - 'db-nextcloud.pwd' (password for the Nextcloud database user)<br> - 'db-root.pwd' (password for the MariaDB root user)<br> - 'db-user.txt' (name for the Nextcloud database user)<br><h2>Otherwise this stack will not works</h2>",
+			"categories": ["web", "storage"],
+			"platform": "linux",
+			"logo": "https://raw.githubusercontent.com/Neomediatech/docker-stack-templates/master/nextcloud-logo-nm.png",
+			"repository": {
+				"url": "https://github.com/Neomediatech/docker-stack-templates",
+				"stackfile": "portainer-v2/nextcloud-stack-4-swarm-nm.yml"
+			},
+			"env": [{
+				 "name": "STACK_BASE_PATH",
+				 "label": "STACK_BASE_PATH",
+				 "description": "Path for the stack. Must exists before launching this stack!",
+			         "default": "/srv/data/docker/containers/nextcloud-app"
+				},
+				{
+				 "name": "NC_SHARE1",
+				 "label": "NC_SHARE1",
+				 "description": "_",
+			         "default": "share1"
+				},
+				{
+				 "name": "NC_SHARE2",
+				 "label": "NC_SHARE2",
+				 "description": "_",
+			         "default": "share2"
+				},
+				{
+				 "name": "NC_SHARE3",
+				 "label": "NC_SHARE3",
+				 "description": "_",
+			         "default": "share3"
+				},
+                                {
+                                 "name": "JWT_SECRET",
+                                 "label": "JWT_SECRET",
+                                 "description": "Put here the secret taken from Nextcloud config.php (jwt_secret parameter)",
+                                 "default": "Set_here_the_secret_password_taken_from_Nextcloud_config.php"
+                                }
+			]
+		},
+
+		{
 			"type": 2,
 			"name": "test",
 			"title": "Test stack",
