@@ -798,7 +798,7 @@
 			"logo": "https://raw.githubusercontent.com/Neomediatech/docker-stack-templates/master/nextcloud-logo-nm.png",
 			"repository": {
 				"url": "https://github.com/Neomediatech/docker-stack-templates",
-				"stackfile": "portainer-v2/nextcloud-stack-4-swarm-nm.yml"
+				"stackfile": "portainer-v2/nextcloud-apache-stack-4-compose-nm.yml"
 			},
 			"env": [{
 				 "name": "STACK_BASE_PATH",

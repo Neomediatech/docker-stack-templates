@@ -1,0 +1,249 @@
+# STACK_BASE_PATH [base folder where to host files, must exists]
+# STACK_BASE_PATH=/srv/data/docker/containers/nextcloud-app ; grep device docker-compose.yml|grep -v "#"|awk '{print $2}'|while read dir; do eval mkdir -p $dir; done
+
+version: '3.7'
+
+x-environment: &common-vars
+    MYSQL_PASSWORD: 
+    MYSQL_DATABASE: 
+    MYSQL_USER: 
+    MYSQL_ROOT_PASSWORD: 
+    UPLOAD_MAX_SIZE: 20G
+
+x-vol-tz: &v-tz /etc/timezone:/etc/timezone:ro
+x-vol-ltime: &v-ltime /etc/localtime:/etc/localtime:ro
+x-vol-lgen: &v-lgen /etc/locale.gen:/etc/locale.gen:ro
+x-vols: &vols
+  - *v-tz
+  - *v-ltime
+  - *v-lgen
+
+services:
+  db:
+    image: mariadb:10.8
+    hostname: db
+    deploy:
+      replicas: 1    
+    command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW --innodb_read_only_compressed=OFF
+    restart: always
+    volumes:
+      - *v-tz
+      - *v-ltime
+      - *v-lgen
+      - db:/var/lib/mysql
+    environment:
+      << : *common-vars
+      MYSQL_ROOT_PASSWORD_FILE: /var/lib/mysql/db-root.pwd
+      MYSQL_PASSWORD_FILE: /var/lib/mysql/db-nextcloud.pwd
+      MYSQL_DATABASE_FILE: /var/lib/mysql/db-name.txt
+      MYSQL_USER_FILE: /var/lib/mysql/db-user.txt
+
+  app:
+    image: nextcloud:27
+    hostname: nc
+    deploy:
+      replicas: 1    
+    restart: always
+    ports:
+      - target: 80
+        published: 8080
+        protocol: tcp
+        mode: host
+    volumes:
+      - *v-tz
+      - *v-ltime
+      - *v-lgen
+      - nc_html:/var/www/html
+      - nc_data:/var/www/html/data
+      - nc_apps:/var/www/html/custom_apps
+      - nc_config:/var/www/html/config
+      - nc_share1:/media/${NC_SHARE1}
+      - nc_share2:/media/${NC_SHARE2}
+      - nc_share3:/media/${NC_SHARE3}
+      - ${STACK_BASE_PATH}/fpm/www-custom.ini:/usr/local/etc/php-fpm.d/zz-custom.conf
+    environment:
+      << : *common-vars
+      JWT_HEADER: "AuthorizationJwt"
+      MYSQL_HOST : db
+    depends_on:
+      - db
+
+  cron:
+    image: nextcloud:27
+    hostname: nc-cron
+    deploy:
+      replicas: 1    
+    restart: always
+    volumes:
+      - *v-tz
+      - *v-ltime
+      - *v-lgen
+      - nc_html:/var/www/html
+      - nc_data:/var/www/html/data
+      - nc_apps:/var/www/html/custom_apps
+      - nc_config:/var/www/html/config
+    entrypoint: /cron.sh
+    depends_on:
+      - db
+
+  onlyoffice:
+    image: onlyoffice/documentserver:latest
+    hostname: oo
+    deploy:
+      replicas: 1    
+    stdin_open: true
+    tty: true
+    restart: always
+    volumes:
+      - *v-tz
+      - *v-ltime
+      - *v-lgen
+      - oo_data:/var/www/onlyoffice/Data
+      - oo_pg:/var/lib/postgresql
+      - oo_rabbit:/var/lib/rabbitmq
+      - oo_redis:/var/lib/redis
+      - oo_lib:/var/lib/onlyoffice
+      - oo_fonts:/usr/share/fonts/truetype/custom
+      - oo_conf:/etc/onlyoffice/documentserver
+    environment:
+      JWT_HEADER: "AuthorizationJwt"
+      JWT_SECRET: "${JWT_SECRET:-Set_here_the_secret_password_taken_from_Nextcloud_config.php}"
+    ports:
+      - 8081:80
+      - 8443:443
+    depends_on:
+      - app
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    hostname: pma
+    environment:
+      << : *common-vars    
+      PMA_HOST: db
+      PMA_PORT: 3306
+    volumes: *vols
+    ports:
+      - '8280:80'
+    depends_on:
+      - db
+
+  redis:
+    image: redis:7-alpine
+    deploy:
+      replicas: 1    
+    restart: always
+    hostname: redis
+    environment:
+      TZ: Europe/Rome
+    volumes:
+      - nc_redis_db:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 20s
+      timeout: 10s
+      retries: 5
+    sysctls:
+      - net.core.somaxconn=511
+    stop_grace_period: 30s
+
+volumes:
+  db:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/mariadb/db
+  nc_html:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/nextcloud/html
+  nc_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/nextcloud/data
+  nc_apps:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/nextcloud/apps
+  nc_config:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/nextcloud/config
+  nc_redis_db:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /srv/data/docker/containers/nextcloud-app/redis/db
+  nc_share1:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /media/${NC_SHARE1}
+  nc_share2:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /media/${NC_SHARE2}
+  nc_share3:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /media/${NC_SHARE3}
+  oo_logs:
+  oo_lib:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/onlyoffice/lib
+  oo_fonts:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/onlyoffice/fonts
+  oo_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/onlyoffice/data
+  oo_pg:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/onlyoffice/postgresql/db
+  oo_rabbit:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/onlyoffice/rabbitmq/db
+  oo_redis:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/onlyoffice/redis/data
+
+  oo_conf:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/onlyoffice/conf
+
+
