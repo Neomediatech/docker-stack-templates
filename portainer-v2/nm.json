@@ -1515,6 +1515,47 @@
 			  }
 			],
 			"restart_policy": "always"
+		},
+		{
+			"type": 1,
+			"name": "radicale",
+			"title": "Radicale by Neomediatech",
+			"description": "Radicale is a CalDAV (calendars, to-do lists) and CardDAV (contacts) server",
+			"note": "<h1>create folders: </h1>BASE_DIR='/srv/data/docker/containers/radicale' <br>mkdir -p $BASE_DIR/data && chmod 777 $BASE_DIR/data",
+			"categories": [
+				"Mail"
+			],
+			"platform": "linux",
+			"logo": "https://raw.githubusercontent.com/Neomediatech/radicale/master/radicale-nm.png",
+			"image": "neomediatech/radicale:latest",
+			"hostname": "radicale",
+			"network": "bridge",
+                        "ports": ["5233:5232/tcp"],
+			"volumes": [
+			  {
+			    "container": "/radicale.conf",
+			    "bind": "/srv/data/docker/containers/radicale/radicale.conf",
+			    "readonly": true
+			  },
+			  {
+			    "container": "/data",
+			    "bind": "/srv/data/docker/containers/radicale/data"
+			  }
+			],
+			"restart_policy": "always",
+                        "env": [{
+                                 "name": "IMAP_HOST",
+                                 "label": "IMAP_HOST",
+                                 "description": "IMAP host to connect to",
+                                 "default": "10.2.0.1"
+                                },
+                                {
+                                 "name": "STACK_BASE_PATH",
+                                 "label": "STACK_BASE_PATH",
+                                 "description": "Path for the stack. Must exists before launching this stack!",
+                                 "default": "/srv/data/docker/containers/radicale"
+                                }
+                        ]
 		}
 
   ]
