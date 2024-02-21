@@ -111,6 +111,7 @@ services:
         - "traefik.http.services.ipblock-app.loadbalancer.server.port=80"
     volumes:
       - app_html:/var/www/html
+      - app_conf:/etc/apache2/conf-custom
       - logs:/logs
       - rbldnsd_data:/data
       - common:/common:ro
@@ -315,7 +316,7 @@ volumes:
     driver_opts:
       type: none
       o: bind
-      device: ${STACK_BASE_PATH}/app/conf
+      device: ${STACK_BASE_PATH}/app/apache-conf
 
   app_html:
     driver: local
