@@ -72,7 +72,7 @@
 				 "name": "CUSTOM_CONFIG",
 				 "label": "CUSTOM_CONFIG",
 				 "description": "Add custom config (ex: mybl.domain.tld:ip4set:blfile.txt)",
-			         "default": "cbl.cdcd.it:ip4set:cbl.rbl asn.cdcd.it:generic:asndrop.strange-rbl auth.cdcd.it:ip4set:auth.rbl asn.cdcd.it:dnset:asn_neo-rbl"
+			         "default": "cbl.cdcd.it:ip4set:cbl.rbl auth.cdcd.it:ip4set:auth.rbl asn.cdcd.it:dnset:asn_neo-rbl asn.cdcd.it:dnset:asndrop.strange-rbl"
 				},
 				{
 				 "name": "STACK_BASE_PATH",
