@@ -134,7 +134,7 @@ services:
       - logs:/var/log/rspamd
       - common_bin:/data/common_bin
     environment:
-      WAITFOR: "tcp://clamav:3310"
+      WAITFOR: "tcp://clamav:3310 tcp://redis:6379"
     depends_on:
       - redis
       - clamav
