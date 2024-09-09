@@ -39,7 +39,7 @@ services:
       MYSQL_USER_FILE: /var/lib/mysql/db-user.txt
 
   app:
-    image: nextcloud:28
+    image: nextcloud:29
     hostname: nc
     deploy:
       replicas: 1    
@@ -69,7 +69,7 @@ services:
       - db
 
   cron:
-    image: nextcloud:28
+    image: nextcloud:29
     hostname: nc-cron
     deploy:
       replicas: 1    
