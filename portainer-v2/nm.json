@@ -1114,6 +1114,74 @@
 		},
 		{
 			"type": 3,
+			"name": "mail-tester",
+			"title": "Mail tester by Neomediatech",
+			"description": "Compose Stack to check mail validity, Caddy version",
+			"note": "<h2>NOTA INTERNA</h2>Per i dati di configurazione fai riferimento al file '.env' che trovi nella directory dello stack, oppure compila a piacimento, oppure avvia da riga di comando con lo script apposito, presente nella directory dello stack",
+			"categories": ["email"],
+			"platform": "linux",
+			"logo": "https://raw.githubusercontent.com/Neomediatech/docker-stack-templates/master/email.png",
+			"repository": {
+				"url": "https://github.com/Neomediatech/docker-stack-templates",
+				"stackfile": "portainer-v2/mail-tester-4compose-caddy.yml"
+			},
+			"env": [{
+				 "name": "MAILTESTER_FQDN",
+				 "label": "MAILTESTER_FQDN",
+				 "description": "FQDN for the Mail-tester web app",
+			         "default": ""
+				},
+				{
+				 "name": "RSPAMD_FQDN",
+				 "label": "RSPAMD_FQDN",
+				 "description": "FQDN for the Rspamd web ui",
+				 "default": ""
+				},
+				{
+				 "name": "EXIM_LOGDIR",
+				 "label": "EXIM_LOGDIR",
+				 "description": "Path dei log di Exim (cambia solo se sai cosa stai facendo!)",
+			         "default": "/data/logs"
+				},
+				{
+				 "name": "STACK_BASE_PATH",
+				 "label": "STACK_BASE_PATH",
+				 "description": "Percorso base dello stack all'interno dell'host (deve esistere!)",
+			         "default": "/srv/data/docker/containers/mail-tester"
+				},
+				{
+				 "name": "HONEYPOT",
+				 "label": "Am I a Honeypot?",
+				 "description": "Normally false",
+				 "select": [
+				  {
+				   "text": "false",
+				   "value": "false",
+				   "default": true
+				  },
+				  {
+				   "text": "true",
+				   "value": "true"
+				  }
+				 ]
+                                },
+				{
+				 "name": "QUEUE_CYCLE",
+				 "label": "QUEUE_CYCLE",
+				 "description": "Tempo di avvio della coda",
+			         "default": "10m"
+				},
+				{
+				 "name": "CLAMAV_START",
+				 "label": "CLAMAV_START",
+				 "description": "Avvio ClamAV? (yes/no)",
+			         "default": "yes"
+				}
+			]
+		},
+
+		{
+			"type": 3,
 			"name": "antispam",
 			"title": "Antispam stack personalizzato per uso interno",
 			"description": "Mancano Exim e Dovecot, è presente solo la parte antivirus/antispam per il momento. versione per Compose",

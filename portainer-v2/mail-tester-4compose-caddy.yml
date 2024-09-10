@@ -1,0 +1,302 @@
+# use to create a compose template in Portainer
+# STACK_BASE_PATH [base folder where to host files, must exists]
+# STACK_BASE_PATH=/srv/docker/mail-tester ; grep device email-stack-4-swarm.yml|grep -v "#"|awk '{print $2}'|while read dir; do eval mkdir -p $dir; done
+# MAILSERVER_CERT=yourmailserver.domain.tld
+# Prior to run this stack you should have a SSL certificate to be used by dovecot, exim and webmail containers
+# This stack depends on Caddy logic
+
+x-dns-opts: 
+  &dns-opts
+  dns:
+    - 10.2.0.15
+
+x-default-opts:
+  &default-opts
+  restart: always
+  
+services:
+  exim:
+    image: neomediatech/exim:4.97-from-source
+    hostname: exim
+    <<: [*default-opts, *dns-opts]
+    ports:
+      - target: 25
+        published: 25
+        protocol: tcp
+        mode: host
+      - target: 465
+        published: 465
+        protocol: tcp
+        mode: host
+      - target: 587
+        published: 587
+        protocol: tcp
+        mode: host
+    volumes:
+      - mailbox_files:/data/files
+      - mailbox_homes:/data/home
+      - logs:/data/logs
+      - common_data:/data/common
+      - certs:/data/certs
+      - exim_spool:/var/spool/exim
+      - exim_confs:/data/conf
+    environment:
+      TZ: Europe/Rome
+      WAITFOR: "tcp://clamav:3310 tcp://redis:6379 tcp://rspamd:11333"
+      EXIM_LOGDIR: ${EXIM_LOGDIR}
+      MAILSERVER_CERT: ${MAILTESTER_FQDN}
+      EXIM_OPTIONS: ${EXIM_OPTIONS:-""}
+      QUEUE_CYCLE: ${QUEUE_CYCLE:-5m}
+    depends_on:
+      - clamav
+      - redis
+      - rspamd
+    networks:
+      - private
+
+  app:
+    image: neomediatech/php:7.4-apache
+    hostname: app
+    <<: [*default-opts]
+    volumes:
+      - app_html:/var/www/html
+      - app_logs:/logs
+    environment:
+      TZ: Europe/Rome
+    networks:
+      - private
+      - caddy-pub
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.mail-tester-frontend.entrypoints=https, http"
+      - "traefik.http.routers.mail-tester-frontend.rule=Host(`${MAILTESTER_FQDN}`)"
+      - "traefik.http.routers.mail-tester-frontend.service=mail-tester-frontend"
+      - "traefik.http.routers.mail-tester-frontend.middlewares=nm-ipwhitelist@file, redirect2https@file"
+      - "traefik.http.services.mail-tester-frontend.loadbalancer.server.port=80"
+      # - "traefik.http.routers.mail-tester-frontend.middlewares=nm-ipwhitelist@file, nm-auth@file, redirect2https@file"
+
+  clamav:
+    image: neomediatech/clamav:latest
+    hostname: clamav
+    <<: *default-opts    
+    volumes:
+      - clamav_defs:/var/lib/clamav
+      - clamav_unoff_defs:/var/lib/clamav-unofficial-sigs
+    environment:
+      CLAMAV_START: ${CLAMAV_START:-yes}
+    stop_grace_period: 1m
+    networks:
+      - private
+
+  rspamd:
+    image: neomediatech/rspamd:latest
+    hostname: rspamd
+    <<: [*default-opts, *dns-opts]
+    volumes:
+      - rspamd_conf:/data
+      - rspamd_data:/var/lib/rspamd
+      - logs:/var/log/rspamd
+      - common_bin:/data/common_bin
+    environment:
+      WAITFOR: "tcp://clamav:3310"
+    depends_on:
+      - redis
+      - clamav
+    stop_grace_period: 1m
+    networks:
+      - private
+      - caddy-pub
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.mail-tester-rspamd.entrypoints=https, http"
+      - "traefik.http.routers.mail-tester-rspamd.rule=Host(`${RSPAMD_FQDN}`)"
+      - "traefik.http.routers.mail-tester-rspamd.service=mail-tester-rspamd"
+      - "traefik.http.routers.mail-tester-rspamd.middlewares=nm-ipwhitelist@file, nm-auth@file, redirect2https@file"
+      - "traefik.http.services.mail-tester-rspamd.loadbalancer.server.port=11334"
+
+  dcc:
+    image: neomediatech/dcc:latest
+    hostname: dcc
+    <<: [*default-opts, *dns-opts]
+    networks:
+      - private
+
+  razor:
+    image: neomediatech/razor:latest
+    hostname: razor
+    <<: [*default-opts, *dns-opts]
+    networks:
+      - private
+
+  pyzor:
+    image: neomediatech/pyzor-cc:latest
+    hostname: pyzor
+    <<: [*default-opts, *dns-opts]
+    networks:
+      - private
+
+  redis:
+    image: redis:7-alpine
+    hostname: redis
+    <<: *default-opts    
+    environment:
+      TZ: Europe/Rome
+    volumes:
+      - redis_db:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 60s
+      timeout: 10s
+      retries: 3
+    networks:
+      private:
+        aliases:
+          - redis-rspamd-history
+
+  redis-app:
+    image: redis:7-alpine
+    hostname: redis-app
+    <<: *default-opts    
+    environment:
+      TZ: Europe/Rome
+    volumes:
+      - redis_app:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 60s
+      timeout: 10s
+      retries: 3
+    networks:
+      - private
+
+  spamassassin:
+    image: neomediatech/spamassassin:latest
+    hostname: spamassassin
+    <<: [*default-opts, *dns-opts]
+    environment:
+      TZ: Europe/Rome
+    volumes:
+      - spamassassin_data:/var/lib/spamassassin
+      - spamassassin_conf:/data/conf
+      - logs:/var/log
+    stop_grace_period: 10s
+    networks:
+      - private
+
+networks:
+  private:
+    attachable: true
+
+  caddy-pub:
+    external: true
+
+volumes:
+  common_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/common
+  clamav_defs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/clamav/defs
+  clamav_unoff_defs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/clamav/unoff_defs  
+  redis_db:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/redis/db
+  redis_app:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/redis_app/db
+  rspamd_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/rspamd/var
+  rspamd_conf:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/rspamd/conf
+  logs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/logs
+  app_logs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/app/logs
+  mailbox_files:    
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/mailboxes/files
+  mailbox_homes:    
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/mailboxes/home
+  certs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/certs
+  exim_spool:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/exim/spool
+  exim_confs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/exim/conf
+  common_bin:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/common/bin
+  spamassassin_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/spamassassin/var
+  spamassassin_conf:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/spamassassin/conf
+  app_html:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/app/html
+
