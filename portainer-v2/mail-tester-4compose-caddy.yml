@@ -16,7 +16,6 @@ x-default-opts:
   restart: always
   env_file:
     - stack.env
-      required: false
 
 services:
   exim:
