@@ -1,9 +1,10 @@
-# use to create a compose template in Portainer
+# use to create a swarm template in Portainer
 # STACK_BASE_PATH [base folder where to host files, must exists]
 # STACK_BASE_PATH=/srv/docker/mail-tester ; grep device email-stack-4-swarm.yml|grep -v "#"|awk '{print $2}'|while read dir; do eval mkdir -p $dir; done
 # MAILSERVER_CERT=yourmailserver.domain.tld
-# Prior to run this stack you should have a SSL certificate to be used by dovecot, exim and webmail containers
-# This stack depends on Caddy logic
+# Prior to run this stack you must have a SSL certificate to be used by dovecot and exim and a certificate used
+#   by the webmail container
+# This depends on Traefik logic
 
 x-dns-opts: 
   &dns-opts
@@ -16,7 +17,7 @@ x-default-opts:
   env_file:
     - path: .env
       required: false
-  
+
 services:
   exim:
     image: neomediatech/exim:4.97-from-source
@@ -48,8 +49,8 @@ services:
       WAITFOR: "tcp://clamav:3310 tcp://redis:6379 tcp://rspamd:11333"
       EXIM_LOGDIR: ${EXIM_LOGDIR}
       MAILSERVER_CERT: ${MAILTESTER_FQDN}
-      EXIM_OPTIONS: ${EXIM_OPTIONS:-""}
-      QUEUE_CYCLE: ${QUEUE_CYCLE:-5m}
+      EXIM_OPTIONS: ${EXIM_OPTIONS}
+      QUEUE_CYCLE: ${QUEUE_CYCLE}
     depends_on:
       - clamav
       - redis
@@ -63,7 +64,7 @@ services:
     <<: [*default-opts]
     volumes:
       - app_html:/var/www/html
-      - app_logs:/logs
+      - logs:/logs
     environment:
       TZ: Europe/Rome
     networks:
@@ -182,7 +183,7 @@ services:
       - spamassassin_data:/var/lib/spamassassin
       - spamassassin_conf:/data/conf
       - logs:/var/log
-    stop_grace_period: 10s
+    stop_grace_period: 5s
     networks:
       - private
 
@@ -241,7 +242,7 @@ volumes:
     driver_opts:
       type: none
       o: bind
-      device: ${STACK_BASE_PATH}/logs
+      device: ${STACK_BASE_PATH}/../logs/mail-tester
   app_logs:
     driver: local
     driver_opts:
@@ -302,4 +303,5 @@ volumes:
       type: none
       o: bind
       device: ${STACK_BASE_PATH}/app/html
+
 
