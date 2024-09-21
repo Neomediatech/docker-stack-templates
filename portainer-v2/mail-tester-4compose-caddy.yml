@@ -15,7 +15,7 @@ x-default-opts:
   &default-opts
   restart: always
   env_file:
-    - path: stack.env
+    - stack.env
       required: false
 
 services:
