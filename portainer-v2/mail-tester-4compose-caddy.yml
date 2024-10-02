@@ -76,13 +76,12 @@ services:
       - private
       - caddy-pub
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.mail-tester-frontend.entrypoints=https, http"
-      - "traefik.http.routers.mail-tester-frontend.rule=Host(`${MAILTESTER_FQDN}`)"
-      - "traefik.http.routers.mail-tester-frontend.service=mail-tester-frontend"
-      - "traefik.http.routers.mail-tester-frontend.middlewares=nm-ipwhitelist@file, redirect2https@file"
-      - "traefik.http.services.mail-tester-frontend.loadbalancer.server.port=80"
-      # - "traefik.http.routers.mail-tester-frontend.middlewares=nm-ipwhitelist@file, nm-auth@file, redirect2https@file"
+      - caddy: "$HOST_NAME"
+      - caddy.0_import: nm
+      - caddy.1_import: common
+      - caddy.2_import: log-both $HOST_NAME
+      - caddy.reverse_proxy: "@nm-ips {{upstreams http 80}}"
+      - caddy.reverse_proxy.transport: http
 
   clamav:
     image: neomediatech/clamav:latest
@@ -116,12 +115,13 @@ services:
       - private
       - caddy-pub
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.mail-tester-rspamd.entrypoints=https, http"
-      - "traefik.http.routers.mail-tester-rspamd.rule=Host(`${RSPAMD_FQDN}`)"
-      - "traefik.http.routers.mail-tester-rspamd.service=mail-tester-rspamd"
-      - "traefik.http.routers.mail-tester-rspamd.middlewares=nm-ipwhitelist@file, nm-auth@file, redirect2https@file"
-      - "traefik.http.services.mail-tester-rspamd.loadbalancer.server.port=11334"
+      - caddy: "$RSPAMD_FQDN"
+      - caddy.0_import: nm
+      - caddy.1_import: common
+      - caddy.2_import: log-both $HOST_NAME
+      - caddy.reverse_proxy: "@nm-ips {{upstreams http 11334}}"
+      - caddy.reverse_proxy.transport: http
+      #- "traefik.http.routers.mail-tester-rspamd.middlewares=nm-ipwhitelist@file, nm-auth@file, redirect2https@file"
 
   dcc:
     image: neomediatech/dcc:latest
