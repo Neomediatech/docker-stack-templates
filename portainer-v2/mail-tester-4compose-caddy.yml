@@ -44,7 +44,7 @@ services:
     volumes:
       - mailbox_files:/data/files
       - mailbox_homes:/data/home
-      - logs:/data/logs
+      - exim_logs:/data/logs
       - common_data:/data/common
       - certs:/data/certs
       - exim_spool:/var/spool/exim
@@ -69,7 +69,7 @@ services:
     <<: [*default-opts]
     volumes:
       - app_html:/var/www/html
-      - logs:/logs
+      - app_logs:/logs
     environment:
       TZ: Europe/Rome
     networks:
@@ -103,7 +103,7 @@ services:
     volumes:
       - rspamd_conf:/data
       - rspamd_data:/var/lib/rspamd
-      - logs:/var/log/rspamd
+      - rspamd_logs:/var/log/rspamd
       - common_bin:/data/common_bin
     environment:
       WAITFOR: "tcp://clamav:3310"
@@ -187,7 +187,7 @@ services:
     volumes:
       - spamassassin_data:/var/lib/spamassassin
       - spamassassin_conf:/data/conf
-      - logs:/var/log
+      - spamassassin_logs:/var/log
     stop_grace_period: 5s
     networks:
       - private
@@ -242,18 +242,30 @@ volumes:
       type: none
       o: bind
       device: ${STACK_BASE_PATH}/rspamd/conf
-  logs:
+  exim_logs:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: ${STACK_BASE_PATH}/../logs/mail-tester
+      device: ${STACK_BASE_PATH}/../logs/mail-tester/exim
   app_logs:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: ${STACK_BASE_PATH}/app/logs
+      device: ${STACK_BASE_PATH}/../logs/mail-tester/app
+  rspamd_logs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/../logs/mail-tester/rspamd
+  spamassassin_logs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/../logs/mail-tester/spamassassin
   mailbox_files:    
     driver: local
     driver_opts:
