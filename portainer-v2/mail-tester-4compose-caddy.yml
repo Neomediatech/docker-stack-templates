@@ -77,7 +77,7 @@ services:
       - caddy-pub
     labels:
       caddy: "$HOST_NAME"
-      caddy.0_import: nm
+      caddy.0_import: nm.snippet
       caddy.1_import: common
       caddy.2_import: log-both $HOST_NAME
       caddy.reverse_proxy: "@nm-ips {{upstreams http 80}}"
@@ -116,7 +116,7 @@ services:
       - caddy-pub
     labels:
       caddy: "$RSPAMD_FQDN"
-      caddy.0_import: nm
+      caddy.0_import: nm.snippet
       caddy.1_import: common
       caddy.2_import: log-both $HOST_NAME
       caddy.reverse_proxy: "@nm-ips {{upstreams http 11334}}"
