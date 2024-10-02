@@ -16,10 +16,11 @@ x-dns-opts:
 x-default-opts:
   &default-opts
   restart: always
-  env_file:
+  env_file: /data/envs/mail-tester/.env
     # this path (/data/envs) is used by portainer to get env vars for this stack
-    - path: /data/envs/mail-tester/.env
-    #  required: false (not working from portainer)
+    # (not working from portainer)
+    # - path: /data/envs/mail-tester/.env
+    #  required: false
 
 services:
   exim:
