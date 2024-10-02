@@ -1,0 +1,54 @@
+# Test stack for Portainer
+# STACK_BASE_PATH [base folder where to host files, must exists]
+# STACK_BASE_PATH=/srv/docker/test ; grep device mail-tester-4compose-caddy.yml|grep -v "#"|awk '{print $2}'|while read dir; do eval mkdir -p $dir; done
+
+name: test
+
+x-dns-opts: 
+  &dns-opts
+  dns:
+    - 10.2.0.15
+
+x-default-opts:
+  &default-opts
+  restart: always
+  # this path (/data/envs) is used by portainer to get env vars for this stack
+  # and must exists in portainer volume (portainer_data:/data)
+  env_file: /data/envs/test/.env
+    # (not working from portainer)
+    # - path: /data/envs/mail-tester/.env
+    #  required: false
+
+services:
+  app:
+    image: neomediatech/php:7.4-apache
+    hostname: app
+    <<: [*default-opts]
+    environment:
+      TZ: Europe/Rome
+    networks:
+      - private
+      - caddy-pub
+    labels:
+      caddy: "$HOST_NAME"
+      caddy.0_import: nm.snippet
+      caddy.1_import: common
+      caddy.2_import: log-both $HOST_NAME
+      caddy.reverse_proxy: "@nm-ips {{upstreams http 80}}"
+      caddy.reverse_proxy.transport: http
+
+networks:
+  private:
+    attachable: true
+
+  caddy-pub:
+    external: true
+
+volumes:
+  data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${STACK_BASE_PATH}/data
+
