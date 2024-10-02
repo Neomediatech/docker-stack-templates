@@ -76,12 +76,12 @@ services:
       - private
       - caddy-pub
     labels:
-      - caddy: "$HOST_NAME"
-      - caddy.0_import: nm
-      - caddy.1_import: common
-      - caddy.2_import: log-both $HOST_NAME
-      - caddy.reverse_proxy: "@nm-ips {{upstreams http 80}}"
-      - caddy.reverse_proxy.transport: http
+      caddy: "$HOST_NAME"
+      caddy.0_import: nm
+      caddy.1_import: common
+      caddy.2_import: log-both $HOST_NAME
+      caddy.reverse_proxy: "@nm-ips {{upstreams http 80}}"
+      caddy.reverse_proxy.transport: http
 
   clamav:
     image: neomediatech/clamav:latest
@@ -115,12 +115,12 @@ services:
       - private
       - caddy-pub
     labels:
-      - caddy: "$RSPAMD_FQDN"
-      - caddy.0_import: nm
-      - caddy.1_import: common
-      - caddy.2_import: log-both $HOST_NAME
-      - caddy.reverse_proxy: "@nm-ips {{upstreams http 11334}}"
-      - caddy.reverse_proxy.transport: http
+      caddy: "$RSPAMD_FQDN"
+      caddy.0_import: nm
+      caddy.1_import: common
+      caddy.2_import: log-both $HOST_NAME
+      caddy.reverse_proxy: "@nm-ips {{upstreams http 11334}}"
+      caddy.reverse_proxy.transport: http
       #- "traefik.http.routers.mail-tester-rspamd.middlewares=nm-ipwhitelist@file, nm-auth@file, redirect2https@file"
 
   dcc:
