@@ -1,10 +1,10 @@
-# use to create a swarm template in Portainer
+# use to create a compose template in Portainer
 # STACK_BASE_PATH [base folder where to host files, must exists]
-# STACK_BASE_PATH=/srv/docker/mail-tester ; grep device email-stack-4-swarm.yml|grep -v "#"|awk '{print $2}'|while read dir; do eval mkdir -p $dir; done
+# STACK_BASE_PATH=/srv/docker/mail-tester ; grep device mail-tester-4compose-caddy.yml|grep -v "#"|awk '{print $2}'|while read dir; do eval mkdir -p $dir; done
 # MAILSERVER_CERT=yourmailserver.domain.tld
 # Prior to run this stack you must have a SSL certificate to be used by dovecot and exim and a certificate used
 #   by the webmail container
-# This depends on Traefik logic
+# This compose stack depends on Caddy logic
 
 name: mail-tester
 
@@ -16,8 +16,9 @@ x-dns-opts:
 x-default-opts:
   &default-opts
   restart: always
+  # this path (/data/envs) is used by portainer to get env vars for this stack
+  # and must exists in portainer volume (portainer_data:/data)
   env_file: /data/envs/mail-tester/.env
-    # this path (/data/envs) is used by portainer to get env vars for this stack
     # (not working from portainer)
     # - path: /data/envs/mail-tester/.env
     #  required: false
