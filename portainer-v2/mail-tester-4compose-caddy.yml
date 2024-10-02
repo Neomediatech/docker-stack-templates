@@ -19,7 +19,7 @@ x-default-opts:
   env_file:
     # this path (/data/envs) is used by portainer to get env vars for this stack
     - path: /data/envs/mail-tester/.env
-      required: false
+    #  required: false (not working from portainer)
 
 services:
   exim:
