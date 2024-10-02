@@ -6,6 +6,8 @@
 #   by the webmail container
 # This depends on Traefik logic
 
+name: mail-tester
+
 x-dns-opts: 
   &dns-opts
   dns:
@@ -15,7 +17,9 @@ x-default-opts:
   &default-opts
   restart: always
   env_file:
-    - ${STACK_BASE_PATH}/.env
+    # this path (/data/envs) is used by portainer to get env vars for this stack
+    - path: /data/envs/mail-tester/.env
+      required: false
 
 services:
   exim:
