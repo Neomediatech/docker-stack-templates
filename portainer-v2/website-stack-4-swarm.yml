@@ -25,7 +25,7 @@ services:
     stop_grace_period: 5s
 
   db:
-    image: mariadb:10.8
+    image: mariadb:10.10
     hostname: db
     volumes:
       - db:/var/lib/mysql
