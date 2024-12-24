@@ -23,7 +23,7 @@ services:
       disable: true
 
   db:
-    image: mariadb:10.8
+    image: mariadb:10.10
     hostname: db
     volumes:
       - db:/var/lib/mysql
