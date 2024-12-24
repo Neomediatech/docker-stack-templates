@@ -80,7 +80,7 @@ services:
       - rspamd
 
   webmail:
-    image: roundcube/roundcubemail:1.5.x-apache
+    image: roundcube/roundcubemail:1.6.x-apache
     hostname: webmail
     <<: *default-opts
     ports:
