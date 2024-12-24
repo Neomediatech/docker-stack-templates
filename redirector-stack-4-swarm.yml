@@ -8,13 +8,11 @@ x-default-opts:
     restart_policy:
       condition: on-failure
       delay: 5s
-      #max_attempts: 3
       window: 20s
 
 services:
   redirector:
-    image: nginx:1.21-alpine
-#    restart: unless-stopped
+    image: nginx:1.26-alpine
     hostname: pusher
     <<: *default-opts    
     ports:
