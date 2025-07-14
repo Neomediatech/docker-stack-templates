@@ -187,7 +187,7 @@ services:
       << : *common-vars
 
   rspamd:
-    image: neomediatech/rspamd:3.8
+    image: ghcr.io/neomediatech/rspamd:3.11
     hostname: rspamd
     <<: *default-opts
     volumes:
