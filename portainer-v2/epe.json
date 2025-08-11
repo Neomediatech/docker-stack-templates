@@ -267,7 +267,7 @@
 			"categories": ["sec"],
 			"platform": "linux",
 			"logo": "https://raw.githubusercontent.com/Neomediatech/fail2ban/master/fail2ban_logo.png",
-			"image": "neomediatech/fail2ban:from-source",
+			"image": "ghcr.io/neomediatech/fail2ban:0.11.2",
 			"hostname": "fail2ban",
 			"network": "host",
 			"volumes": [
