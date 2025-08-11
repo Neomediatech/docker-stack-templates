@@ -3,8 +3,7 @@ version: '3.7'
 
 services:
   app:
-    # ???? e i log dove li mettiamo ????
-    image: neomediatech/php:8.1-apache
+    image: ghcr.io/neomediatech/php:8.4-apache
 
     hostname: app
     ports:
