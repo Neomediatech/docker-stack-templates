@@ -123,8 +123,6 @@ services:
     image: ghcr.io/neomediatech/clamav-unofficial-sigs
     hostname: clamav-unoff
     <<: *default-opts
-    environment:
-      << : *common-vars
     volumes:
       - *v-tz
       - *v-ltime
