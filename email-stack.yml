@@ -131,7 +131,7 @@ services:
       - clamav_defs:/var/lib/clamav
 
   rspamd:
-    image: neomediatech/rspamd:latest
+    image: ghcr.io/neomediatech/rspamd:3.10
     hostname: rspamd
     <<: *default-opts    
     ports:
