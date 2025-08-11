@@ -19,7 +19,7 @@ x-default-opts:
   
 services:
   dovecot:
-    image: neomediatech/dovecot:latest
+    image: ghcr.io/neomediatech/dovecot:2.3
     hostname: dovecot
     <<: *default-opts    
     ports:
@@ -43,7 +43,7 @@ services:
       MAILSERVER_CERT: "${MAILSERVER_CERT}"
   
   exim:
-    image: neomediatech/exim:4.93
+    image: ghcr.io/neomediatech/exim:4.93
     hostname: exim
     <<: *default-opts    
     ports:
@@ -106,7 +106,7 @@ services:
       - exim
 
   clamav:
-    image: neomediatech/clamav:latest
+    image: clamav/clamav:1.4_base
     hostname: clamav
     <<: *default-opts    
     deploy:
@@ -116,8 +116,19 @@ services:
         window: 20s    
     volumes:
       - clamav_defs:/var/lib/clamav
-      - clamav_unoff_defs:/var/lib/clamav-unofficial-sigs
+      - clamav_conf:/etc/clamav
     stop_grace_period: 1m
+
+  clamav-unoff-defs:
+    image: ghcr.io/neomediatech/clamav-unofficial-sigs
+    hostname: clamav-unoff
+    <<: *default-opts
+    environment:
+      << : *common-vars
+    volumes:
+      - *v-tz
+      - *v-ltime
+      - clamav_defs:/var/lib/clamav
 
   rspamd:
     image: neomediatech/rspamd:latest
@@ -141,12 +152,12 @@ services:
     stop_grace_period: 1m
 
   dcc:
-    image: neomediatech/dcc:latest
+    image: ghcr.io/neomediatech/dcc:latest
     hostname: dcc
     <<: *default-opts    
 
   razor:
-    image: neomediatech/razor:latest
+    image: ghcr.io/neomediatech/razor:latest
     hostname: razor
     <<: *default-opts
     ports:
@@ -156,7 +167,7 @@ services:
         mode: host
 
   pyzor:
-    image: neomediatech/pyzor-cc:latest
+    image: ghcr.io/neomediatech/pyzor-cc:latest
     hostname: pyzor
     <<: *default-opts
     ports:
@@ -253,12 +264,12 @@ volumes:
       type: none
       o: bind
       device: ${STACK_BASE_PATH}/clamav/defs
-  clamav_unoff_defs:
+  clamav_conf:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: ${STACK_BASE_PATH}/clamav/unoff_defs  
+      device: ${STACK_BASE_PATH}/clamav/conf
   redis_db:
     driver: local
     driver_opts:
