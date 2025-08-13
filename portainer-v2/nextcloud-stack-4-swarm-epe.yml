@@ -19,39 +19,22 @@ x-default-opts:
       window: 20s
 
 services:
-  nginx:
-    image: nginx:1.26
-    hostname: nginx
-    <<: *default-opts    
+  app:
+    image: nextcloud:31
+    hostname: app
+    <<: *default-opts
     ports:
       - target: 80
         published: 89
         protocol: tcp
         mode: host
     volumes:
-      - /srv/data/nextcloud/nginx/nextcloud.conf:/etc/nginx/nginx.conf:ro
       - app:/var/www/html
       - nc_custom_apps:/var/www/html/custom_apps
       - nc_config:/var/www/html/config
-      - logs:/var/log/nginx
-      - /srv/data/nextcloud/nginx/entrypoint.sh:/entrypoint.sh:ro
-    environment:
-      TZ: Europe/Rome
-      WAITFOR: app:ping
-    depends_on:
-      - app
-    entrypoint: ["/entrypoint.sh"]
-    command: ["nginx", "-g", "daemon off;"]
-    stop_grace_period: 20s
-
-  app:
-    image: nextcloud:29-fpm 
-    hostname: app
-    <<: *default-opts    
-    volumes:
-      - app:/var/www/html
-      - nc_custom_apps:/var/www/html/custom_apps
-      - nc_config:/var/www/html/config
+      - nc_bin:/nc_bin
+      - /srv/data/nextcloud/apache/zz-custom.ini:/usr/local/etc/php/conf.d/zz-custom.ini:ro
+      - /srv/data/nextcloud/apache/zz-remoteip.conf:/etc/apache2/conf-enabled/zz-remoteip.conf:ro
       - testi:/testi
     environment:
       TZ: Europe/Rome
@@ -64,13 +47,15 @@ services:
     stop_grace_period: 20s
 
   cron:
-    image: nextcloud:29-fpm
+    image: nextcloud:31
     hostname: cron
     <<: *default-opts
     volumes:
       - app:/var/www/html
       - nc_custom_apps:/var/www/html/custom_apps
       - nc_config:/var/www/html/config
+      - /srv/data/nextcloud/apache/zz-custom.ini:/usr/local/etc/php/conf.d/zz-custom.ini:ro
+      - /srv/data/nextcloud/apache/zz-remoteip.conf:/etc/apache2/conf-enabled/zz-remoteip.conf:ro
     environment:
       TZ: Europe/Rome
       << : *common-vars
@@ -101,7 +86,7 @@ services:
     command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW --skip-innodb-read-only-compressed
 
   redis:
-    image: redis:7-alpine
+    image: redis:8-alpine
     hostname: redis
     <<: *default-opts
     environment:
@@ -112,7 +97,7 @@ services:
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
     environment:
-      << : *common-vars    
+      << : *common-vars
       PMA_HOST: db
       PMA_PORT: 3306
     ports:
@@ -156,6 +141,13 @@ volumes:
       o: bind
       device: /srv/data/nextcloud/app/config
 
+  nc_bin:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /srv/data/nextcloud/bin
+   
   redis:
     driver: local
 
@@ -165,3 +157,4 @@ volumes:
       type: none
       o: bind
       device: /media/apps/testi
+
