@@ -1,336 +1,337 @@
 {
   "version": "3",
-	"templates": [
-		{
-			"id": "1",
-			"type": 2,
-			"name": "email",
-			"title": "Email by Neomediatech",
-			"description": "email stack",
-			"note": " ",
-			"categories": ["email"],
-			"platform": "linux",
-			"logo": "https://raw.githubusercontent.com/Neomediatech/docker-stack-templates/master/email.png",
-			"repository": {
-				"url": "https://github.com/Neomediatech/docker-stack-templates",
-				"stackfile": "email-stack.yml"
-			},
-			"env": [{
-				 "name": "MAILSERVER_CERT",
-				 "label": "MAILSERVER_CERT",
-				 "description": "FQDN del mailserver da utilizzare per il percorso del certificato (il certificato deve già esistere!)",
-			         "default": "mail.ente**.it"
-				},
-				{
-				 "name": "EXIM_LOGDIR",
-				 "label": "EXIM_LOGDIR",
-				 "description": "Path dei log di Exim (cambia solo se sai cosa stai facendo!)",
-			         "default": "/data/logs"
-				},
-				{
-				 "name": "STACK_BASE_PATH",
-				 "label": "STACK_BASE_PATH",
-				 "description": "Percorso base dello stack all'interno dell'host (deve esistere!)",
-			         "default": "/srv/data/email"
-				},
-				{
-				 "name": "HONEYPOT",
-				 "label": "Am I a Honeypot?",
-				 "description": "Normally false",
-				 "select": [
-				  {
-				   "text": "false",
-				   "value": "false",
-				   "default": true
-				  },
-				  {
-				   "text": "true",
-				   "value": "true"
-				  }
-				 ]
-				}
-			]
-		},
-		{
-			"id": "2",
-			"type": 2,
-			"name": "pusher",
-			"title": "Pusher by Neomediatech",
-			"description": "pusher stack",
-			"note": " ",
-			"categories": ["web"],
-			"platform": "linux",
-			"logo": "https://raw.githubusercontent.com/Neomediatech/docker-stack-templates/master/nginx-logo-nm.png",
-			"repository": {
-				"url": "https://github.com/Neomediatech/docker-stack-templates",
-				"stackfile": "redirector-stack-4-swarm.yml"
-			}
-		},
-		{
-			"id": "3",
-			"type": 2,
-			"name": "website",
-			"title": "Website by Neomediatech",
-			"description": "website stack",
-			"note": " ",
-			"categories": ["web"],
-			"platform": "linux",
-			"logo": "https://raw.githubusercontent.com/Neomediatech/docker-stack-templates/master/epevda-logo.png",
-			"repository": {
-				"url": "https://github.com/Neomediatech/docker-stack-templates",
-				"stackfile": "portainer-v2/website-stack-4-swarm.yml"
-			}
-		},
-		{
-			"id": "4",
-			"type": 2,
-			"name": "comunicazioni",
-			"title": "Invio comunicazioni e Split and Send by Neomediatech",
-			"description": "comunicazioni stack",
-			"note": " ",
-			"categories": ["web"],
-			"platform": "linux",
-			"logo": "https://raw.githubusercontent.com/Neomediatech/docker-stack-templates/master/epevda-logo.png",
-			"repository": {
-				"url": "https://github.com/Neomediatech/docker-stack-templates",
-				"stackfile": "portainer-v2/website-stack-4-swarm-debian-custom-fpm.yml"
-			}
-		},
-		{
-			"id": "5",
-			"type": 2,
-			"name": "website-old",
-			"title": "OLD Website by Neomediatech",
-			"description": "Vecchio sito",
-			"note": " ",
-			"categories": ["web"],
-			"platform": "linux",
-			"logo": "https://raw.githubusercontent.com/Neomediatech/docker-stack-templates/master/epevda-logo-no-access.png",
-			"repository": {
-				"url": "https://github.com/Neomediatech/docker-stack-templates",
-				"stackfile": "portainer-v2/website-old-stack-4-swarm.yml"
-			}
-		},
-		{
-			"id": "6",
-			"type": 2,
-			"name": "portainer",
-			"title": "Portainer by Neomediatech",
-			"description": "Portainer swarm stack",
-			"note": " ",
-			"categories": ["management"],
-			"platform": "linux",
-			"logo": "https://github.com/Neomediatech/portainer-docker-stack/raw/master/portainer_logo.png",
-			"repository": {
-				"url": "https://github.com/Neomediatech/portainer-docker-stack",
-				"stackfile": "docker-compose.yml"
-			}
-		},
-		{
-			"id": "7",
-			"type": 2,
-			"name": "nextcloud",
-			"title": "Nextcloud by Neomediatech",
-			"description": "Nextcloud, OnlyOffice, Nginx, MariaDB, FPM, Redis, cron",
-			"note": "<h1>ATTENZIONE!!!</h1> Vanno create le secrets 'nc-db-file.txt', 'nc-db-pwd.txt', 'nc-db-root-pwd.txt', 'nc-db-user.txt' (se non esistono) dentro swarm. Si può fare in Portainer -> Secrets. Sono le stesse secrets presenti in /srv/data/databases/nextcloud/",
-			"categories": ["web", "storage"],
-			"platform": "linux",
-			"logo": "https://raw.githubusercontent.com/Neomediatech/docker-stack-templates/master/nextcloud-logo-nm.png",
-			"repository": {
-				"url": "https://github.com/Neomediatech/docker-stack-templates",
-				"stackfile": "portainer-v2/nextcloud-stack-4-swarm-epe.yml"
-			}
-		},
-		{
-			"id": "8",
-			"type": 2,
-			"name": "intranet",
-			"title": "Intranet by Neomediatech",
-			"description": "Sito Help interno",
-			"note": "_",
-			"categories": ["web"],
-			"platform": "linux",
-			"logo": "https://raw.githubusercontent.com/Neomediatech/docker-stack-templates/master/intranet-help-by-neomediatech.png",
-			"repository": {
-				"url": "https://github.com/Neomediatech/docker-stack-templates",
-				"stackfile": "intranet-help-stack-4-swarm-debian-custom-fpm.yml"
-			}
-		},
-		{
-			"id": "9",
-			"type": 2,
-			"name": "rlst_shares",
-			"title": "RLST shares by Neomediatech",
-			"description": "Condivisioni SAMBA per R.L.S.T.",
-			"categories": ["storage"],
-			"platform": "linux",
-			"logo": "https://raw.githubusercontent.com/Neomediatech/samba-alpine-docker/master/rlst_share-logo.png",
-			"repository": {
-				"url": "https://github.com/Neomediatech/samba-alpine-docker",
-				"stackfile": "docker-compose.yml"
-			},
-			"env": [{
-				 "name": "WORKGROUP",
-				 "label": "WORKGROUP",
-				 "description": "_",
-			         "default": "rlst"
-				}
-			]
-		},
-		{
-			"id": "10",
-			"type": 2,
-			"name": "mysql_reports",
-			"title": "MySQL Reports by Neomediatech",
-			"description": "Container per generare i reports PDF dal db MySQL",
-			"note": "Accesso: http://172.16.217.15:88/report.php <br> AGGIUNGERE/MODIFICARE utenti e password di accesso: <br> - apri una console 'portainer' sul container <br> - lancia il comando <b>htpasswd /var/www/html/.pwd nomeutente </b><br>(dove 'nomeutente' è l'utente di cui si vuole creare/cambiare la password) <br> - digita due volte la password desiderata <br>",
-			"categories": ["database"],
-			"platform": "linux",
-			"logo": "https://raw.githubusercontent.com/Neomediatech/docker-stack-templates/master/portainer-v2/mysql-reports-logo.png",
-			"repository": {
-				"url": "https://github.com/Neomediatech/docker-stack-templates",
-				"stackfile": "portainer-v2/mysql-report-stack-4-swarm.yml"
-			}
-		},
-		{
-			"id": "11",
-			"type": 2,
-			"name": "pgsql_reports",
-			"title": "PostgreSQL Reports by Neomediatech",
-			"description": "Container per generare i reports PDF dal db PostgreSQL",
-			"note": "Accesso: http://172.16.217.15:8087/report.php <br> AGGIUNGERE/MODIFICARE utenti e password di accesso: <br> - apri una console 'portainer' sul container <br> - lancia il comando <b>htpasswd /var/www/html/.pwd nomeutente </b><br>(dove 'nomeutente' è l'utente di cui si vuole creare/cambiare la password) <br> - digita due volte la password desiderata <br>",
-			"categories": ["database"],
-			"platform": "linux",
-			"logo": "https://raw.githubusercontent.com/Neomediatech/docker-stack-templates/master/portainer-v2/pgsql-reports-logo.png",
-			"repository": {
-				"url": "https://github.com/Neomediatech/docker-stack-templates",
-				"stackfile": "portainer-v2/pgsql-report-stack-4-swarm.yml"
-			}
-		},
-		{
-			"id": "12",
-			"type": 2,
-			"name": "phppgadmin",
-			"title": "phpPgAdmin by Neomediatech",
-			"description": "Interfaccia PHP per accedere a PostgreSQL",
-			"note": "Accesso: http://172.16.217.15:8283",
-			"categories": ["database"],
-			"platform": "linux",
-			"logo": "https://raw.githubusercontent.com/Neomediatech/docker-stack-templates/master/portainer-v2/phppgadmin-logo.png",
-			"repository": {
-				"url": "https://github.com/Neomediatech/docker-stack-templates",
-				"stackfile": "portainer-v2/phppgadmin-stack.yml"
-			},
-			"env": [{
-				 "name": "STACK_BASE_PATH",
-				 "label": "STACK_BASE_PATH",
-				 "description": "Percorso base dello stack all'interno dell'host (deve esistere!)",
-			         "default": "/srv/data/phppgadmin"
-				}
-			]
-		},
-		{
-			"id": "13",
-			"type": 2,
-			"name": "tftp",
-			"title": "TFTP service by Neomediatech",
-			"description": "Servizio TFTP per boot di emergenza e installazione server",
-			"note": "<h1>IMPORTANTE:</h1> Devi prima creare il percorso dove verranno ospitati i file, es: <strong>mkdir -p /srv/data/docker/containers/failover</strong> <br/>",
-			"categories": ["ops"],
-			"platform": "linux",
-			"logo": "https://github.com/Neomediatech/docker-stack-templates/raw/master/nm-logo.png",
-			"repository": {
-				"url": "https://github.com/Neomediatech/tftp-alpine-docker",
-				"stackfile": "docker-compose.yml"
-			}
-		},
-		{
-			"id": "14",
-			"type": 2,
-			"name": "website-test",
-			"title": "TEST Website by Neomediatech",
-			"description": "STACK DI TEST (NON USARE MAI!)",
-			"note": "<h1>NON UTILIZZARE QUESTO STACK, SERVE SOLO PER FARE TEST</h1>",
-			"categories": ["web"],
-			"platform": "linux",
-			"logo": "https://raw.githubusercontent.com/Neomediatech/docker-stack-templates/master/epevda-logo.png",
-			"repository": {
-				"url": "https://github.com/Neomediatech/docker-stack-templates",
-				"stackfile": "website-stack-4-swarm-debian-custom-fpm-test.yml"
-			}
-		},
-		{
-			"id": "15",
-			"type": 1,
-			"name": "fail2ban",
-			"title": "Fail2Ban by Neomediatech",
-			"description": "Dockerized Fail2Ban",
-			"note": " ",
-			"categories": ["sec"],
-			"platform": "linux",
-			"logo": "https://raw.githubusercontent.com/Neomediatech/fail2ban/master/fail2ban_logo.png",
-			"image": "ghcr.io/neomediatech/fail2ban:0.11.2",
-			"hostname": "fail2ban",
-			"network": "host",
-			"volumes": [
-			  {
-			    "container": "/data",
-			    "bind": "/srv/data/fail2ban/confs"
-			  },
-			  {
-			    "container": "/var/log",
-			    "bind": "/srv/data/logs"
-			  }
-			],
-			"restart_policy": "unless-stopped",
-			"privileged": true
-		},
-		{
-			"id": "16",
-			"type": 1,
-			"name": "pdfsplit",
-			"title": "PDFsplit by Neomediatech",
-			"description": "Servizio di split dei PDF",
-			"note": "_",
-			"categories": [
-				"ops"
-			],
-			"platform": "linux",
-			"logo": "https://raw.githubusercontent.com/Neomediatech/pdfsplit/master/pdfsplit-logo.png",
-			"image": "ghcr.io/neomediatech/pdfsplit:20.04",
-			"hostname": "pdfsplit",
-			"network": "bridge",
-			"ports": ["2223:22/tcp"],
-			"volumes": [
-			  {
-			    "container": "/usr/local/sbin/pdfsplit",
-			    "bind": "/srv/data/pdfsplit/assets/pdfsplit",
-			    "readonly": true
-			  },
-			  {
-			    "container": "/data/log",
-			    "bind": "/srv/data/logs/pdfsplit"
-			  },
-			  {
-			    "container": "/data/assets",
-			    "bind": "/srv/data/pdfsplit/assets"
-			  }
-			],
-			"restart_policy": "on-failure",
-			"privileged": true,
-			"env": [{
-				 "name": "USER",
-				 "label": "USER",
-				 "description": "_",
-			         "default": "pdfsplit"
-				},
-				{
-				 "name": "PASSWORD",
-				 "label": "PASSWORD",
-				 "description": "_",
-			         "default": "fakepassword768"
-				}
-			]
-		}
+  "templates": [
+    {
+      "id": 1,
+      "type": 2,
+      "name": "email",
+      "title": "Email by Neomediatech",
+      "description": "email stack",
+      "note": " ",
+      "categories": ["email"],
+      "platform": "linux",
+      "logo": "https://raw.githubusercontent.com/Neomediatech/docker-stack-templates/master/email.png",
+      "repository": {
+        "url": "https://github.com/Neomediatech/docker-stack-templates",
+        "stackfile": "email-stack.yml"
+      },
+      "env": [{
+         "name": "MAILSERVER_CERT",
+         "label": "MAILSERVER_CERT",
+         "description": "FQDN del mailserver da utilizzare per il percorso del certificato (il certificato deve già esistere!)",
+               "default": "mail.ente**.it"
+        },
+        {
+         "name": "EXIM_LOGDIR",
+         "label": "EXIM_LOGDIR",
+         "description": "Path dei log di Exim (cambia solo se sai cosa stai facendo!)",
+               "default": "/data/logs"
+        },
+        {
+         "name": "STACK_BASE_PATH",
+         "label": "STACK_BASE_PATH",
+         "description": "Percorso base dello stack all'interno dell'host (deve esistere!)",
+               "default": "/srv/data/email"
+        },
+        {
+         "name": "HONEYPOT",
+         "label": "Am I a Honeypot?",
+         "description": "Normally false",
+         "select": [
+          {
+           "text": "false",
+           "value": "false",
+           "default": true
+          },
+          {
+           "text": "true",
+           "value": "true"
+          }
+         ]
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "type": 2,
+      "name": "pusher",
+      "title": "Pusher by Neomediatech",
+      "description": "pusher stack",
+      "note": " ",
+      "categories": ["web"],
+      "platform": "linux",
+      "logo": "https://raw.githubusercontent.com/Neomediatech/docker-stack-templates/master/nginx-logo-nm.png",
+      "repository": {
+        "url": "https://github.com/Neomediatech/docker-stack-templates",
+        "stackfile": "redirector-stack-4-swarm.yml"
+      }
+    },
+    {
+      "id": 3,
+      "type": 2,
+      "name": "website",
+      "title": "Website by Neomediatech",
+      "description": "website stack",
+      "note": " ",
+      "categories": ["web"],
+      "platform": "linux",
+      "logo": "https://raw.githubusercontent.com/Neomediatech/docker-stack-templates/master/epevda-logo.png",
+      "repository": {
+        "url": "https://github.com/Neomediatech/docker-stack-templates",
+        "stackfile": "portainer-v2/website-stack-4-swarm.yml"
+      }
+    },
+    {
+      "id": 4,
+      "type": 2,
+      "name": "comunicazioni",
+      "title": "Invio comunicazioni e Split and Send by Neomediatech",
+      "description": "comunicazioni stack",
+      "note": " ",
+      "categories": ["web"],
+      "platform": "linux",
+      "logo": "https://raw.githubusercontent.com/Neomediatech/docker-stack-templates/master/epevda-logo.png",
+      "repository": {
+        "url": "https://github.com/Neomediatech/docker-stack-templates",
+        "stackfile": "portainer-v2/website-stack-4-swarm-debian-custom-fpm.yml"
+      }
+    },
+    {
+      "id": 5,
+      "type": 2,
+      "name": "website-old",
+      "title": "OLD Website by Neomediatech",
+      "description": "Vecchio sito",
+      "note": " ",
+      "categories": ["web"],
+      "platform": "linux",
+      "logo": "https://raw.githubusercontent.com/Neomediatech/docker-stack-templates/master/epevda-logo-no-access.png",
+      "repository": {
+        "url": "https://github.com/Neomediatech/docker-stack-templates",
+        "stackfile": "portainer-v2/website-old-stack-4-swarm.yml"
+      }
+    },
+    {
+      "id": 6,
+      "type": 2,
+      "name": "portainer",
+      "title": "Portainer by Neomediatech",
+      "description": "Portainer swarm stack",
+      "note": " ",
+      "categories": ["management"],
+      "platform": "linux",
+      "logo": "https://github.com/Neomediatech/portainer-docker-stack/raw/master/portainer_logo.png",
+      "repository": {
+        "url": "https://github.com/Neomediatech/portainer-docker-stack",
+        "stackfile": "docker-compose.yml"
+      }
+    },
+    {
+      "id": 7,
+      "type": 2,
+      "name": "nextcloud",
+      "title": "Nextcloud by Neomediatech",
+      "description": "Nextcloud, OnlyOffice, Nginx, MariaDB, FPM, Redis, cron",
+      "note": "<h1>ATTENZIONE!!!</h1> Vanno create le secrets 'nc-db-file.txt', 'nc-db-pwd.txt', 'nc-db-root-pwd.txt', 'nc-db-user.txt' (se non esistono) dentro swarm. Si può fare in Portainer -> Secrets. Sono le stesse secrets presenti in /srv/data/databases/nextcloud/",
+      "categories": ["web", "storage"],
+      "platform": "linux",
+      "logo": "https://raw.githubusercontent.com/Neomediatech/docker-stack-templates/master/nextcloud-logo-nm.png",
+      "repository": {
+        "url": "https://github.com/Neomediatech/docker-stack-templates",
+        "stackfile": "portainer-v2/nextcloud-stack-4-swarm-epe.yml"
+      }
+    },
+    {
+      "id": 8,
+      "type": 2,
+      "name": "intranet",
+      "title": "Intranet by Neomediatech",
+      "description": "Sito Help interno",
+      "note": "_",
+      "categories": ["web"],
+      "platform": "linux",
+      "logo": "https://raw.githubusercontent.com/Neomediatech/docker-stack-templates/master/intranet-help-by-neomediatech.png",
+      "repository": {
+        "url": "https://github.com/Neomediatech/docker-stack-templates",
+        "stackfile": "intranet-help-stack-4-swarm-debian-custom-fpm.yml"
+      }
+    },
+    {
+      "id": 9,
+      "type": 2,
+      "name": "rlst_shares",
+      "title": "RLST shares by Neomediatech",
+      "description": "Condivisioni SAMBA per R.L.S.T.",
+      "categories": ["storage"],
+      "platform": "linux",
+      "logo": "https://raw.githubusercontent.com/Neomediatech/samba-alpine-docker/master/rlst_share-logo.png",
+      "repository": {
+        "url": "https://github.com/Neomediatech/samba-alpine-docker",
+        "stackfile": "docker-compose.yml"
+      },
+      "env": [{
+         "name": "WORKGROUP",
+         "label": "WORKGROUP",
+         "description": "_",
+               "default": "rlst"
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "type": 2,
+      "name": "mysql_reports",
+      "title": "MySQL Reports by Neomediatech",
+      "description": "Container per generare i reports PDF dal db MySQL",
+      "note": "Accesso: http://172.16.217.15:88/report.php <br> AGGIUNGERE/MODIFICARE utenti e password di accesso: <br> - apri una console 'portainer' sul container <br> - lancia il comando <b>htpasswd /var/www/html/.pwd nomeutente </b><br>(dove 'nomeutente' è l'utente di cui si vuole creare/cambiare la password) <br> - digita due volte la password desiderata <br>",
+      "categories": ["database"],
+      "platform": "linux",
+      "logo": "https://raw.githubusercontent.com/Neomediatech/docker-stack-templates/master/portainer-v2/mysql-reports-logo.png",
+      "repository": {
+        "url": "https://github.com/Neomediatech/docker-stack-templates",
+        "stackfile": "portainer-v2/mysql-report-stack-4-swarm.yml"
+      }
+    },
+    {
+      "id": 11,
+      "type": 2,
+      "name": "pgsql_reports",
+      "title": "PostgreSQL Reports by Neomediatech",
+      "description": "Container per generare i reports PDF dal db PostgreSQL",
+      "note": "Accesso: http://172.16.217.15:8087/report.php <br> AGGIUNGERE/MODIFICARE utenti e password di accesso: <br> - apri una console 'portainer' sul container <br> - lancia il comando <b>htpasswd /var/www/html/.pwd nomeutente </b><br>(dove 'nomeutente' è l'utente di cui si vuole creare/cambiare la password) <br> - digita due volte la password desiderata <br>",
+      "categories": ["database"],
+      "platform": "linux",
+      "logo": "https://raw.githubusercontent.com/Neomediatech/docker-stack-templates/master/portainer-v2/pgsql-reports-logo.png",
+      "repository": {
+        "url": "https://github.com/Neomediatech/docker-stack-templates",
+        "stackfile": "portainer-v2/pgsql-report-stack-4-swarm.yml"
+      }
+    },
+    {
+      "id": 12,
+      "type": 2,
+      "name": "phppgadmin",
+      "title": "phpPgAdmin by Neomediatech",
+      "description": "Interfaccia PHP per accedere a PostgreSQL",
+      "note": "Accesso: http://172.16.217.15:8283",
+      "categories": ["database"],
+      "platform": "linux",
+      "logo": "https://raw.githubusercontent.com/Neomediatech/docker-stack-templates/master/portainer-v2/phppgadmin-logo.png",
+      "repository": {
+        "url": "https://github.com/Neomediatech/docker-stack-templates",
+        "stackfile": "portainer-v2/phppgadmin-stack.yml"
+      },
+      "env": [{
+         "name": "STACK_BASE_PATH",
+         "label": "STACK_BASE_PATH",
+         "description": "Percorso base dello stack all'interno dell'host (deve esistere!)",
+               "default": "/srv/data/phppgadmin"
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "type": 2,
+      "name": "tftp",
+      "title": "TFTP service by Neomediatech",
+      "description": "Servizio TFTP per boot di emergenza e installazione server",
+      "note": "<h1>IMPORTANTE:</h1> Devi prima creare il percorso dove verranno ospitati i file, es: <strong>mkdir -p /srv/data/docker/containers/failover</strong> <br/>",
+      "categories": ["ops"],
+      "platform": "linux",
+      "logo": "https://github.com/Neomediatech/docker-stack-templates/raw/master/nm-logo.png",
+      "repository": {
+        "url": "https://github.com/Neomediatech/tftp-alpine-docker",
+        "stackfile": "docker-compose.yml"
+      }
+    },
+    {
+      "id": 14,
+      "type": 2,
+      "name": "website-test",
+      "title": "TEST Website by Neomediatech",
+      "description": "STACK DI TEST (NON USARE MAI!)",
+      "note": "<h1>NON UTILIZZARE QUESTO STACK, SERVE SOLO PER FARE TEST</h1>",
+      "categories": ["web"],
+      "platform": "linux",
+      "logo": "https://raw.githubusercontent.com/Neomediatech/docker-stack-templates/master/epevda-logo.png",
+      "repository": {
+        "url": "https://github.com/Neomediatech/docker-stack-templates",
+        "stackfile": "website-stack-4-swarm-debian-custom-fpm-test.yml"
+      }
+    },
+    {
+      "id": 15,
+      "type": 1,
+      "name": "fail2ban",
+      "title": "Fail2Ban by Neomediatech",
+      "description": "Dockerized Fail2Ban",
+      "note": " ",
+      "categories": ["sec"],
+      "platform": "linux",
+      "logo": "https://raw.githubusercontent.com/Neomediatech/fail2ban/master/fail2ban_logo.png",
+      "image": "ghcr.io/neomediatech/fail2ban:0.11.2",
+      "hostname": "fail2ban",
+      "network": "host",
+      "volumes": [
+        {
+          "container": "/data",
+          "bind": "/srv/data/fail2ban/confs"
+        },
+        {
+          "container": "/var/log",
+          "bind": "/srv/data/logs"
+        }
+      ],
+      "restart_policy": "unless-stopped",
+      "privileged": true
+    },
+    {
+      "id": 16,
+      "type": 1,
+      "name": "pdfsplit",
+      "title": "PDFsplit by Neomediatech",
+      "description": "Servizio di split dei PDF",
+      "note": "_",
+      "categories": [
+        "ops"
+      ],
+      "platform": "linux",
+      "logo": "https://raw.githubusercontent.com/Neomediatech/pdfsplit/master/pdfsplit-logo.png",
+      "image": "ghcr.io/neomediatech/pdfsplit:20.04",
+      "hostname": "pdfsplit",
+      "network": "bridge",
+      "ports": ["2223:22/tcp"],
+      "volumes": [
+        {
+          "container": "/usr/local/sbin/pdfsplit",
+          "bind": "/srv/data/pdfsplit/assets/pdfsplit",
+          "readonly": true
+        },
+        {
+          "container": "/data/log",
+          "bind": "/srv/data/logs/pdfsplit"
+        },
+        {
+          "container": "/data/assets",
+          "bind": "/srv/data/pdfsplit/assets"
+        }
+      ],
+      "restart_policy": "on-failure",
+      "privileged": true,
+      "env": [{
+         "name": "USER",
+         "label": "USER",
+         "description": "_",
+               "default": "pdfsplit"
+        },
+        {
+         "name": "PASSWORD",
+         "label": "PASSWORD",
+         "description": "_",
+               "default": "fakepassword768"
+        }
+      ]
+    }
   ]
 } 
+
