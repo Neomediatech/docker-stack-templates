@@ -43,7 +43,7 @@ services:
       MAILSERVER_CERT: "${MAILSERVER_CERT}"
   
   exim:
-    image: ghcr.io/neomediatech/exim:4.93
+    image: ghcr.io/neomediatech/exim:4.97
     hostname: exim
     <<: *default-opts    
     ports:
@@ -127,7 +127,7 @@ services:
       - clamav_defs:/var/lib/clamav
 
   rspamd:
-    image: ghcr.io/neomediatech/rspamd:3.10
+    image: ghcr.io/neomediatech/rspamd:3.14
     hostname: rspamd
     <<: *default-opts    
     ports:
